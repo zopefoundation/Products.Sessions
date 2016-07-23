@@ -40,7 +40,7 @@ setup(
     ],
     install_requires=[
         'setuptools',
-        'Zope2',
+        'Zope2 >= 4.0.dev0',
     ],
     include_package_data=True,
     zip_safe=False,
