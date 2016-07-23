@@ -16,7 +16,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='Products.Sessions',
-    version='4.0',
+    version='4.1.dev0',
     url='https://pypi.python.org/pypi/Products.Sessions',
     license='ZPL 2.1',
     description="Zope 2 session management.",
