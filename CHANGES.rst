@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0 (unreleased)
+3.0 (2016-08-01)
 ----------------
 
 - Create a separate distribution called `Products.Sessions` without
