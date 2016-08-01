@@ -1,7 +1,9 @@
 Changelog
 =========
 
-4.0 (unreleased)
+3.0 (unreleased)
 ----------------
 
-- Released as separate distribution.
+- Create a separate distribution called `Products.Sessions` without
+  any code inside it. This allows projects to depend on this project
+  inside the Zope 2.13 release line.
