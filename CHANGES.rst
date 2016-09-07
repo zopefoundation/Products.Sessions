@@ -4,6 +4,9 @@ Changelog
 4.1 (unreleased)
 ----------------
 
+- Quote variables in Products.Transience manage_container to avoid XSS.
+  From Products.PloneHotfix20160830.  [maurits]
+
 
 4.0 (2016-07-23)
 ----------------
