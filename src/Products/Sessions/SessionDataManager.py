@@ -1,5 +1,5 @@
 ############################################################################
-# 
+#
 # Copyright (c) 2002 Zope Foundation and Contributors.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -26,7 +26,7 @@ from Persistence import Persistent
 from ZPublisher.BeforeTraverse import registerBeforeTraverse
 from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 from ZODB.POSException import ConflictError
-from zope.interface import implements
+from zope.interface import implementer
 
 from Products.Sessions.interfaces import ISessionDataManager
 from Products.Sessions.interfaces import SessionDataManagerErr
@@ -59,6 +59,7 @@ class SessionIdManagerErr(Exception):
     pass
 
 
+@implementer(ISessionDataManager)
 class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     """ The Zope default session data manager implementation """
 
@@ -88,8 +89,6 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     security.setPermissionDefault(ACCESS_SESSIONDATA_PERM,
                                   ['Manager','Anonymous'])
 
-    implements(ISessionDataManager)
-
     manage_sessiondatamgr = DTMLFile('dtml/manageDataManager',
         globals())
 
@@ -113,7 +112,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     security.declareProtected(ARBITRARY_SESSIONDATA_PERM,'getSessionDataByKey')
     def getSessionDataByKey(self, key):
         return self._getSessionDataObjectByKey(key)
-    
+
     security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserIdManager')
     def getBrowserIdManager(self):
         """ """
@@ -126,7 +125,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         return mgr
 
     # END INTERFACE METHODS
-    
+
     def __init__(self, id, path=None, title='', requestName=None):
         self.id = id
         self.setContainerPath(path)
@@ -171,18 +170,18 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             self.obpath = list(path) # sequence
         else:
             raise SessionDataManagerErr('Bad path value %s' % path)
-            
+
     security.declareProtected(MGMT_SCREEN_PERM, 'getContainerPath')
     def getContainerPath(self):
         """ """
         if self.obpath is not None:
             return  '/'.join(self.obpath)
         return '' # blank string represents undefined state
-    
+
     def _hasSessionDataObject(self, key):
         """ """
         c = self._getSessionDataContainer()
-        return c.has_key(key)
+        return key in c
 
     def _getSessionDataObject(self, key):
         """ returns new or existing session data object """

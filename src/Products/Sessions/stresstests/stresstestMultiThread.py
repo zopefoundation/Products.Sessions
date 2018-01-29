@@ -25,6 +25,9 @@ from Products.Transience.Transience import \
 from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from ZODB.POSException import ConflictError, \
      ReadConflictError, BTreesConflictError
+
+from __future__ import print_function
+
 from unittest import TestCase, TestSuite, makeSuite
 import threading, random
 from ZODB.DemoStorage import DemoStorage
@@ -179,14 +182,14 @@ class BaseReaderWriter(threading.Thread):
                     return
                 except ReadConflictError:
                     #traceback.print_exc()
-                    print "R",
+                    print("R", end=' ')
                 except BTreesConflictError:
-                    print "B",
+                    print("B", end=' ')
                 except ConflictError:
-                    print "W",
+                    print("W", end=' ')
                 except:
                     transaction.abort()
-                    print log_time()
+                    print(log_time())
                     traceback.print_exc()
                     raise
                 

@@ -112,7 +112,7 @@ class TestTransientObjectContainer(TestCase):
         r = range(10, 110)
         for x in r:
             k = random.choice(r)
-            if not added.has_key(k):
+            if not k in added:
                 self.t[k] = x
                 added[k] = 1
         addl = added.keys()
@@ -140,14 +140,14 @@ class TestTransientObjectContainer(TestCase):
         deleted = []
         for x in r:
             k = random.choice(r)
-            if self.t.has_key(k):
+            if k in self.t:
                 del self.t[k]
                 deleted.append(k)
-                if self.t.has_key(k):
+                if k in self.t:
                     print "had problems deleting %s" % k
         badones = []
         for x in deleted:
-            if self.t.has_key(x):
+            if x in self.t:
                 badones.append(x)
         self.assertEqual(badones, [])
 
@@ -166,7 +166,7 @@ class TestTransientObjectContainer(TestCase):
             try:
                 ts, item = self.t.__delitem__(x)
                 results[x] = ts, item
-            except KeyError, v:
+            except KeyError as v:
                 if v.args[0] != x:
                     weird.append(x)
                 couldntdelete[x] = v.args[0]
@@ -234,7 +234,7 @@ class TestTransientObjectContainer(TestCase):
         for x in delete_order:
             try: del self.t[x]
             except KeyError:
-                self.assertFalse(self.t.has_key(x))
+                self.assertFalse(x in self.t)
 
     def testGetDelaysTimeout(self):
         for x in range(10, 110):

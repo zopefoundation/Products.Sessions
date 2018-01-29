@@ -4,6 +4,9 @@ Changelog
 4.1 (unreleased)
 ----------------
 
+- Fix startup and syntax in python3
+  [pbauer]
+
 - Quote variables in Products.Transience manage_container to avoid XSS.
   From Products.PloneHotfix20160830.  [maurits]
 

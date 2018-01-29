@@ -20,7 +20,7 @@ import math
 import os
 import random
 import sys
-import thread
+from six.moves import _thread as thread
 import time
 
 from AccessControl.class_init import InitializeClass
@@ -35,7 +35,7 @@ from BTrees.OOBTree import OOBTree
 from BTrees.IOBTree import IOBTree
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
-from zope.interface import implements
+from zope.interface import implementer
 
 from Products.Transience.TransienceInterfaces import DictionaryLike
 from Products.Transience.TransienceInterfaces \
@@ -93,18 +93,20 @@ def constructTransientObjectContainer(self, id, title='', timeout_mins=20,
     if REQUEST is not None:
         return self.manage_main(self, REQUEST, update_menu=1)
 
-class MaxTransientObjectsExceeded(Exception): pass
+class MaxTransientObjectsExceeded(Exception):
+    pass
 
+
+@implementer(ItemWithId,
+             StringKeyedHomogeneousItemContainer,
+             TransientItemContainer,
+             )
 class TransientObjectContainer(SimpleItem):
     """ Object which contains items that are automatically flushed
     after a period of inactivity """
 
     meta_type = "Transient Object Container"
 
-    implements(ItemWithId,
-               StringKeyedHomogeneousItemContainer,
-               TransientItemContainer,
-               )
     manage_options = (
         {'label': 'Manage', 'action': 'manage_container'},
         {'label': 'Security', 'action': 'manage_access'},
@@ -154,10 +156,10 @@ class TransientObjectContainer(SimpleItem):
 
     def _setTimeout(self, timeout_mins, period_secs):
         if type(timeout_mins) is not type(1):
-            raise TypeError, (escape(`timeout_mins`), "Must be integer")
+            raise TypeError((escape(timeout_mins), "Must be integer"))
 
         if type(period_secs) is not type(1):
-            raise TypeError, (escape(`period_secs`), "Must be integer")
+            raise TypeError((escape(period_secs), "Must be integer"))
 
         timeout_secs = timeout_mins * 60
 
@@ -191,7 +193,7 @@ class TransientObjectContainer(SimpleItem):
 
     def _setLimit(self, limit):
         if type(limit) is not type(1):
-            raise TypeError, (escape(`limit`), "Must be integer")
+            raise TypeError(escape(limit), "Must be integer")
         self._limit = limit
 
     def _reset(self):
@@ -235,7 +237,7 @@ class TransientObjectContainer(SimpleItem):
         # '_last_gc_timeslice' is a value that indicates in which
         # timeslice the garbage collection process was last run.
         self._last_gc_timeslice = Increaser(-self._period)
-        
+
         # our "_length" is the number of "active" data objects in _data.
         # it does not include items that are still kept in _data but need to
         # be garbage collected.
@@ -288,7 +290,7 @@ class TransientObjectContainer(SimpleItem):
         # unnecessarily, as it will end only in tears.  The lack of aliases
         # and the ordering is intentional.
 
-        STRICT and _assert(self._data.has_key(current_ts))
+        STRICT and _assert(current_ts in self._data)
         current_slices = self._getCurrentSlices(current_ts)
         found_ts = None
 
@@ -322,7 +324,7 @@ class TransientObjectContainer(SimpleItem):
             DEBUG and TLOG(
                 '_move_item: keys for found_ts %s (bucket %s): %s' % (
                 found_ts, id(self._data[found_ts]),
-                `list(self._data[found_ts].keys())`)
+                repr(list(self._data[found_ts].keys())))
                 )
             self._data[current_ts][k] = self._data[found_ts][k]
             if not issubclass(BUCKET_CLASS, Persistent):
@@ -340,7 +342,7 @@ class TransientObjectContainer(SimpleItem):
                 k, found_ts, id(self._data[found_ts]))
                 )
             STRICT and _assert(self._data[found_ts].get(k, None) is None)
-            STRICT and _assert(not self._data[found_ts].has_key(k))
+            STRICT and _assert(not k in self._data[found_ts])
 
         if getattr(self._data[current_ts][k], 'setLastAccessed', None):
             self._data[current_ts][k].setLastAccessed()
@@ -361,7 +363,7 @@ class TransientObjectContainer(SimpleItem):
             # if our scheduler fails, dont allow the TOC to stop working
             self._replentish(current_ts, force=True)
 
-        STRICT and _assert(self._data.has_key(current_ts))
+        STRICT and _assert(current_ts in self._data)
         current = self._getCurrentSlices(current_ts)
 
         current.reverse() # overwrite older with newer
@@ -413,10 +415,10 @@ class TransientObjectContainer(SimpleItem):
         else:
             current_ts = 0
         item = self._move_item(k, current_ts, _marker)
-        STRICT and _assert(self._data.has_key(current_ts))
+        STRICT and _assert(current_ts in self._data)
 
         if item is _marker:
-            raise KeyError, k
+            raise KeyError(k)
 
         return self._wrap(item)
 
@@ -427,7 +429,7 @@ class TransientObjectContainer(SimpleItem):
         else:
             current_ts = 0
         item = self._move_item(k, current_ts, _marker)
-        STRICT and _assert(self._data.has_key(current_ts))
+        STRICT and _assert(current_ts in self._data)
         if item is _marker:
             # the key didnt already exist, this is a new item
 
@@ -436,8 +438,8 @@ class TransientObjectContainer(SimpleItem):
             if self._limit and length >= self._limit:
                 LOG.warn('Transient object container %s max subobjects '
                          'reached' % self.getId())
-                    
-                raise MaxTransientObjectsExceeded, (
+
+                raise MaxTransientObjectsExceeded(
                  "%s exceeds maximum number of subobjects %s" %
                  (length, self._limit))
 
@@ -463,7 +465,7 @@ class TransientObjectContainer(SimpleItem):
         else:
             current_ts = 0
         item = self._move_item(k, current_ts)
-        STRICT and _assert(self._data.has_key(current_ts))
+        STRICT and _assert(current_ts in self._data)
         bucket = self._data[current_ts]
         del bucket[k]
         if not issubclass(BUCKET_CLASS, Persistent):
@@ -487,7 +489,7 @@ class TransientObjectContainer(SimpleItem):
         else:
             current_ts = 0
         item = self._move_item(k, current_ts, default)
-        STRICT and _assert(self._data.has_key(current_ts))
+        STRICT and _assert(current_ts in self._data)
         if item is default:
             DEBUG and TLOG('get: returning default')
             return default
@@ -503,7 +505,7 @@ class TransientObjectContainer(SimpleItem):
         item = self._move_item(k, current_ts, _marker)
         DEBUG and TLOG('has_key: _move_item returned %s%s' %
                        (item, item is _marker and ' (marker)' or ''))
-        STRICT and _assert(self._data.has_key(current_ts))
+        STRICT and _assert(current_ts in self._data)
         if item is not _marker:
             return True
         DEBUG and TLOG('has_key: returning false from for %s' % k)
@@ -546,7 +548,7 @@ class TransientObjectContainer(SimpleItem):
 
             # we want to start finalizing from one timeslice after the
             # timeslice which we last finalized.
-            
+
             start_finalize  = last_finalized + self._period
 
             # we want to finalize only up to the maximum expired timeslice
@@ -580,7 +582,7 @@ class TransientObjectContainer(SimpleItem):
                        start_finalize)
 
         to_finalize = list(self._data.keys(start_finalize, max_ts))
-        DEBUG and TLOG('_do_finalize_work: to_finalize is %s' % `to_finalize`)
+        DEBUG and TLOG('_do_finalize_work: to_finalize is %r' % to_finalize)
 
         delta = 0
 
@@ -588,10 +590,10 @@ class TransientObjectContainer(SimpleItem):
 
             _assert(start_finalize <= key)
             _assert(key <= max_ts)
-            STRICT and _assert(self._data.has_key(key))
+            STRICT and _assert(key in self._data)
             values = list(self._data[key].values())
             DEBUG and TLOG('_do_finalize_work: values to notify from ts %s '
-                           'are %s' % (key, `list(values)`))
+                           'are %r' % (key, list(values)))
 
             delta += len(values)
 
@@ -620,7 +622,7 @@ class TransientObjectContainer(SimpleItem):
         if not self._timeout_slices:
             DEBUG and TLOG('_replentish: no timeout, doing nothing')
             return
-        
+
         # the difference between high and low naturally diminishes to
         # zero as now approaches self._max_timeslice() during normal
         # operations.  If high <= low, it means we have no current bucket,
@@ -709,7 +711,7 @@ class TransientObjectContainer(SimpleItem):
         DEBUG and TLOG('_do_replentish_work: buckets to add = %s'
                        % new_buckets)
         for k in new_buckets:
-            STRICT and _assert(not self._data.has_key(k))
+            STRICT and _assert(not k in self._data)
             self._data[k] = BUCKET_CLASS() # XXX ReadConflictError hotspot
 
         self._max_timeslice.set(max(new_buckets))
@@ -729,7 +731,7 @@ class TransientObjectContainer(SimpleItem):
             DEBUG and TLOG('_gc: couldnt acquire lock')
             return
 
-        try: 
+        try:
             if now is None:
                 now = getCurrentTimeslice(self._period) # for unit tests
 
@@ -765,7 +767,7 @@ class TransientObjectContainer(SimpleItem):
 
         for key in to_gc:
             _assert(key <= max_ts)
-            STRICT and _assert(self._data.has_key(key))
+            STRICT and _assert(key in self._data)
             DEBUG and TLOG('_do_gc_work: deleting %s from _data' % key)
             del self._data[key]
 
@@ -841,9 +843,9 @@ class TransientObjectContainer(SimpleItem):
     def new(self, key):
         DEBUG and TLOG('new called with %s' % key)
         if type(key) is not type(''):
-            raise TypeError, (key, "key is not a string type")
-        if self.has_key(key):
-            raise KeyError, "cannot duplicate key %s" % key
+            raise TypeError((key, "key is not a string type"))
+        if key in self:
+            raise KeyError("cannot duplicate key %s" % key)
         item = TransientObject(key)
         self[key] = item
         return self._wrap(item)
@@ -856,7 +858,7 @@ class TransientObjectContainer(SimpleItem):
         compatibility.  In older versions of this code, period was
         hardcoded to 20. """
         timeout_secs = timeout_mins * 60
-        
+
         if (timeout_mins != self.getTimeoutMinutes()
             or period_secs != self.getPeriodSeconds()):
             # do nothing unless something has changed
@@ -950,7 +952,7 @@ class TransientObjectContainer(SimpleItem):
             return self.manage_container(
                 self, REQUEST, manage_tabs_message='Changes saved.'
                 )
-        
+
     def __setstate__(self, state):
         # upgrade versions of Transience in Zope versions less
         # than 2.7.1, which used a different transience mechanism.  Note:
@@ -983,7 +985,7 @@ class TransientObjectContainer(SimpleItem):
                 SPARE_BUCKETS*2,
                 self._period)
             for i in new_slices:
-                if not self._data.has_key(i):
+                if not i in self._data:
                     self._data[i] = BUCKET_CLASS()
             # create an Increaser for max timeslice
             self._max_timeslice = Increaser(max(new_slices))
@@ -1000,7 +1002,7 @@ class TransientObjectContainer(SimpleItem):
         # them in order to allow people to switch between 2.6.0->2.7.0 and
         # 2.7.1+ as necessary (although that has not been tested)
         self.__dict__.update(state)
-    
+
 def getCurrentTimeslice(period):
     """
     Return an integer representing the 'current' timeslice.

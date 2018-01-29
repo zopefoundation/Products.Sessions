@@ -11,41 +11,41 @@
 #
 ############################################################################
 
-import binascii
+
+from AccessControl.class_init import InitializeClass
+from AccessControl.SecurityInfo import ClassSecurityInfo
+from Acquisition import aq_inner
+from Acquisition import aq_parent
+from Acquisition import Implicit
+from App.Management import Tabs
+from App.special_dtml import DTMLFile
 from cgi import escape
 from hashlib import sha256
+from OFS.owner import Owned
+from OFS.role import RoleManager
+from OFS.SimpleItem import Item
+from Persistence import Persistent
+from persistent import TimeStamp
+from Products.Sessions.interfaces import BrowserIdManagerErr
+from Products.Sessions.interfaces import IBrowserIdManager
+from Products.Sessions.SessionPermissions import ACCESS_CONTENTS_PERM
+from Products.Sessions.SessionPermissions import CHANGE_IDMGR_PERM
+from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import urlunparse
+from zope.interface import implementer
+from ZPublisher.BeforeTraverse import queryBeforeTraverse
+from ZPublisher.BeforeTraverse import registerBeforeTraverse
+from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
+
+import binascii
 import logging
 import os
 import re
 import string
 import sys
 import time
-from urllib import quote
-from urlparse import urlparse
-from urlparse import urlunparse
-
-from AccessControl.class_init import InitializeClass
-from AccessControl.SecurityInfo import ClassSecurityInfo
-from Acquisition import Implicit
-from Acquisition import aq_parent
-from Acquisition import aq_inner
-from App.Management import Tabs
-from App.special_dtml import DTMLFile
-from Persistence import Persistent
-from persistent import TimeStamp
-from OFS.owner import Owned
-from OFS.role import RoleManager
-from OFS.SimpleItem import Item
-from ZPublisher.BeforeTraverse import registerBeforeTraverse
-from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
-from ZPublisher.BeforeTraverse import queryBeforeTraverse
-from zope.interface import implements
-
-from Products.Sessions.interfaces import IBrowserIdManager
-from Products.Sessions.interfaces import BrowserIdManagerErr
-from Products.Sessions.SessionPermissions import ACCESS_CONTENTS_PERM
-from Products.Sessions.SessionPermissions import CHANGE_IDMGR_PERM
-from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
 
 b64_trans = string.maketrans('+/', '-.')
 b64_untrans = string.maketrans('-.', '+/')
@@ -67,6 +67,7 @@ LOG = logging.getLogger('Zope.BrowserIdManager')
 
 # Use the system PRNG if possible
 import random
+
 try:
     random = random.SystemRandom()
     using_sysrandom = True
@@ -102,11 +103,12 @@ def constructBrowserIdManager(
     ob = self._getOb(id)
     if REQUEST is not None:
         return self.manage_main(self, REQUEST, update_menu=1)
-    
+
+
+@implementer(IBrowserIdManager)
 class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     """ browser id management class
     """
-    implements(IBrowserIdManager)
     meta_type = 'Browser Id Manager'
 
     security = ClassSecurityInfo()
@@ -145,7 +147,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             return self.getBrowserId(create=0) is not None
         except BrowserIdManagerErr:
             return False
-                
+
     security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserId')
     def getBrowserId(self, create=1):
         """ See IBrowserIdManager.
@@ -262,7 +264,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         """
         s = '<input type="hidden" name="%s" value="%s" />'
         return s % (self.getBrowserIdName(), self.getBrowserId())
-    
+
     security.declareProtected(ACCESS_CONTENTS_PERM, 'encodeUrl')
     def encodeUrl(self, url, style='querystring', create=1):
         # See IBrowserIdManager
@@ -295,7 +297,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     security.declareProtected(CHANGE_IDMGR_PERM, 'setBrowserIdNamespaces')
     def setBrowserIdNamespaces(self, ns):
         """
-        accepts list of allowable browser id namespaces 
+        accepts list of allowable browser id namespaces
         """
         for name in ns:
             if name not in ALLOWED_BID_NAMESPACES:
@@ -419,7 +421,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             URL1 = REQUEST.get('URL1', None)
             if URL1 is None:
                 return # should we raise an exception?
-            if string.split(URL1,':')[0] != 'https':
+            if URL1.split(':')[0] != 'https':
                 return # should we raise an exception?
 
         cookies = REQUEST.RESPONSE.cookies
