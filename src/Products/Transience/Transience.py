@@ -379,7 +379,7 @@ class TransientObjectContainer(SimpleItem):
         return d
 
     def keys(self):
-        return self._all().keys()
+        return list(self._all().keys())
 
     def raw(self, current_ts):
         # for debugging and unit testing
@@ -398,10 +398,10 @@ class TransientObjectContainer(SimpleItem):
         return d
 
     def items(self):
-        return self._all().items()
+        return list(self._all().items())
 
     def values(self):
-        return self._all().values()
+        return list(self._all().values())
 
     def _wrap(self, item):
         # dont use hasattr here (it hides conflict errors)
@@ -961,7 +961,7 @@ class TransientObjectContainer(SimpleItem):
         # can't make __len__ an instance variable in new-style classes
 
         # f/w compat: 2.8 cannot use __len__ as an instance variable
-        if not state.has_key('_length'):
+        if '_length' not in state:
             length = state.get('__len__', Length2())
             self._length = self.getLen = length
 
@@ -974,12 +974,12 @@ class TransientObjectContainer(SimpleItem):
             self._length = self.getLen = Length2(sz)
 
         # TOCs prior to 2.7.1 took their period from a global
-        if not state.has_key('_period'):
+        if '_period' not in state:
             self._period = 20 # this was the default for all prior releases
 
         # TOCs prior to 2.7.1 used a different set of data structures
         # for efficiently keeping tabs on the maximum slice
-        if not state.has_key('_max_timeslice'):
+        if '_max_timeslice' not in state:
             new_slices = getTimeslices(
                 getCurrentTimeslice(self._period),
                 SPARE_BUCKETS*2,
@@ -990,11 +990,11 @@ class TransientObjectContainer(SimpleItem):
             # create an Increaser for max timeslice
             self._max_timeslice = Increaser(max(new_slices))
 
-        if not state.has_key('_last_finalized_timeslice'):
+        if '_last_finalized_timeslice' not in state:
             self._last_finalized_timeslice = Increaser(-self._period)
 
         # TOCs prior to 2.7.3 didn't have a _last_gc_timeslice
-        if not state.has_key('_last_gc_timeslice'):
+        if '_last_gc_timeslice' not in state:
             self._last_gc_timeslice = Increaser(-self._period)
 
         # we should probably delete older attributes from state such as

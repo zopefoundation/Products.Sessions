@@ -141,13 +141,13 @@ class TransientObject(Persistent, Implicit):
     #
 
     def keys(self):
-        return self._container.keys()
+        return list(self._container.keys())
 
     def values(self):
-        return self._container.values()
+        return list(self._container.values())
 
     def items(self):
-        return self._container.items()
+        return list(self._container.items())
 
     def get(self, k, default=_notfound):
         v = self._container.get(k, default)
@@ -207,7 +207,7 @@ class TransientObject(Persistent, Implicit):
         # We can clearly resolve the conflict if one state is invalid,
         # because it's a terminal state.
         for state in states:
-            if state.has_key('_invalid'):
+            if '_invalid' in state:
                 DEBUG and TLOG('TO _p_rc: a state was invalid')
                 return state
 
@@ -256,12 +256,12 @@ class TransientObject(Persistent, Implicit):
 
     def _generateUniqueId(self):
         t = str(int(time.time()))
-        d = "%010d" % random.randint(0, sys.maxint-1)
+        d = "%010d" % random.randint(0, sys.maxsize-1)
         return "%s%s" % (t, d)
 
     def __repr__(self):
         return "id: %s, token: %s, content keys: %r" % (
-            self.id, self.token, self.keys()
+            self.id, self.token, list(self.keys())
             )
 
 def lastmodified_sort(d1, d2):

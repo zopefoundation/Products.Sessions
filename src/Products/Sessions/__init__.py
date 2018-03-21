@@ -17,8 +17,8 @@ from Products.Sessions.interfaces import SessionDataManagerErr  #BBB
 
 def initialize(context):
 
-    import BrowserIdManager
-    import SessionDataManager
+    from . import BrowserIdManager
+    from . import SessionDataManager
 
     context.registerClass(
         BrowserIdManager.BrowserIdManager,
