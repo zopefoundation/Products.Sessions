@@ -12,6 +12,7 @@ Changelog
 ----------------
 
 - Released as separate distribution including the code.
+  This release requires Zope >= 4.0.
 
 
 3.0 (2016-08-01)

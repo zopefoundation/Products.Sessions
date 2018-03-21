@@ -19,7 +19,7 @@ setup(
     version='4.1.dev0',
     url='https://github.com/zopefoundation/Products.Sessions/',
     license='ZPL 2.1',
-    description="Zope 2 session management.",
+    description="Zope session management.",
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
     long_description=(open('README.rst').read() + '\n' +
@@ -30,7 +30,7 @@ setup(
     classifiers=[
         "Development Status :: 6 - Mature",
         "Environment :: Web Environment",
-        "Framework :: Zope2",
+        "Framework :: Zope :: 4",
         "License :: OSI Approved :: Zope Public License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
@@ -48,7 +48,7 @@ setup(
         'Products.TemporaryFolder',
         'transaction',
         'ZODB',
-        'Zope2 >= 4.0.dev0',
+        'Zope >= 4.0.dev0',
         'zope.interface',
     ],
     include_package_data=True,
