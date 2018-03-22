@@ -495,8 +495,8 @@ class TransientObjectContainer(SimpleItem):
             return default
         return self._wrap(item)
 
-    security.declareProtected(ACCESS_TRANSIENTS_PERM, 'has_key')
-    def has_key(self, k):
+    security.declareProtected(ACCESS_TRANSIENTS_PERM, '__contains__')
+    def __contains__(self, k):
         if self._timeout_slices:
             current_ts = getCurrentTimeslice(self._period)
         else:

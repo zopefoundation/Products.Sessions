@@ -65,7 +65,7 @@ class TestTransientObjectContainer(TestCase):
 
     def testHasKeyWorks(self):
         self.t[10] = 1
-        self.assertTrue(self.t.has_key(10))
+        self.assertIn(10, self.t)
 
     def testValuesWorks(self):
         for x in range(10, 110):
@@ -278,7 +278,7 @@ class TestTransientObjectContainer(TestCase):
             del self.t[k]
 
         self.assertEqual(len(self.t), 0)
-        
+
 
     def testResetWorks(self):
         self.t[10] = 1
