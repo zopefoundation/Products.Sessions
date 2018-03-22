@@ -89,9 +89,9 @@ class TestTransientObject(TestCase):
     def test_dictionaryLike(self):
         t = self.t.new('keytest')
         t.update(data)
-        self.assertEqual(t.keys(), data.keys())
-        self.assertEqual(t.values(), data.values())
-        self.assertEqual(t.items(), data.items())
+        self.assertItemsEqual(t.keys(), data.keys())
+        self.assertItemsEqual(t.values(), data.values())
+        self.assertItemsEqual(t.items(), data.items())
         for k in data.keys():
             self.assertEqual(t.get(k), data.get(k))
         self.assertEqual(t.get('foobie'), None)
