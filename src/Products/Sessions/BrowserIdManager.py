@@ -43,12 +43,10 @@ import binascii
 import logging
 import os
 import re
-import string
+import six
 import sys
 import time
 
-b64_trans = string.maketrans('+/', '-.')
-b64_untrans = string.maketrans('-.', '+/')
 
 badidnamecharsin = re.compile('[\?&;,<> ]').search
 badcookiecharsin = re.compile('[;,<>& ]').search
@@ -351,11 +349,11 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             raise BrowserIdManagerErr(
                             'Cookie domain must contain at least two dots '
                             '(e.g. ".zope.org" or "www.zope.org") or it must '
-                            'be left blank. : ' '%s' % escape(`domain`))
+                            'be left blank. : ' '%s' % escape(repr(domain)))
         if badcookiecharsin(domain):
             raise BrowserIdManagerErr(
                             'Bad characters in cookie domain %s'
-                                % escape(`domain`))
+                                % escape(repr(domain)))
         self.cookie_domain = domain
 
     security.declareProtected(ACCESS_CONTENTS_PERM, 'getCookieDomain')
@@ -547,20 +545,43 @@ class BrowserIdManagerTraverser(Persistent):
         except:
             LOG.error('indeterminate error', exc_info=sys.exc_info())
 
-def getB64TStamp(
-    b2a=binascii.b2a_base64,gmtime=time.gmtime, time=time.time,
-    b64_trans=b64_trans, split=string.split,
-    TimeStamp=TimeStamp.TimeStamp, translate=string.translate
-    ):
-    t=time()
-    ts=split(b2a(`TimeStamp(*gmtime(t)[:5]+(t%60,))`)[:-1],'=')[0]
-    return translate(ts, b64_trans)
+if six.PY2:
+    import string
 
-def getB64TStampToInt(
-    ts, TimeStamp=TimeStamp.TimeStamp, b64_untrans=b64_untrans,
-    a2b=binascii.a2b_base64, translate=string.translate
-    ):
-    return TimeStamp(a2b(translate(ts+'=',b64_untrans))).timeTime()
+    b64_trans = string.maketrans('+/', '-.')
+    b64_untrans = string.maketrans('-.', '+/')
+
+    def getB64TStamp(
+        b2a=binascii.b2a_base64, gmtime=time.gmtime, time=time.time,
+        b64_trans=b64_trans, split=string.split,
+        TimeStamp=TimeStamp.TimeStamp, translate=string.translate
+         ):
+        t = time()
+        ts = split(b2a(repr(TimeStamp(*gmtime(t)[:5] + (t % 60,))))[:-1], '=')[0]
+        return translate(ts, b64_trans)
+
+    def getB64TStampToInt(
+        ts, TimeStamp=TimeStamp.TimeStamp, b64_untrans=b64_untrans,
+        a2b=binascii.a2b_base64, translate=string.translate
+         ):
+        return TimeStamp(a2b(translate(ts + '=', b64_untrans))).timeTime()
+
+else:
+    def getB64TStamp(
+        b2a=binascii.b2a_base64, gmtime=time.gmtime, time=time.time,
+        TimeStamp=TimeStamp.TimeStamp,
+         ):
+        t = time()
+        stamp = TimeStamp(*gmtime(t)[:5]+(t % 60,))
+        ts = b2a(stamp.raw()).split(b'=')[:-1][0]
+        return ts.replace(b'+/', b'-.')
+
+    def getB64TStampToInt(
+        ts, TimeStamp=TimeStamp.TimeStamp, a2b=binascii.a2b_base64
+         ):
+        stamp = TimeStamp(a2b(ts + b'=').replace(b'-.', b'+/'))
+        return stamp.timeTime()
+
 
 def getBrowserIdPieces(bid):
     """ returns browser id parts in a tuple consisting of rand_id,
