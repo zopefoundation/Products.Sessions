@@ -155,11 +155,11 @@ class TransientObjectContainer(SimpleItem):
     # helpers
 
     def _setTimeout(self, timeout_mins, period_secs):
-        if type(timeout_mins) is not type(1):
-            raise TypeError((escape(timeout_mins), "Must be integer"))
+        if not isinstance(timeout_mins, int):
+            raise TypeError((escape(str(timeout_mins)), "Must be integer"))
 
-        if type(period_secs) is not type(1):
-            raise TypeError((escape(period_secs), "Must be integer"))
+        if not isinstance(period_secs, int):
+            raise TypeError((escape(str(period_secs)), "Must be integer"))
 
         timeout_secs = timeout_mins * 60
 

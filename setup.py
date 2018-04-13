@@ -46,7 +46,7 @@ setup(
         'BTrees',
         'persistent',
         'Persistence',
-        'Products.TemporaryFolder',
+        'Products.TemporaryFolder >= 5',
         'transaction',
         'ZODB',
         'Zope >= 4.0.dev0',

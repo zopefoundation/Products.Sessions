@@ -7,7 +7,7 @@ import Products.Transience.TransientObject
 from unittest import TestCase, TestSuite, makeSuite
 from ZODB.DemoStorage import DemoStorage
 from OFS.Application import Application
-import fauxtime
+from . import fauxtime
 import time as oldtime
 
 WRITEGRANULARITY = 30

@@ -19,8 +19,8 @@ import Products.Transience.Transience
 import Products.Transience.TransientObject
 from unittest import TestCase, TestSuite, makeSuite
 import time as oldtime
-import fauxtime
-import slowfauxtime
+from . import fauxtime
+from . import slowfauxtime
 
 
 class TestTransientObjectContainer(TestCase):
@@ -33,8 +33,8 @@ class TestTransientObjectContainer(TestCase):
         self.errmargin = .20
         self.timeout = fauxtime.timeout
         self.period = 20
-        self.t = TransientObjectContainer('sdc', timeout_mins=self.timeout/60,
-                                          period_secs=self.period)
+        self.t = TransientObjectContainer(
+            'sdc', timeout_mins=self.timeout // 60, period_secs=self.period)
 
     def tearDown(self):
         self.t = None
@@ -144,7 +144,7 @@ class TestTransientObjectContainer(TestCase):
                 del self.t[k]
                 deleted.append(k)
                 if k in self.t:
-                    print "had problems deleting %s" % k
+                    print("had problems deleting %s" % k)
         badones = []
         for x in deleted:
             if x in self.t:
@@ -286,7 +286,7 @@ class TestTransientObjectContainer(TestCase):
         self.assertFalse(self.t.get(10))
 
     def testGetTimeoutMinutesWorks(self):
-        self.assertEqual(self.t.getTimeoutMinutes(), self.timeout / 60)
+        self.assertEqual(self.t.getTimeoutMinutes(), self.timeout // 60)
         self.t._setTimeout(10, 30)
         self.assertEqual(self.t.getTimeoutMinutes(), 10)
         self.assertEqual(self.t.getPeriodSeconds(), 30)
@@ -312,8 +312,8 @@ class TestTransientObjectContainer(TestCase):
         self.assertEqual(self.t.getId(), 'sdc')
 
     def testSubobjectLimitWorks(self):
-        self.t = TransientObjectContainer('a', timeout_mins=self.timeout/60,
-                                          limit=10)
+        self.t = TransientObjectContainer(
+            'a', timeout_mins=self.timeout // 60, limit=10)
         self.assertRaises(MaxTransientObjectsExceeded, self._maxOut)
 
     def testZeroTimeoutMeansPersistForever(self):
@@ -351,8 +351,8 @@ class TestSlowTransientObjectContainer(TestCase):
         self.errmargin = .20
         self.timeout = 120
         self.period = 20
-        self.t = TransientObjectContainer('sdc', timeout_mins=self.timeout/60,
-                                          period_secs=self.period)
+        self.t = TransientObjectContainer(
+            'sdc', timeout_mins=self.timeout // 60, period_secs=self.period)
 
     def tearDown(self):
         self.t = None
@@ -369,7 +369,7 @@ class TestSlowTransientObjectContainer(TestCase):
         self.assertEqual(len(self.t.keys()), 0)
 
         # 2 minutes
-        self.t._setTimeout(self.timeout/60*2, self.period)
+        self.t._setTimeout(self.timeout // 60 * 2, self.period)
         self.t._reset()
         for x in range(10, 110):
             self.t[x] = x
@@ -380,7 +380,7 @@ class TestSlowTransientObjectContainer(TestCase):
         self.assertEqual(len(self.t.keys()), 0)
 
         # 3 minutes
-        self.t._setTimeout(self.timeout/60*3, self.period)
+        self.t._setTimeout(self.timeout // 60 * 3, self.period)
         self.t._reset()
         for x in range(10, 110):
             self.t[x] = x

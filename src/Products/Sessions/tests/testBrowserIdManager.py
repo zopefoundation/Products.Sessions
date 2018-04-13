@@ -653,7 +653,7 @@ class TestBrowserIdManagerPublish(Testing.ZopeTestCase.FunctionalTestCase):
 
         res = self.publish(
             '/browser_id_manager/encodeUrl?url=%3Chtml%3EEVIL%2Fhtml%3E%3C!--')
-        self.assertFalse("<html>EVIL/html>" in res.getBody())
+        self.assertFalse(b"<html>EVIL/html>" in res.getBody())
 
 
 class DummyObject:

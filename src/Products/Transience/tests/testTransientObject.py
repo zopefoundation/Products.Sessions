@@ -11,12 +11,12 @@
 #
 ##############################################################################
 
+from . import fauxtime
 from Products.Transience.Transience import TransientObjectContainer
 import Products.Transience.TransientObject
 import Products.Transience.Transience
 from unittest import TestCase, TestSuite, makeSuite
 import time as oldtime
-import fauxtime
 
 class TestTransientObject(TestCase):
     def setUp(self):
@@ -25,7 +25,8 @@ class TestTransientObject(TestCase):
         Products.Transience.Transience.setStrict(1)
         self.errmargin = .20
         self.timeout = fauxtime.timeout
-        self.t = TransientObjectContainer('sdc', timeout_mins=self.timeout/60)
+        self.t = TransientObjectContainer(
+            'sdc', timeout_mins=self.timeout // 60)
 
     def tearDown(self):
         Products.Transience.Transience.time = oldtime
