@@ -797,7 +797,7 @@ class TransientObjectContainer(SimpleItem):
             except (KeyError, AttributeError):
                 path = self.getPhysicalPath()
                 err = 'No such onAdd/onDelete method %s referenced via %s'
-                LOG.warn(err % (callback, '/'.join(path)),
+                LOG.warning(err % (callback, '/'.join(path)),
                          exc_info=sys.exc_info())
                 return
         else:
@@ -815,7 +815,7 @@ class TransientObjectContainer(SimpleItem):
                 except:
                     # dont raise, just log
                     path = self.getPhysicalPath()
-                    LOG.warn('%s failed when calling %s in %s' % (name,callback,
+                    LOG.warning('%s failed when calling %s in %s' % (name,callback,
                                                                  '/'.join(path)),
                              exc_info=sys.exc_info())
             finally:
@@ -823,7 +823,7 @@ class TransientObjectContainer(SimpleItem):
         else:
             err = '%s in %s attempted to call non-callable %s'
             path = self.getPhysicalPath()
-            LOG.warn(err % (name, '/'.join(path), callback),
+            LOG.warning(err % (name, '/'.join(path), callback),
                      exc_info=sys.exc_info())
 
     def getId(self):
