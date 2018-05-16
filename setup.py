@@ -54,4 +54,9 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
+    entry_points="""
+    [zope2.initialize]
+    Products.Sessions = Products.Sessions:initialize
+    Products.Transience = Products.Transience:initialize
+    """,
 )
