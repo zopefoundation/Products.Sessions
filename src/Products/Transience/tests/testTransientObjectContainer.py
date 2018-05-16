@@ -115,9 +115,9 @@ class TestTransientObjectContainer(TestCase):
             if not k in added:
                 self.t[k] = x
                 added[k] = 1
-        addl = added.keys()
+        addl = list(added.keys())
         addl.sort()
-        self.assertEqual(lsubtract(self.t.keys(),addl), [])
+        self.assertEqual(lsubtract(list(self.t.keys()),addl), [])
 
     def testRandomOverlappingInserts(self):
         added = {}
@@ -126,9 +126,9 @@ class TestTransientObjectContainer(TestCase):
             k = random.choice(r)
             self.t[k] = x
             added[k] = 1
-        addl = added.keys()
+        addl = list(added.keys())
         addl.sort()
-        self.assertEqual(lsubtract(self.t.keys(), addl), [])
+        self.assertEqual(lsubtract(list(self.t.keys()), addl), [])
 
     def testRandomDeletes(self):
         r = range(10, 1010)
@@ -417,8 +417,8 @@ class TestSlowTransientObjectContainer(TestCase):
 def lsubtract(l1, l2):
     l1=list(l1)
     l2=list(l2)
-    l = filter(lambda x, l1=l1: x not in l1, l2)
-    l = l + filter(lambda x, l2=l2: x not in l2, l1)
+    l = [x for x in l2 if x not in l1]
+    l = l + [x for x in l1 if x not in l2]
     return l
 
 
