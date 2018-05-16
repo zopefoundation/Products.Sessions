@@ -16,6 +16,8 @@ import sys
 
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from Acquisition import Implicit
 from App.special_dtml import DTMLFile
 from App.Management import Tabs
@@ -251,7 +253,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     def updateTraversalData(self, requestSessionName=None):
         # Note this cant be called directly at add -- manage_afterAdd will
         # work though.
-        parent = self.aq_inner.aq_parent
+        parent = aq_parent(aq_inner(self))
 
         if getattr(self,'_hasTraversalHook', None):
             unregisterBeforeTraverse(parent, 'SessionDataManager')

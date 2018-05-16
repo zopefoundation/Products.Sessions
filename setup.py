@@ -52,7 +52,7 @@ setup(
         'Products.TemporaryFolder >= 5',
         'transaction',
         'ZODB',
-        'Zope >= 4.0.dev0',
+        'Zope >= 4.0b5',
         'zope.interface',
     ],
     include_package_data=True,

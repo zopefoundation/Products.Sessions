@@ -15,6 +15,33 @@
 from Products.Sessions.interfaces import BrowserIdManagerErr    #BBB
 from Products.Sessions.interfaces import SessionDataManagerErr  #BBB
 
+def commit(note):
+    import transaction
+    transaction.get().note(note)
+    transaction.commit()
+
+def install_browser_id_manager(app):
+    if hasattr(app, 'browser_id_manager'):
+        return
+
+    from . import BrowserIdManager
+    bid = BrowserIdManager.BrowserIdManager('browser_id_manager', 'Browser Id Manager')
+    app._setObject('browser_id_manager', bid)
+    commit(u'Added browser_id_manager')
+
+def install_session_data_manager(app):
+    # Ensure that a session data manager exists
+    if hasattr(app, 'session_data_manager'):
+        return
+
+    from . import SessionDataManager
+    sdm = SessionDataManager.SessionDataManager('session_data_manager',
+        title='Session Data Manager',
+        path='/temp_folder/session_data',
+        requestName='SESSION')
+    app._setObject('session_data_manager', sdm)
+    commit(u'Added session_data_manager')
+
 def initialize(context):
 
     from . import BrowserIdManager
@@ -56,3 +83,8 @@ def initialize(context):
     security = ModuleSecurityInfo('Products.Sessions')
     security.declarePublic('BrowserIdManagerErr')
     security.declarePublic('SessionDataManagerErr')
+
+    app = context.getApplication() # new API added in Zope 4.0b5
+    if app is not None:
+        install_browser_id_manager(app)
+        install_session_data_manager(app)
