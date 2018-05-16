@@ -436,7 +436,7 @@ class TransientObjectContainer(SimpleItem):
             length = self._length() # XXX ReadConflictError hotspot
 
             if self._limit and length >= self._limit:
-                LOG.warn('Transient object container %s max subobjects '
+                LOG.warning('Transient object container %s max subobjects '
                          'reached' % self.getId())
 
                 raise MaxTransientObjectsExceeded(
