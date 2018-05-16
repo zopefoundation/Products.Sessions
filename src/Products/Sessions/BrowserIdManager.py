@@ -19,7 +19,7 @@ from Acquisition import aq_parent
 from Acquisition import Implicit
 from App.Management import Tabs
 from App.special_dtml import DTMLFile
-from cgi import escape
+from ._compat import html_escape as escape
 from hashlib import sha256
 from OFS.owner import Owned
 from OFS.role import RoleManager
