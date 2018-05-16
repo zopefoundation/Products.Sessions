@@ -574,12 +574,12 @@ else:
         t = time()
         stamp = TimeStamp(*gmtime(t)[:5]+(t % 60,))
         ts = b2a(stamp.raw()).split(b'=')[:-1][0]
-        return ts.replace(b'+/', b'-.')
+        return ts.replace(b'+/', b'-.').decode('ascii')
 
     def getB64TStampToInt(
         ts, TimeStamp=TimeStamp.TimeStamp, a2b=binascii.a2b_base64
          ):
-        stamp = TimeStamp(a2b(ts + b'=').replace(b'-.', b'+/'))
+        stamp = TimeStamp(a2b(ts + '=').replace(b'-.', b'+/'))
         return stamp.timeTime()
 
 
