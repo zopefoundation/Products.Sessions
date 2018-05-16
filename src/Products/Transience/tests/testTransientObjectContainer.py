@@ -94,7 +94,7 @@ class TestTransientObjectContainer(TestCase):
             self.t[x] = x
         v = self.t.items()
         v.sort()
-        self.assertEquals(len(v), 100)
+        self.assertEqual(len(v), 100)
         i = 10
         for x in v:
             self.assertEqual(x[0], i)
