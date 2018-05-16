@@ -703,7 +703,7 @@ class TransientObjectContainer(SimpleItem):
         DEBUG and TLOG('_do_replentish_work: replentish_end = %s'
                        % replentish_end)
         # n is the number of buckets to create
-        n = (replentish_end - replentish_start) / self._period
+        n = (replentish_end - replentish_start) // self._period
         new_buckets = getTimeslices(replentish_start, n, self._period)
         new_buckets.reverse()
         STRICT and _assert(new_buckets)
