@@ -82,7 +82,7 @@ class TestLastAccessed(TestBase):
         # to get to the next Windows time.time() tick.
         fauxtime.sleep(WRITEGRANULARITY + 0.06 * 60)
         sdo = self.app.sm.get('TempObject')
-        self.assert_(sdo.getLastAccessed() > la1)
+        self.assertTrue(sdo.getLastAccessed() > la1)
 
 class TestNotifications(TestBase):
     def testAddNotification(self):
@@ -91,7 +91,7 @@ class TestNotifications(TestBase):
         now = fauxtime.time()
         k = sdo.get('starttime')
         self.assertEqual(type(k), type(now))
-        self.assert_(k <= now)
+        self.assertTrue(k <= now)
 
     def testDelNotification(self):
         self.app.sm.setDelNotificationTarget(delNotificationTarget)
@@ -102,7 +102,7 @@ class TestNotifications(TestBase):
         now = fauxtime.time()
         k = sdo.get('endtime')
         self.assertEqual(type(k), type(now))
-        self.assert_(k <= now)
+        self.assertTrue(k <= now)
 
     def testMissingCallbackGetCallbackReturnsNone(self):
         # in response to http://zope.org/Collectors/Zope/1403
