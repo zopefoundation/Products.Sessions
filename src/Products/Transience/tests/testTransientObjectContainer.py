@@ -173,21 +173,21 @@ class TestTransientObjectContainer(TestCase):
         self.assertEqual(self.t.keys(), [])
 
     def testPathologicalRightBranching(self):
-        r = range(10, 1010)
+        r = list(range(10, 1010))
         for x in r:
             self.t[x] = 1
-        assert list(self.t.keys()) == r, (self.t.keys(), r)
-        map(self.t.__delitem__, r)
+        self.assertEqual(list(self.t.keys()), r)
+        [self.t.__delitem__(x) for x in r]
         self.assertEqual(list(self.t.keys()), [])
 
     def testPathologicalLeftBranching(self):
-        r = range(10, 1010)
+        r = list(range(10, 1010))
         revr = r[:]
         revr.reverse()
         for x in revr:
             self.t[x] = 1
         self.assertEqual(list(self.t.keys()), r)
-        map(self.t.__delitem__, revr)
+        [self.t.__delitem__(x) for x in revr]
         self.assertEqual(list(self.t.keys()), [])
 
     def testSuccessorChildParentRewriteExerciseCase(self):
@@ -334,7 +334,7 @@ class TestTransientObjectContainer(TestCase):
         max_ts = self.t._last_finalized_timeslice()
         keys = list(self.t._data.keys())
         for k in keys:
-            self.assert_(k > max_ts, "k %s < max_ts %s" % (k, max_ts))
+            self.assertTrue(k > max_ts, "k %s < max_ts %s" % (k, max_ts))
 
     def _maxOut(self):
         for x in range(11):
