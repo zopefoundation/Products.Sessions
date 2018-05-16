@@ -38,7 +38,7 @@ from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
 from Products.Sessions.common import DEBUG
 from Products.Sessions.BrowserIdManager import BROWSERID_MANAGER_NAME
 
-bad_path_chars_in=re.compile('[^a-zA-Z0-9-_~\,\. \/]').search
+bad_path_chars_in=re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search
 LOG = getLogger('SessionDataManager')
 
 constructSessionDataManagerForm = DTMLFile('dtml/addDataManager',

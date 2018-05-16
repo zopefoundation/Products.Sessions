@@ -48,9 +48,9 @@ import sys
 import time
 
 
-badidnamecharsin = re.compile('[\?&;,<> ]').search
-badcookiecharsin = re.compile('[;,<>& ]').search
-twodotsin = re.compile('(\w*\.){2,}').search
+badidnamecharsin = re.compile(r'[\?&;,<> ]').search
+badcookiecharsin = re.compile(r'[;,<>& ]').search
+twodotsin = re.compile(r'(\w*\.){2,}').search
 
 _marker = []
 
