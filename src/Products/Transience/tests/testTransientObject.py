@@ -42,19 +42,19 @@ class TestTransientObject(TestCase):
 
     def test_validate(self):
         t = self.t.new('xyzzy')
-        self.assert_(t.isValid())
+        self.assertTrue(t.isValid())
         t.invalidate()
         self.assertFalse(t.isValid())
 
     def test_getLastAccessed(self):
         t = self.t.new('xyzzy')
         ft = fauxtime.time()
-        self.assert_(t.getLastAccessed() <= ft)
+        self.assertTrue(t.getLastAccessed() <= ft)
 
     def test_getCreated(self):
         t = self.t.new('xyzzy')
         ft = fauxtime.time()
-        self.assert_(t.getCreated() <= ft)
+        self.assertTrue(t.getCreated() <= ft)
 
     def test_getLastModifiedUnset(self):
         t = self.t.new('xyzzy')
@@ -73,13 +73,13 @@ class TestTransientObject(TestCase):
     def test_setLastAccessed(self):
         t = self.t.new('xyzzy')
         ft = fauxtime.time()
-        self.assert_(t.getLastAccessed() <= ft)
+        self.assertTrue(t.getLastAccessed() <= ft)
         fauxtime.sleep(self.timeout * 2)   # go to sleep past the granularity
         ft2 = fauxtime.time()
         t.setLastAccessed()
         ft3 = fauxtime.time()
-        self.assert_(t.getLastAccessed() <= ft3)
-        self.assert_(t.getLastAccessed() >= ft2)
+        self.assertTrue(t.getLastAccessed() <= ft3)
+        self.assertTrue(t.getLastAccessed() >= ft2)
 
     def _genKeyError(self, t):
         return t.get('foobie')
@@ -90,15 +90,20 @@ class TestTransientObject(TestCase):
     def test_dictionaryLike(self):
         t = self.t.new('keytest')
         t.update(data)
-        self.assertItemsEqual(t.keys(), data.keys())
-        self.assertItemsEqual(t.values(), data.values())
-        self.assertItemsEqual(t.items(), data.items())
+        from Products.Sessions._compat import PYTHON2
+        if PYTHON2:
+            assertCountEqual = self.assertItemsEqual
+        else:
+            assertCountEqual = self.assertCountEqual
+        assertCountEqual(t.keys(), data.keys())
+        assertCountEqual(t.values(), data.values())
+        assertCountEqual(t.items(), data.items())
         for k in data.keys():
             self.assertEqual(t.get(k), data.get(k))
         self.assertEqual(t.get('foobie'), None)
         self.assertRaises(AttributeError, self._genLenError, t)
         self.assertEqual(t.get('foobie',None), None)
-        self.assert_(t.has_key('a'))
+        self.assertTrue(t.has_key('a'))
         self.assertFalse(t.has_key('foobie'))
         t.clear()
         self.assertEqual(len(t.keys()), 0)
