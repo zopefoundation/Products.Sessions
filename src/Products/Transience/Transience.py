@@ -15,12 +15,12 @@ Transient Object Container Class ('timeslice'-based design, no index).
 """
 
 from cgi import escape
+from six.moves import _thread as thread
 from logging import getLogger
 import math
 import os
 import random
 import sys
-from six.moves import _thread as thread
 import time
 
 from AccessControl.class_init import InitializeClass
@@ -322,10 +322,9 @@ class TransientObjectContainer(SimpleItem):
             DEBUG and TLOG('_move_item: current_ts (%s) != found_ts (%s), '
                            'moving to current' % (current_ts, found_ts))
             DEBUG and TLOG(
-                '_move_item: keys for found_ts %s (bucket %s): %s' % (
-                found_ts, id(self._data[found_ts]),
-                repr(list(self._data[found_ts].keys())))
-                )
+                '_move_item: keys for found_ts %s (bucket %s): %r' % (
+                    found_ts, id(self._data[found_ts]),
+                    list(self._data[found_ts].keys())))
             self._data[current_ts][k] = self._data[found_ts][k]
             if not issubclass(BUCKET_CLASS, Persistent):
                 # tickle persistence machinery
@@ -593,7 +592,7 @@ class TransientObjectContainer(SimpleItem):
             STRICT and _assert(key in self._data)
             values = list(self._data[key].values())
             DEBUG and TLOG('_do_finalize_work: values to notify from ts %s '
-                           'are %r' % (key, list(values)))
+                           'are %r' % (key, values))
 
             delta += len(values)
 

@@ -10,6 +10,8 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+from __future__ import print_function
+
 import time
 
 from Testing import makerequest
@@ -26,7 +28,6 @@ from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from ZODB.POSException import ConflictError, \
      ReadConflictError, BTreesConflictError
 
-from __future__ import print_function
 
 from unittest import TestCase, TestSuite, makeSuite
 import threading, random
@@ -192,7 +193,7 @@ class BaseReaderWriter(threading.Thread):
                     print(log_time())
                     traceback.print_exc()
                     raise
-                
+
                 i = i + 1
                 transaction.abort()
                 self.conn.close()
@@ -206,7 +207,7 @@ class BaseReaderWriter(threading.Thread):
 
     def isFinished(self):
         return self.finished
-        
+
 
 class ReaderThread(BaseReaderWriter):
     def run1(self):

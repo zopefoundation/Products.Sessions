@@ -232,9 +232,10 @@ class TestTransientObjectContainer(TestCase):
         for x in add_order:
             self.t[x] = 1
         for x in delete_order:
-            try: del self.t[x]
+            try:
+                del self.t[x]
             except KeyError:
-                self.assertFalse(x in self.t)
+                self.assertNotIn(x, self.t)
 
     def testGetDelaysTimeout(self):
         for x in range(10, 110):
@@ -334,7 +335,7 @@ class TestTransientObjectContainer(TestCase):
         max_ts = self.t._last_finalized_timeslice()
         keys = list(self.t._data.keys())
         for k in keys:
-            self.assertTrue(k > max_ts, "k %s < max_ts %s" % (k, max_ts))
+            self.assertGreater(k, max_ts, "k %s < max_ts %s" % (k, max_ts))
 
     def _maxOut(self):
         for x in range(11):

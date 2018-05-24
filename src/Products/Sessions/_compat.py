@@ -11,12 +11,9 @@
 #
 ############################################################################
 
-import sys
+import six
 
-PYTHON3 = sys.version_info[0] == 3
-PYTHON2 = sys.version_info[0] == 2
-
-if PYTHON2:
+if six.PY2:
     from cgi import escape as html_escape
 else:
     from html import escape as html_escape  # noqa

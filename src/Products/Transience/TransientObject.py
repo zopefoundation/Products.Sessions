@@ -13,11 +13,11 @@
 """Simple ZODB-based transient object implementation.
 """
 
+from six.moves import _thread as thread
 import logging
 import os
 import random
 import sys
-from six.moves import _thread as thread
 import time
 
 from AccessControl.class_init import InitializeClass

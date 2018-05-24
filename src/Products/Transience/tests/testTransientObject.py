@@ -13,10 +13,12 @@
 
 from . import fauxtime
 from Products.Transience.Transience import TransientObjectContainer
-import Products.Transience.TransientObject
-import Products.Transience.Transience
 from unittest import TestCase, TestSuite, makeSuite
+import Products.Transience.Transience
+import Products.Transience.TransientObject
+import six
 import time as oldtime
+
 
 class TestTransientObject(TestCase):
     def setUp(self):
@@ -49,37 +51,37 @@ class TestTransientObject(TestCase):
     def test_getLastAccessed(self):
         t = self.t.new('xyzzy')
         ft = fauxtime.time()
-        self.assertTrue(t.getLastAccessed() <= ft)
+        self.assertLessEqual(t.getLastAccessed(), ft)
 
     def test_getCreated(self):
         t = self.t.new('xyzzy')
         ft = fauxtime.time()
-        self.assertTrue(t.getCreated() <= ft)
+        self.assertLessEqual(t.getCreated(), ft)
 
     def test_getLastModifiedUnset(self):
         t = self.t.new('xyzzy')
-        self.assertEqual(t.getLastModified(), None)
+        self.assertIsNone(t.getLastModified())
 
     def test_getLastModifiedSet(self):
         t = self.t.new('xyzzy')
         t['a'] = 1
-        self.assertNotEqual(t.getLastModified(), None)
+        self.assertIsNotNone(t.getLastModified())
 
     def testSetLastModified(self):
         t = self.t.new('xyzzy')
         t.setLastModified()
-        self.assertNotEqual(t.getLastModified(), None)
+        self.assertIsNotNone(t.getLastModified())
 
     def test_setLastAccessed(self):
         t = self.t.new('xyzzy')
         ft = fauxtime.time()
-        self.assertTrue(t.getLastAccessed() <= ft)
+        self.assertLessEqual(t.getLastAccessed(), ft)
         fauxtime.sleep(self.timeout * 2)   # go to sleep past the granularity
         ft2 = fauxtime.time()
         t.setLastAccessed()
         ft3 = fauxtime.time()
-        self.assertTrue(t.getLastAccessed() <= ft3)
-        self.assertTrue(t.getLastAccessed() >= ft2)
+        self.assertLessEqual(t.getLastAccessed(), ft3)
+        self.assertGreaterEqual(t.getLastAccessed(), ft2)
 
     def _genKeyError(self, t):
         return t.get('foobie')
@@ -90,8 +92,7 @@ class TestTransientObject(TestCase):
     def test_dictionaryLike(self):
         t = self.t.new('keytest')
         t.update(data)
-        from Products.Sessions._compat import PYTHON2
-        if PYTHON2:
+        if six.PY2:
             assertCountEqual = self.assertItemsEqual
         else:
             assertCountEqual = self.assertCountEqual
@@ -100,9 +101,10 @@ class TestTransientObject(TestCase):
         assertCountEqual(t.items(), data.items())
         for k in data.keys():
             self.assertEqual(t.get(k), data.get(k))
-        self.assertEqual(t.get('foobie'), None)
-        self.assertRaises(AttributeError, self._genLenError, t)
-        self.assertEqual(t.get('foobie',None), None)
+        self.assertIsNone(t.get('foobie'))
+        with self.assertRaises(AttributeError):
+            self._genLenError(t)
+        self.assertIsNone(t.get('foobie',None))
         self.assertTrue(t.has_key('a'))
         self.assertFalse(t.has_key('foobie'))
         t.clear()
@@ -122,9 +124,7 @@ class TestTransientObject(TestCase):
         # information being visible in e.g. the ErrorLog object.
         t = self.t.new('password-storing-session')
         t.set('__ac_password__', 'secret')
-        self.assertFalse( repr(t).find('secret') != -1
-                   , '__repr__ leaks: %s' % repr(t)
-                   )
+        self.assertNotIn('secret', repr(t), '__repr__ leaks: %s' % repr(t))
 
 
 def test_suite():
