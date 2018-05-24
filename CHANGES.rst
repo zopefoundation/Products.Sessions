@@ -4,11 +4,10 @@ Changelog
 4.1 (unreleased)
 ----------------
 
-- Fix startup and syntax in python3
-  [pbauer]
+- Add support for Python 3.5 and 3.6.
 
 - Quote variables in Products.Transience manage_container to avoid XSS.
-  From Products.PloneHotfix20160830.  [maurits]
+  From Products.PloneHotfix20160830.
 
 
 4.0 (2016-07-23)
