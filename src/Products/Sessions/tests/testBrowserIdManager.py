@@ -107,6 +107,14 @@ class TestBrowserIdManager(unittest.TestCase):
         self.assertEqual(request.browser_id_ns_, None)
         self.assertEqual(response.cookies['bid'], {'path': '/', 'value': bid})
 
+    def test_getBrowserId_considers_replaced_characters_well_formed(self):
+        from Products.Sessions.BrowserIdManager import getNewBrowserId
+        bid = '92778276A8eYSMj-.iI'
+        request = DummyRequest(browser_id_=bid)
+        mgr = self._makeOne(request)
+        self.assertTrue(mgr.hasBrowserId())
+        self.assertEqual(bid, mgr.getBrowserId())
+
     def test_isBrowserIdNew_nonesuch_raises(self):
         request = DummyRequest()
         mgr = self._makeOne(request)
@@ -653,7 +661,7 @@ class TestBrowserIdManagerPublish(Testing.ZopeTestCase.FunctionalTestCase):
 
         res = self.publish(
             '/browser_id_manager/encodeUrl?url=%3Chtml%3EEVIL%2Fhtml%3E%3C!--')
-        self.assertFalse("<html>EVIL/html>" in res.getBody())
+        self.assertFalse(b"<html>EVIL/html>" in res.getBody())
 
 
 class DummyObject:

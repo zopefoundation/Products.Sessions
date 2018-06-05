@@ -13,11 +13,11 @@
 """Simple ZODB-based transient object implementation.
 """
 
+from six.moves import _thread as thread
 import logging
 import os
 import random
 import sys
-import thread
 import time
 
 from AccessControl.class_init import InitializeClass
@@ -25,7 +25,7 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import Implicit
 from Persistence import Persistent
 from ZODB.POSException import ConflictError
-from zope.interface import implements
+from zope.interface import implementer
 
 from Products.Transience.TransienceInterfaces import DictionaryLike
 from Products.Transience.TransienceInterfaces import \
@@ -51,16 +51,16 @@ _notfound = []
 
 WRITEGRANULARITY=30 # Timing granularity for access write clustering, seconds
 
+@implementer(ItemWithId, # randomly generate an id
+             Transient,
+             DictionaryLike,
+             TTWDictionary,
+             ImmutablyValuedMappingOfPickleableObjects
+             )
 class TransientObject(Persistent, Implicit):
     """ Dictionary-like object that supports additional methods
     concerning expiration and containment in a transient object container
     """
-    implements(ItemWithId, # randomly generate an id
-               Transient,
-               DictionaryLike,
-               TTWDictionary,
-               ImmutablyValuedMappingOfPickleableObjects
-              )
 
     security = ClassSecurityInfo()
     security.setDefaultAccess('allow')
@@ -105,7 +105,7 @@ class TransientObject(Persistent, Implicit):
                 trans_ob_container = ob
                 break
         if trans_ob_container is not None:
-            if trans_ob_container.has_key(self.token):
+            if self.token in trans_ob_container:
                 del trans_ob_container[self.token]
         self._invalid = None
 
@@ -141,13 +141,13 @@ class TransientObject(Persistent, Implicit):
     #
 
     def keys(self):
-        return self._container.keys()
+        return list(self._container.keys())
 
     def values(self):
-        return self._container.values()
+        return list(self._container.values())
 
     def items(self):
-        return self._container.items()
+        return list(self._container.items())
 
     def get(self, k, default=_notfound):
         v = self._container.get(k, default)
@@ -207,7 +207,7 @@ class TransientObject(Persistent, Implicit):
         # We can clearly resolve the conflict if one state is invalid,
         # because it's a terminal state.
         for state in states:
-            if state.has_key('_invalid'):
+            if '_invalid' in state:
                 DEBUG and TLOG('TO _p_rc: a state was invalid')
                 return state
 
@@ -256,12 +256,12 @@ class TransientObject(Persistent, Implicit):
 
     def _generateUniqueId(self):
         t = str(int(time.time()))
-        d = "%010d" % random.randint(0, sys.maxint-1)
+        d = "%010d" % random.randint(0, sys.maxsize-1)
         return "%s%s" % (t, d)
 
     def __repr__(self):
-        return "id: %s, token: %s, content keys: %s" % (
-            self.id, self.token, `self.keys()`
+        return "id: %s, token: %s, content keys: %r" % (
+            self.id, self.token, list(self.keys())
             )
 
 def lastmodified_sort(d1, d2):

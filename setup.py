@@ -34,18 +34,22 @@ setup(
         "License :: OSI Approved :: Zope Public License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2 :: Only",
+        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     install_requires=[
         'setuptools',
+        'six',
         'AccessControl',
         'Acquisition',
         'BTrees',
         'persistent',
         'Persistence',
-        'Products.TemporaryFolder',
+        'Products.TemporaryFolder >= 5',
         'transaction',
         'ZODB',
         'Zope >= 4.0.dev0',
@@ -53,4 +57,9 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
+    entry_points="""
+    [zope2.initialize]
+    Products.Sessions = Products.Sessions:initialize
+    Products.Transience = Products.Transience:initialize
+    """,
 )

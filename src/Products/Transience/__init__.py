@@ -15,11 +15,11 @@ Transience initialization routines
 """
 
 import ZODB # this is to help out testrunner, don't remove.
-import Transience
+from . import Transience
 # import of MaxTransientObjectsExceeded for easy import from scripts,
 # this is protected by a module security info declaration in the
 # Sessions package.
-from Transience import MaxTransientObjectsExceeded
+from .Transience import MaxTransientObjectsExceeded
 
 def initialize(context):
     context.registerClass(

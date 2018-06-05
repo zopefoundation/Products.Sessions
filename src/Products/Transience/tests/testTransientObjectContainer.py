@@ -19,8 +19,8 @@ import Products.Transience.Transience
 import Products.Transience.TransientObject
 from unittest import TestCase, TestSuite, makeSuite
 import time as oldtime
-import fauxtime
-import slowfauxtime
+from . import fauxtime
+from . import slowfauxtime
 
 
 class TestTransientObjectContainer(TestCase):
@@ -33,8 +33,8 @@ class TestTransientObjectContainer(TestCase):
         self.errmargin = .20
         self.timeout = fauxtime.timeout
         self.period = 20
-        self.t = TransientObjectContainer('sdc', timeout_mins=self.timeout/60,
-                                          period_secs=self.period)
+        self.t = TransientObjectContainer(
+            'sdc', timeout_mins=self.timeout // 60, period_secs=self.period)
 
     def tearDown(self):
         self.t = None
@@ -65,7 +65,7 @@ class TestTransientObjectContainer(TestCase):
 
     def testHasKeyWorks(self):
         self.t[10] = 1
-        self.assertTrue(self.t.has_key(10))
+        self.assertIn(10, self.t)
 
     def testValuesWorks(self):
         for x in range(10, 110):
@@ -94,7 +94,7 @@ class TestTransientObjectContainer(TestCase):
             self.t[x] = x
         v = self.t.items()
         v.sort()
-        self.assertEquals(len(v), 100)
+        self.assertEqual(len(v), 100)
         i = 10
         for x in v:
             self.assertEqual(x[0], i)
@@ -112,12 +112,12 @@ class TestTransientObjectContainer(TestCase):
         r = range(10, 110)
         for x in r:
             k = random.choice(r)
-            if not added.has_key(k):
+            if not k in added:
                 self.t[k] = x
                 added[k] = 1
-        addl = added.keys()
+        addl = list(added.keys())
         addl.sort()
-        self.assertEqual(lsubtract(self.t.keys(),addl), [])
+        self.assertEqual(lsubtract(list(self.t.keys()),addl), [])
 
     def testRandomOverlappingInserts(self):
         added = {}
@@ -126,9 +126,9 @@ class TestTransientObjectContainer(TestCase):
             k = random.choice(r)
             self.t[k] = x
             added[k] = 1
-        addl = added.keys()
+        addl = list(added.keys())
         addl.sort()
-        self.assertEqual(lsubtract(self.t.keys(), addl), [])
+        self.assertEqual(lsubtract(list(self.t.keys()), addl), [])
 
     def testRandomDeletes(self):
         r = range(10, 1010)
@@ -140,14 +140,14 @@ class TestTransientObjectContainer(TestCase):
         deleted = []
         for x in r:
             k = random.choice(r)
-            if self.t.has_key(k):
+            if k in self.t:
                 del self.t[k]
                 deleted.append(k)
-                if self.t.has_key(k):
-                    print "had problems deleting %s" % k
+                if k in self.t:
+                    print("had problems deleting %s" % k)
         badones = []
         for x in deleted:
-            if self.t.has_key(x):
+            if x in self.t:
                 badones.append(x)
         self.assertEqual(badones, [])
 
@@ -166,28 +166,28 @@ class TestTransientObjectContainer(TestCase):
             try:
                 ts, item = self.t.__delitem__(x)
                 results[x] = ts, item
-            except KeyError, v:
+            except KeyError as v:
                 if v.args[0] != x:
                     weird.append(x)
                 couldntdelete[x] = v.args[0]
         self.assertEqual(self.t.keys(), [])
 
     def testPathologicalRightBranching(self):
-        r = range(10, 1010)
+        r = list(range(10, 1010))
         for x in r:
             self.t[x] = 1
-        assert list(self.t.keys()) == r, (self.t.keys(), r)
-        map(self.t.__delitem__, r)
+        self.assertEqual(list(self.t.keys()), r)
+        [self.t.__delitem__(x) for x in r]
         self.assertEqual(list(self.t.keys()), [])
 
     def testPathologicalLeftBranching(self):
-        r = range(10, 1010)
+        r = list(range(10, 1010))
         revr = r[:]
         revr.reverse()
         for x in revr:
             self.t[x] = 1
         self.assertEqual(list(self.t.keys()), r)
-        map(self.t.__delitem__, revr)
+        [self.t.__delitem__(x) for x in revr]
         self.assertEqual(list(self.t.keys()), [])
 
     def testSuccessorChildParentRewriteExerciseCase(self):
@@ -232,9 +232,10 @@ class TestTransientObjectContainer(TestCase):
         for x in add_order:
             self.t[x] = 1
         for x in delete_order:
-            try: del self.t[x]
+            try:
+                del self.t[x]
             except KeyError:
-                self.assertFalse(self.t.has_key(x))
+                self.assertNotIn(x, self.t)
 
     def testGetDelaysTimeout(self):
         for x in range(10, 110):
@@ -278,7 +279,7 @@ class TestTransientObjectContainer(TestCase):
             del self.t[k]
 
         self.assertEqual(len(self.t), 0)
-        
+
 
     def testResetWorks(self):
         self.t[10] = 1
@@ -286,7 +287,7 @@ class TestTransientObjectContainer(TestCase):
         self.assertFalse(self.t.get(10))
 
     def testGetTimeoutMinutesWorks(self):
-        self.assertEqual(self.t.getTimeoutMinutes(), self.timeout / 60)
+        self.assertEqual(self.t.getTimeoutMinutes(), self.timeout // 60)
         self.t._setTimeout(10, 30)
         self.assertEqual(self.t.getTimeoutMinutes(), 10)
         self.assertEqual(self.t.getPeriodSeconds(), 30)
@@ -312,8 +313,8 @@ class TestTransientObjectContainer(TestCase):
         self.assertEqual(self.t.getId(), 'sdc')
 
     def testSubobjectLimitWorks(self):
-        self.t = TransientObjectContainer('a', timeout_mins=self.timeout/60,
-                                          limit=10)
+        self.t = TransientObjectContainer(
+            'a', timeout_mins=self.timeout // 60, limit=10)
         self.assertRaises(MaxTransientObjectsExceeded, self._maxOut)
 
     def testZeroTimeoutMeansPersistForever(self):
@@ -334,7 +335,7 @@ class TestTransientObjectContainer(TestCase):
         max_ts = self.t._last_finalized_timeslice()
         keys = list(self.t._data.keys())
         for k in keys:
-            self.assert_(k > max_ts, "k %s < max_ts %s" % (k, max_ts))
+            self.assertGreater(k, max_ts, "k %s < max_ts %s" % (k, max_ts))
 
     def _maxOut(self):
         for x in range(11):
@@ -351,8 +352,8 @@ class TestSlowTransientObjectContainer(TestCase):
         self.errmargin = .20
         self.timeout = 120
         self.period = 20
-        self.t = TransientObjectContainer('sdc', timeout_mins=self.timeout/60,
-                                          period_secs=self.period)
+        self.t = TransientObjectContainer(
+            'sdc', timeout_mins=self.timeout // 60, period_secs=self.period)
 
     def tearDown(self):
         self.t = None
@@ -369,7 +370,7 @@ class TestSlowTransientObjectContainer(TestCase):
         self.assertEqual(len(self.t.keys()), 0)
 
         # 2 minutes
-        self.t._setTimeout(self.timeout/60*2, self.period)
+        self.t._setTimeout(self.timeout // 60 * 2, self.period)
         self.t._reset()
         for x in range(10, 110):
             self.t[x] = x
@@ -380,7 +381,7 @@ class TestSlowTransientObjectContainer(TestCase):
         self.assertEqual(len(self.t.keys()), 0)
 
         # 3 minutes
-        self.t._setTimeout(self.timeout/60*3, self.period)
+        self.t._setTimeout(self.timeout // 60 * 3, self.period)
         self.t._reset()
         for x in range(10, 110):
             self.t[x] = x
@@ -417,8 +418,8 @@ class TestSlowTransientObjectContainer(TestCase):
 def lsubtract(l1, l2):
     l1=list(l1)
     l2=list(l2)
-    l = filter(lambda x, l1=l1: x not in l1, l2)
-    l = l + filter(lambda x, l2=l2: x not in l2, l1)
+    l = [x for x in l2 if x not in l1]
+    l = l + [x for x in l1 if x not in l2]
     return l
 
 

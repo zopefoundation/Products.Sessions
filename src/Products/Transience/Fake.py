@@ -24,7 +24,7 @@ class FakeIOBTree(PersistentMapping):
             min = 0
 
         if max is None:
-            max = sys.maxint
+            max = sys.maxsize
 
         for k in self.data:
             if min <= k <= max:

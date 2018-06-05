@@ -11,48 +11,46 @@
 #
 ############################################################################
 
-import binascii
-from cgi import escape
-from hashlib import sha256
-import logging
-import os
-import re
-import string
-import sys
-import time
-from urllib import quote
-from urlparse import urlparse
-from urlparse import urlunparse
 
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
-from Acquisition import Implicit
-from Acquisition import aq_parent
 from Acquisition import aq_inner
+from Acquisition import aq_parent
+from Acquisition import Implicit
 from App.Management import Tabs
 from App.special_dtml import DTMLFile
-from Persistence import Persistent
-from persistent import TimeStamp
+from ._compat import html_escape as escape
+from hashlib import sha256
 from OFS.owner import Owned
 from OFS.role import RoleManager
 from OFS.SimpleItem import Item
-from ZPublisher.BeforeTraverse import registerBeforeTraverse
-from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
-from ZPublisher.BeforeTraverse import queryBeforeTraverse
-from zope.interface import implements
-
-from Products.Sessions.interfaces import IBrowserIdManager
+from Persistence import Persistent
+from persistent import TimeStamp
 from Products.Sessions.interfaces import BrowserIdManagerErr
+from Products.Sessions.interfaces import IBrowserIdManager
 from Products.Sessions.SessionPermissions import ACCESS_CONTENTS_PERM
 from Products.Sessions.SessionPermissions import CHANGE_IDMGR_PERM
 from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import urlunparse
+from zope.interface import implementer
+from ZPublisher.BeforeTraverse import queryBeforeTraverse
+from ZPublisher.BeforeTraverse import registerBeforeTraverse
+from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 
-b64_trans = string.maketrans('+/', '-.')
-b64_untrans = string.maketrans('-.', '+/')
+import binascii
+import logging
+import os
+import re
+import six
+import sys
+import time
 
-badidnamecharsin = re.compile('[\?&;,<> ]').search
-badcookiecharsin = re.compile('[;,<>& ]').search
-twodotsin = re.compile('(\w*\.){2,}').search
+
+badidnamecharsin = re.compile(r'[\?&;,<> ]').search
+badcookiecharsin = re.compile(r'[;,<>& ]').search
+twodotsin = re.compile(r'(\w*\.){2,}').search
 
 _marker = []
 
@@ -67,6 +65,7 @@ LOG = logging.getLogger('Zope.BrowserIdManager')
 
 # Use the system PRNG if possible
 import random
+
 try:
     random = random.SystemRandom()
     using_sysrandom = True
@@ -102,11 +101,12 @@ def constructBrowserIdManager(
     ob = self._getOb(id)
     if REQUEST is not None:
         return self.manage_main(self, REQUEST, update_menu=1)
-    
+
+
+@implementer(IBrowserIdManager)
 class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     """ browser id management class
     """
-    implements(IBrowserIdManager)
     meta_type = 'Browser Id Manager'
 
     security = ClassSecurityInfo()
@@ -145,7 +145,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             return self.getBrowserId(create=0) is not None
         except BrowserIdManagerErr:
             return False
-                
+
     security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserId')
     def getBrowserId(self, create=1):
         """ See IBrowserIdManager.
@@ -262,7 +262,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         """
         s = '<input type="hidden" name="%s" value="%s" />'
         return s % (self.getBrowserIdName(), self.getBrowserId())
-    
+
     security.declareProtected(ACCESS_CONTENTS_PERM, 'encodeUrl')
     def encodeUrl(self, url, style='querystring', create=1):
         # See IBrowserIdManager
@@ -295,7 +295,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     security.declareProtected(CHANGE_IDMGR_PERM, 'setBrowserIdNamespaces')
     def setBrowserIdNamespaces(self, ns):
         """
-        accepts list of allowable browser id namespaces 
+        accepts list of allowable browser id namespaces
         """
         for name in ns:
             if name not in ALLOWED_BID_NAMESPACES:
@@ -349,11 +349,11 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             raise BrowserIdManagerErr(
                             'Cookie domain must contain at least two dots '
                             '(e.g. ".zope.org" or "www.zope.org") or it must '
-                            'be left blank. : ' '%s' % escape(`domain`))
+                            'be left blank. : ' '%s' % escape(repr(domain)))
         if badcookiecharsin(domain):
             raise BrowserIdManagerErr(
                             'Bad characters in cookie domain %s'
-                                % escape(`domain`))
+                                % escape(repr(domain)))
         self.cookie_domain = domain
 
     security.declareProtected(ACCESS_CONTENTS_PERM, 'getCookieDomain')
@@ -419,7 +419,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             URL1 = REQUEST.get('URL1', None)
             if URL1 is None:
                 return # should we raise an exception?
-            if string.split(URL1,':')[0] != 'https':
+            if URL1.split(':')[0] != 'https':
                 return # should we raise an exception?
 
         cookies = REQUEST.RESPONSE.cookies
@@ -545,20 +545,43 @@ class BrowserIdManagerTraverser(Persistent):
         except:
             LOG.error('indeterminate error', exc_info=sys.exc_info())
 
-def getB64TStamp(
-    b2a=binascii.b2a_base64,gmtime=time.gmtime, time=time.time,
-    b64_trans=b64_trans, split=string.split,
-    TimeStamp=TimeStamp.TimeStamp, translate=string.translate
-    ):
-    t=time()
-    ts=split(b2a(`TimeStamp(*gmtime(t)[:5]+(t%60,))`)[:-1],'=')[0]
-    return translate(ts, b64_trans)
+if six.PY2:
+    import string
 
-def getB64TStampToInt(
-    ts, TimeStamp=TimeStamp.TimeStamp, b64_untrans=b64_untrans,
-    a2b=binascii.a2b_base64, translate=string.translate
-    ):
-    return TimeStamp(a2b(translate(ts+'=',b64_untrans))).timeTime()
+    b64_trans = string.maketrans('+/', '-.')
+    b64_untrans = string.maketrans('-.', '+/')
+
+    def getB64TStamp(
+        b2a=binascii.b2a_base64, gmtime=time.gmtime, time=time.time,
+        b64_trans=b64_trans, split=string.split,
+        TimeStamp=TimeStamp.TimeStamp, translate=string.translate
+         ):
+        t = time()
+        ts = split(b2a(repr(TimeStamp(*gmtime(t)[:5] + (t % 60,))))[:-1], '=')[0]
+        return translate(ts, b64_trans)
+
+    def getB64TStampToInt(
+        ts, TimeStamp=TimeStamp.TimeStamp, b64_untrans=b64_untrans,
+        a2b=binascii.a2b_base64, translate=string.translate
+         ):
+        return TimeStamp(a2b(translate(ts + '=', b64_untrans))).timeTime()
+
+else:
+    def getB64TStamp(
+        b2a=binascii.b2a_base64, gmtime=time.gmtime, time=time.time,
+        TimeStamp=TimeStamp.TimeStamp,
+         ):
+        t = time()
+        stamp = TimeStamp(*gmtime(t)[:5]+(t % 60,))
+        ts = b2a(stamp.raw()).split(b'=')[:-1][0]
+        return ts.replace(b'/', b'.').replace(b'+', b'-').decode('ascii')
+
+    def getB64TStampToInt(
+        ts, TimeStamp=TimeStamp.TimeStamp, a2b=binascii.a2b_base64
+         ):
+        stamp = TimeStamp(a2b(ts.replace('.', '/').replace('-', '+') + '='))
+        return stamp.timeTime()
+
 
 def getBrowserIdPieces(bid):
     """ returns browser id parts in a tuple consisting of rand_id,
