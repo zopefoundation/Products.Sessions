@@ -9,6 +9,10 @@ Changelog
 - Quote variables in Products.Transience manage_container to avoid XSS.
   From Products.PloneHotfix20160830.
 
+- Bring back Application initialization (creation of BrowserIdManager and
+  SessionDataManager in the ZODB on first startup).
+  This requires Zope >= 4.0b5.
+
 
 4.0 (2016-07-23)
 ----------------
