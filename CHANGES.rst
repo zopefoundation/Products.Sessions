@@ -11,7 +11,7 @@ Changelog
 
 - Bring back Application initialization (creation of BrowserIdManager and
   SessionDataManager in the ZODB on first startup).
-  This release requires Zope >= 4.0b5.
+  This requires Zope >= 4.0b5.
 
 
 4.0 (2016-07-23)
