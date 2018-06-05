@@ -303,7 +303,7 @@ class TransientItemContainer(Interface):
         the destruction.  For example::
 
           def addNotify(item, container):
-              print "id of 'item' arg was %s" % item.getId()
+              print("id of 'item' arg was %s" % item.getId())
         """
 
     def getDelNotificationTarget():
@@ -326,5 +326,5 @@ class TransientItemContainer(Interface):
         the destruction.  For example::
 
           def delNotify(item, container):
-              print "id of 'item' arg was %s" % item.getId()
+              print("id of 'item' arg was %s" % item.getId())
         """

@@ -143,10 +143,10 @@ class TestMultiThread(TestCase):
         active = threading.activeCount()
         while active > 0:
             active = threading.activeCount()-1
-            print 'waiting for %s threads' % active
-            print "readers: ", numActive(readers),
-            print "writers: ", numActive(writers),
-            print "valuers: ", numActive(valuers)
+            print('waiting for %s threads' % active)
+            print("readers: ", numActive(readers), end=" ")
+            print("writers: ", numActive(writers), end=" ")
+            print("valuers: ", numActive(valuers))
             time.sleep(5)
 
 def numActive(threads):
@@ -203,7 +203,7 @@ class BaseReaderWriter(threading.Thread):
             self.conn.close()
             del self.app
             self.finished = 1
-            print '%s finished' % self.__class__
+            print("%s finished" % self.__class__)
 
     def isFinished(self):
         return self.finished
@@ -234,12 +234,13 @@ class WriterThread(BaseReaderWriter):
             else:
                 transaction.abort()
 
+
 class ValuesGetterThread(BaseReaderWriter):
     def run1(self):
         tf = getattr(self.app, tf_name)
         toc = getattr(tf, toc_name)
         for i in range(self.iters):
-            print '%s values in toc' % len(toc.values())
+            print("%s values in toc" % len(toc.values()))
             n = random.choice(range(3))
             time.sleep(n)
             if n % 2 == 0:
