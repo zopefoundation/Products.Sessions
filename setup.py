@@ -41,6 +41,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
+    keywords="Zope sessions management Transience product ZMI",
     install_requires=[
         'setuptools',
         'six',
