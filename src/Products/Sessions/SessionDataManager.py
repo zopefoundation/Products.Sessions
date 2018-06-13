@@ -66,6 +66,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     """ The Zope default session data manager implementation """
 
     meta_type = 'Session Data Manager'
+    zmi_icon = 'fas fa-history'
 
     manage_options=(
         {'label': 'Settings',

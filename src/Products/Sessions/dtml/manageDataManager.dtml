@@ -3,66 +3,50 @@
         form_title='Manage Session Data Manager'
 	)">
 
+<main class="container-fluid">
 
-<p class="form-help" colspan=2>
-  A Session Data Manager object is responsible for maintaining a 
-  relationship between session data objects and Zope browser ids.
-  It is part of the Zope sessioning machinery.  Programmers may
-  interact with a session data manager in order to obtain
-  information about session data, but will more often use the
-  REQUEST.SESSION object to do sessioning-related tasks.
+<p class="form-help">
+	A Session Data Manager object is responsible for maintaining a 
+	relationship between session data objects and Zope browser ids.
+	It is part of the Zope sessioning machinery.  Programmers may
+	interact with a session data manager in order to obtain
+	information about session data, but will more often use the
+	REQUEST.SESSION object to do sessioning-related tasks.
+	<br />
+	<br />
 </p>
 
 
-<form action="manage_changeSDM" method="post">
-<table cellspacing="2">
+	<form action="manage_changeSDM" method="post">
 
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-    Title
-    </div>
-  </td>
-  <td align="left" valign="top">
-    <input type="text" name="title" size="60" value="&dtml-title;">
-  </td>
-</tr>
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-    Transient Object Container Path
-    </div>
-    <div class="form-help">
-    e.g. '/temp_folder/session_data'
-    </div>
-  </td>
-  <td align="left" valign="top">
-    <input type="text" name="path" size="60"
-     value="&dtml-getContainerPath;">
-  </td>
-</tr>
-<tr>
-  <td align="LEFT" valign="TOP">
-    <div class="form-label">
-    Place SESSION in REQUEST object as
-    </div>
-  </td>
-  <td align="LEFT" valign="TOP">
-  	<input class="form-element" type="TEXT" name="requestName"
-		value="&dtml-getRequestName;">
-  </td>
-</tr>
-<tr>
-  <td>
-  </td>
-  <td align="left" valign="top">
-    <div class="form-element">
-      <input class="form-element" type="submit" value = " Change "> 
-    </div>
-  </td>
-</tr>
-</table>
-</form>
+		<div class="form-group row">
+			<label for="title" class="col-sm-4 col-md-3">Title</label>
+			<div class="col-sm-8 col-md-9">
+				<input id="title" class="form-control" type="text" name="title" value="<dtml-if title>&dtml-title;</dtml-if>">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="getContainerPath" class="col-sm-4 col-md-3">Transient Object Container Path</label>
+			<div class="col-sm-8 col-md-9">
+				<input id="getContainerPath" class="form-control" type="text" name="getContainerPath" value="<dtml-if getContainerPath>&dtml-getContainerPath;</dtml-if>">
+				<small>e.g. '/temp_folder/session_data'</small>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="requestName" class="col-sm-4 col-md-3">Place SESSION in REQUEST object as</label>
+			<div class="col-sm-8 col-md-9">
+				<input id="requestName" class="form-control" type="text" name="requestName" value="<dtml-if getRequestName>&dtml-getRequestName;</dtml-if>">
+			</div>
+		</div>
+
+		<div class="zmi-controls">
+			<input class="btn btn-primary" type="submit" name="submit" value="Save Changes" />
+		</div>
+
+	</form>
+
+</main
+
 <dtml-var manage_page_footer>
 
 
