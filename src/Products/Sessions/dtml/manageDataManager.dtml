@@ -1,21 +1,17 @@
 <dtml-var manage_page_header>
-<dtml-var "manage_tabs(this(), _,
-        form_title='Manage Session Data Manager'
-	)">
 
 <main class="container-fluid">
 
-<p class="form-help">
-	A Session Data Manager object is responsible for maintaining a 
-	relationship between session data objects and Zope browser ids.
-	It is part of the Zope sessioning machinery.  Programmers may
-	interact with a session data manager in order to obtain
-	information about session data, but will more often use the
-	REQUEST.SESSION object to do sessioning-related tasks.
-	<br />
-	<br />
-</p>
-
+	<dtml-var "manage_tabs(this(), _, form_title='Manage Session Data Manager')">
+	
+	<p class="form-help mb-4">
+		A Session Data Manager object is responsible for maintaining a 
+		relationship between session data objects and Zope browser ids.
+		It is part of the Zope sessioning machinery.  Programmers may
+		interact with a session data manager in order to obtain
+		information about session data, but will more often use the
+		REQUEST.SESSION object to do sessioning-related tasks.
+	</p>
 
 	<form action="manage_changeSDM" method="post">
 
@@ -25,6 +21,7 @@
 				<input id="title" class="form-control" type="text" name="title" value="<dtml-if title>&dtml-title;</dtml-if>">
 			</div>
 		</div>
+
 		<div class="form-group row">
 			<label for="getContainerPath" class="col-sm-4 col-md-3">Transient Object Container Path</label>
 			<div class="col-sm-8 col-md-9">
@@ -32,6 +29,7 @@
 				<small>e.g. '/temp_folder/session_data'</small>
 			</div>
 		</div>
+
 		<div class="form-group row">
 			<label for="requestName" class="col-sm-4 col-md-3">Place SESSION in REQUEST object as</label>
 			<div class="col-sm-8 col-md-9">

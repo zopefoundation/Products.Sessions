@@ -2,9 +2,7 @@
 
 <main class="container-fluid">
 
-<dtml-var "manage_form_title(this(), _,
-           form_title='Add Browser Id Manager'
-	   )">
+	<dtml-var "manage_form_title(this(), _, form_title='Add Browser Id Manager' )">
 
 	<p class="form-help mb-4">
 		Zope Browser Id Manager objects allow Zope to differentiate between site
@@ -59,10 +57,12 @@
 		</div>
 
 		<div class="form-group row">
-			<label for="auto_url_encoding" class="col-sm-3 col-md-2">URL Encoding</label>
+			<label class="col-sm-3 col-md-2">URL Encoding</label>
 			<div class="col-sm-9 col-md-10">
-				<input id="auto_url_encoding" class="form-control" type="text" name="auto_url_encoding" value="" />
-				<small>Automatically encode Zope-generated URLs with a browser id</small>
+				<div class="form-check">
+					<input id="auto_url_encoding" class="form-check-input" type="checkbox" name="auto_url_encoding" />
+					<label for="auto_url_encoding" class="form-check-label">Automatically encode Zope-generated URLs with a browser id</label>
+				</div>
 			</div>
 		</div>
 
@@ -115,6 +115,7 @@
 		</div>
 
 	</form>
+
 </main>
 
 <dtml-var manage_page_footer>
