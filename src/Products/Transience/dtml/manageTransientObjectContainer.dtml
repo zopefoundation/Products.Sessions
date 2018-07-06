@@ -15,7 +15,7 @@
 				</dtml-if>
 			</div>
 		<dtml-else>
-			<div class="alert alert-warning">
+			<div class="alert alert-info">
 				There are <em>no items</em> in this transient object container.
 			</div>
 		</dtml-if>
