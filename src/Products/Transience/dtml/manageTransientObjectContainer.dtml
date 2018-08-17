@@ -1,148 +1,112 @@
 <dtml-var manage_page_header>
-<dtml-var "manage_tabs(this(), _,
-           form_title='Change Transient Object Container'
-	   )">
 
-<form action="manage_changeTransientObjectContainer" method="post">
+<dtml-var "manage_tabs(this(), _, form_title='Change Transient Object Container')">
 
-<p class="form-help">
-Transient Object Containers are used to store transient data.
-Transient data will persist, but only for a user-specified period of time
-(the "data object timeout") after which it will be flushed.
-</p>
+<main class="container-fluid">
 
-<dtml-call housekeep><!-- turn the buckets if necessary -->
+	<dtml-call housekeep><!-- turn the buckets if necessary -->
+	<dtml-let l=getLen>
+		<dtml-if l>
+			<div class="alert alert-success">
+				<dtml-if "l == 1">
+					<em>1 item </em> is in this transient object container.
+				<dtml-else>
+					<em>&dtml-l; items</em> are in this transient object container.
+				</dtml-if>
+			</div>
+		<dtml-else>
+			<div class="alert alert-info">
+				There are <em>no items</em> in this transient object container.
+			</div>
+		</dtml-if>
+	</dtml-let>
 
-<p class="form-label">
-<font color="green">
-<dtml-let l=getLen>
-<dtml-if l>
-  <dtml-if "l == 1">1 item is in this transient object container.
-  <dtml-else>&dtml-l; items are in this transient object container.
-  </dtml-if>
-<dtml-else>
-  There are no items in this transient object container.
-</dtml-if>
-</dtml-let>
-</font>
-</p>
+	<p class="form-help">
+		Transient Object Containers are used to store transient data.
+		Transient data will persist, but only for a user-specified period of time
+		(the "data object timeout") after which it will be flushed.
+	</p>
 
+	<form action="manage_changeTransientObjectContainer" method="post">
 
-<table cellspacing="2">
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-      Title
-    </div>
-  </td>
-  <td align="left" valign="top">
-    <input type="text" name="title" size=30 value='<dtml-var name="title" html_quote>'>
-  </td>
-</tr>
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-     Data object timeout value (in minutes)
-    </div>
-    <div class="form-help">
-      ("0" means no expiration)
-    </div>
-  </td>
-  <td align="left" valign="top">
-    <input type="text" name="timeout_mins:int" size=10
-           value='<dtml-var name="getTimeoutMinutes" html_quote>'>
-  </td>
-</tr>
+		<div class="form-group row">
+			<label for="title" class="col-sm-3 col-md-2">Title</label>
+			<div class="col-sm-9 col-md-10">
+				<input id="title" class="form-control" type="text" name="title" 
+					value="<dtml-var name="title" html_quote>" />
+				<small class="text-muted">optional</small>
+			</div>
+		</div>
 
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-     Timeout resolution (in seconds)
-    </div>
-    <div class="form-help">
-      Defines what the "resolution" of item timeout is. Setting this higher
-      allows the transience machinery to do fewer "writes" at the expense of
-      causing items to time out later than the "Data object timeout value" by
-      a factor of (at most) this many seconds.  This number must divide evenly
-      into the number of timeout seconds ("Data object timeout value" * 60)
-      and cannot be set higher than the timeout value in seconds.
-    </div>
-  </td>
-  <td align="left" valign="top">
-    <input type="text" name="period_secs:int" size=10
-      value='<dtml-var name="getPeriodSeconds" html_quote>'>
-  </td>
-</tr>
+		<div class="form-group row">
+			<label for="timeout_mins" class="col-sm-3 col-md-2">Timeout</label>
+			<div class="col-sm-9 col-md-10">
+				<input id="timeout_mins" class="form-control" type="text" name="timeout_mins:int" 
+					value="<dtml-var name="getTimeoutMinutes" html_quote>" />
+				<small class="text-muted">Data object timeout in minutes, <em>0</em> means <em>no expiration</em></small>
+			</div>
+		</div>
 
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-     Maximum number of subobjects
-    </div>
-    <div class="form-help">
-      ("0" means infinite)
-    </div>
-  </td>
-  <td align="left" valign="top">
-    <input type="text" name="limit:int" size=10
-      value='<dtml-var name="getSubobjectLimit" html_quote>'>
-  </td>
-</tr>
+		<div class="form-group row">
+			<label for="period_secs" class="col-sm-3 col-md-2">Resolution</label>
+			<div class="col-sm-9 col-md-10">
+				<input id="period_secs" class="form-control" type="text" name="period_secs:int" 
+					value="<dtml-var name="getPeriodSeconds" html_quote>" />
+				<small class="text-muted">Timeout resolution in seconds (accept the default if you're not sure) 
+					<a href="#period_secs_help" onclick="$('#period_secs_help').toggle()"> [ ... ] </a>
+					<span id="period_secs_help" style="display:none;">Defines what the <em>resolution</em> of item 
+					timeout is. Setting this higher allows the transience machinery to do fewer <em>writes</em> 
+					at the expense of causing items to time out later than the <em>Data object timeout value</em> 
+					by a factor of (at most) this many seconds. This number must divide evenly into the 
+					number of timeout seconds (<em>Data object timeout value</em> * 60) and  cannot be set higher 
+					than the timeout value in seconds.
+					</span>
+				</small>
+			</div>
+		</div>
 
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-      Script to call when objects are added
-    </div>
-    <div class="form-help">
-      (e.g. "/somefolder/addScript")
-    </div>
-  </td>
-  <td align="left" valign="top">
-     <input type="text" name="addNotification"
-       value='<dtml-var name="getAddNotificationTarget" html_quote>' size=40>
-  </td>
-</tr>
+		<div class="form-group row">
+			<label for="limit" class="col-sm-3 col-md-2">Limit</label>
+			<div class="col-sm-9 col-md-10">
+				<input id="limit" class="form-control" type="text" name="limit:int" 
+ 					value="<dtml-var name="getSubobjectLimit" html_quote>" />
+				<small class="text-muted">Maximum number of subobjects; <em>0</em> means <em>infinite</em></small>
+			</div>
+		</div>
 
-<tr>
-  <td align="left" valign="top">
-    <div class="form-label">
-      Script to call when objects are deleted
-    </div>
-    <div class="form-help">
-      (e.g. "/somefolder/delScript")
-    </div>
-  </td>
-  <td align="left" valign="top">
-     <input type="text" name="delNotification"
-      value='<dtml-var name="getDelNotificationTarget" html_quote>' size=40>
-  </td>
-</tr>
+		<div class="form-group row">
+			<label for="addNotification" class="col-sm-3 col-md-2">Add-Notice</label>
+			<div class="col-sm-9 col-md-10">
+				<input id="addNotification" class="form-control" type="text" name="addNotification" 
+					value="<dtml-var name="getAddNotificationTarget" html_quote>" />
+				<small class="text-muted">Script to call upon object add (optional), e.g. <em>/somefolder/addScript</em></small>
+			</div>
+		</div>
 
-<dtml-let l=getLen>
-<dtml-if l>
-<tr>
-<td colspan=2>
-<br/>
-<p class="form-label">
-<font color="red">WARNING!</font>
-All data objects existing in this transient object container
-will be deleted when the data object timeout or expiration resolution
-is changed.
-</p>
-</tr>
-</td>
-</dtml-if>
-</dtml-let>
+		<div class="form-group row">
+			<label for="delNotification" class="col-sm-3 col-md-2">Delete-Notice</label>
+			<div class="col-sm-9 col-md-10">
+				<input id="delNotification" class="form-control" type="text" name="delNotification" 
+					value="<dtml-var name="getDelNotificationTarget" html_quote>" />
+				<small class="text-muted">Script to call upon object delete (optional), e.g. <em>/somefolder/delScript</em></small>
+			</div>
+		</div>
 
-<tr>
-  <td></td>
-  <td>
-  <input class="form-element" type="submit" name="submit" value=" Change ">
-  </td>
-</tr>
-</table>
-</form>
+		<dtml-let l=getLen>
+			<dtml-if l>
+				<p class="mt-4"><strong>WARNING!</strong> 
+					All data objects existing in this transient object container will be 
+					deleted when the data object timeout or expiration resolution is changed.
+				</p>
+			</dtml-if>
+		</dtml-let>
 
+		<div class="zmi-controls">
+			<input class="btn btn-primary" type="submit" name="submit" value="Change" />
+		</div>
+
+	</form>
+
+</main>
 
 <dtml-var manage_page_footer>

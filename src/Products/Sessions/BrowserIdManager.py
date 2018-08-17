@@ -108,6 +108,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     """ browser id management class
     """
     meta_type = 'Browser Id Manager'
+    zmi_icon = 'far fa-id-card'
 
     security = ClassSecurityInfo()
     security.declareObjectPublic()

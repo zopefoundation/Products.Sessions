@@ -106,6 +106,7 @@ class TransientObjectContainer(SimpleItem):
     after a period of inactivity """
 
     meta_type = "Transient Object Container"
+    zmi_icon = 'far fa-clock'
 
     manage_options = (
         {'label': 'Manage', 'action': 'manage_container'},
