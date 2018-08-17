@@ -4,7 +4,8 @@ Changelog
 4.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Update the forms to Bootstrap ZMI.
+  (`#8 <https://github.com/zopefoundation/Products.Sessions/pull/8>`_)
 
 
 4.1 (2018-06-06)
