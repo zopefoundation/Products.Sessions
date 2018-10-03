@@ -18,7 +18,7 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import Implicit
 from Persistence import Persistent
 from Products.Transience.TransienceInterfaces import DictionaryLike
-from Products.Transience.TransienceInterfaces import ImmutablyValuedMappingOfPickleableObjects
+from Products.Transience.TransienceInterfaces import ImmutablyValuedMappingOfPickleableObjects  # NOQA: E501
 from Products.Transience.TransienceInterfaces import ItemWithId
 from Products.Transience.TransienceInterfaces import Transient
 from Products.Transience.TransienceInterfaces import TransientItemContainer
@@ -37,6 +37,7 @@ import time
 DEBUG = int(os.environ.get('Z_TOC_DEBUG', 0))
 LOG = logging.getLogger('Zope.TransientObject')
 
+
 def TLOG(*args):
     sargs = []
     sargs.append(str(thread.get_ident()))
@@ -46,16 +47,18 @@ def TLOG(*args):
     msg = ' '.join(sargs)
     LOG.info(msg)
 
+
 _notfound = []
+WRITEGRANULARITY = 30  # Timing granularity for access write clustering, seconds
 
-WRITEGRANULARITY=30 # Timing granularity for access write clustering, seconds
 
-@implementer(ItemWithId, # randomly generate an id
-             Transient,
-             DictionaryLike,
-             TTWDictionary,
-             ImmutablyValuedMappingOfPickleableObjects
-             )
+@implementer(
+    ItemWithId,  # randomly generate an id
+    Transient,
+    DictionaryLike,
+    TTWDictionary,
+    ImmutablyValuedMappingOfPickleableObjects
+)
 class TransientObject(Persistent, Implicit):
     """ Dictionary-like object that supports additional methods
     concerning expiration and containment in a transient object container
@@ -150,7 +153,8 @@ class TransientObject(Persistent, Implicit):
 
     def get(self, k, default=_notfound):
         v = self._container.get(k, default)
-        if v is _notfound: return None
+        if v is _notfound:
+            return None
         return v
 
     def has_key(self, k):
@@ -199,8 +203,11 @@ class TransientObject(Persistent, Implicit):
 
     def _p_resolveConflict(self, saved, state1, state2):
         DEBUG and TLOG('entering TO _p_rc')
-        DEBUG and TLOG('states: sv: %s, s1: %s, s2: %s' % (
-            saved, state1, state2))
+        DEBUG and TLOG(
+            'states: sv: %s, s1: %s, s2: %s' % (
+                saved, state1, state2
+            )
+        )
         states = [saved, state1, state2]
 
         # We can clearly resolve the conflict if one state is invalid,
@@ -219,9 +226,12 @@ class TransientObject(Persistent, Implicit):
             svattr = saved.get(attr)
             s1attr = state1.get(attr)
             s2attr = state2.get(attr)
-            DEBUG and TLOG('TO _p_rc: attr %s: sv: %s s1: %s s2: %s' %
-                           (attr, svattr, s1attr, s2attr))
-            if not svattr==s1attr==s2attr:
+            DEBUG and TLOG(
+                'TO _p_rc: attr %s: sv: %s s1: %s s2: %s' % (
+                    attr, svattr, s1attr, s2attr
+                )
+            )
+            if not svattr == s1attr == s2attr:
                 DEBUG and TLOG('TO _p_rc: cant resolve conflict')
                 raise ConflictError
 
@@ -251,32 +261,39 @@ class TransientObject(Persistent, Implicit):
         DEBUG and TLOG('TO _p_rc: returning last_accessed state')
         return states[0]
 
-    getName = getId # this is for SQLSession compatibility
+    getName = getId  # this is for SQLSession compatibility
 
     def _generateUniqueId(self):
         t = str(int(time.time()))
-        d = "%010d" % random.randint(0, sys.maxsize-1)
+        d = "%010d" % random.randint(0, sys.maxsize - 1)
         return "%s%s" % (t, d)
 
     def __repr__(self):
         return "id: %s, token: %s, content keys: %r" % (
             self.id, self.token, list(self.keys())
-            )
+        )
+
 
 def lastmodified_sort(d1, d2):
     """ sort dictionaries in descending order based on last mod time """
     m1 = d1.get('_last_modified', 0)
     m2 = d2.get('_last_modified', 0)
-    if m1 == m2: return 0
-    if m1 > m2: return -1 # d1 is "less than" d2
+    if m1 == m2:
+        return 0
+    if m1 > m2:
+        return -1  # d1 is "less than" d2
     return 1
+
 
 def lastaccessed_sort(d1, d2):
     """ sort dictionaries in descending order based on last access time """
     m1 = d1.get('_last_accessed', 0)
     m2 = d2.get('_last_accessed', 0)
-    if m1 == m2: return 0
-    if m1 > m2: return -1 # d1 is "less than" d2
+    if m1 == m2:
+        return 0
+    if m1 > m2:
+        return -1  # d1 is "less than" d2
     return 1
+
 
 InitializeClass(TransientObject)

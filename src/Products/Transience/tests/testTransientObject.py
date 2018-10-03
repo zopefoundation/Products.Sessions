@@ -133,7 +133,7 @@ class TestTransientObject(TestCase):
 
 def test_suite():
     testsuite = makeSuite(TestTransientObject, 'test')
-    alltests = TestSuite((testsuite,))
+    alltests = TestSuite((testsuite, ))
     return alltests
 
 

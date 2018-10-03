@@ -28,14 +28,9 @@ from cgi import escape
 from logging import getLogger
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
-from Products.Transience.Fake import FakeIOBTree
-from Products.Transience.TransienceInterfaces import DictionaryLike
-from Products.Transience.TransienceInterfaces import ImmutablyValuedMappingOfPickleableObjects
 from Products.Transience.TransienceInterfaces import ItemWithId
-from Products.Transience.TransienceInterfaces import StringKeyedHomogeneousItemContainer
-from Products.Transience.TransienceInterfaces import Transient
+from Products.Transience.TransienceInterfaces import StringKeyedHomogeneousItemContainer  # NOQA: E501
 from Products.Transience.TransienceInterfaces import TransientItemContainer
-from Products.Transience.TransienceInterfaces import TTWDictionary
 from Products.Transience.TransientObject import TransientObject
 from six.moves import _thread as thread
 from zope.interface import implementer
@@ -114,9 +109,10 @@ class MaxTransientObjectsExceeded(Exception):
     pass
 
 
-@implementer(ItemWithId,
-             StringKeyedHomogeneousItemContainer,
-             TransientItemContainer,
+@implementer(
+    ItemWithId,
+    StringKeyedHomogeneousItemContainer,
+    TransientItemContainer,
 )
 class TransientObjectContainer(SimpleItem):
     """ Object which contains items that are automatically flushed
