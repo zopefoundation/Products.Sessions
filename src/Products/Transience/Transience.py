@@ -854,21 +854,19 @@ class TransientObjectContainer(SimpleItem):
         if callable(callback):
             sm = getSecurityManager()
             try:
-                user = sm.getUser()
-                try:
-                    newSecurityManager(None, nobody)
-                    callback(item, self)
-                except:
-                    # dont raise, just log
-                    path = self.getPhysicalPath()
-                    LOG.warning(
-                        '%s failed when calling %s in %s' % (
-                            name,
-                            callback,
-                            '/'.join(path),
-                        ),
-                        exc_info=sys.exc_info(),
-                    )
+                newSecurityManager(None, nobody)
+                callback(item, self)
+            except:
+                # dont raise, just log
+                path = self.getPhysicalPath()
+                LOG.warning(
+                    '%s failed when calling %s in %s' % (
+                        name,
+                        callback,
+                        '/'.join(path),
+                    ),
+                    exc_info=sys.exc_info(),
+                )
             finally:
                 setSecurityManager(sm)
         else:

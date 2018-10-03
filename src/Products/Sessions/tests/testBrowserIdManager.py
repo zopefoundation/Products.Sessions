@@ -538,7 +538,10 @@ class TestBrowserIdManager(unittest.TestCase):
         request = DummyRequest(RESPONSE=response, URL1='http://example.com/')
         mgr = self._makeOne(request)
         mgr.setCookieSecure(1)
-        bid = mgr.getBrowserId()  # doesn't raise
+        try:
+            mgr.getBrowserId()  # doesn't raise
+        except Exception:
+            self.assertTrue(False)
         self.assertEqual(len(response.cookies), 0)
 
     def test_hasTraversalHook_missing(self):

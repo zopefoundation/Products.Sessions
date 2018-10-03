@@ -112,7 +112,7 @@ class TestSessionManager(unittest.TestCase):
         conn = db.open()
         root = conn.root()
         self.app = makerequest.makerequest(root['Application'])
-        timeout = self.timeout = 1
+        self.timeout = 1
 
     def tearDown(self):
         _delDB()
@@ -139,7 +139,7 @@ class TestSessionManager(unittest.TestCase):
         self.assertTrue(sd.__class__ is TransientObject)
 
     def testHasSessionData(self):
-        sd = self.app.session_data_manager.getSessionData()
+        self.app.session_data_manager.getSessionData()
         self.assertTrue(self.app.session_data_manager.hasSessionData())
 
     def testNotHasSessionData(self):
@@ -163,7 +163,7 @@ class TestSessionManager(unittest.TestCase):
         self.assertTrue(not hasattr(sd, '_invalid'))
 
     def testBrowserIdIsSet(self):
-        sd = self.app.session_data_manager.getSessionData()
+        self.app.session_data_manager.getSessionData()
         mgr = getattr(self.app, idmgr_name)
         self.assertTrue(mgr.hasBrowserId())
 

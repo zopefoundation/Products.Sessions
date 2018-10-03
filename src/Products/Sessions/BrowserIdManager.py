@@ -609,6 +609,7 @@ class BrowserIdManagerTraverser(Persistent):
                 if isAWellFormedBrowserId(stack[-2]):
                     name = stack.pop()  # pop the name off the stack
                     browser_id = stack.pop()  # pop id off the stack
+                    request.name = name
                     request.browser_id_ = browser_id
                     request.browser_id_ns_ = 'url'
 
