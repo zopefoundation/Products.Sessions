@@ -12,15 +12,18 @@
 #
 ##############################################################################
 
-import Products
+from App.config import getConfiguration
+from App.config import setConfiguration
+from OFS.Application import AppInitializer
+from OFS.Application import Application
+from Zope2.Startup.options import ZopeWSGIOptions
+
 import os
+import Products
 import shutil
 import tempfile
 import unittest
 
-from App.config import getConfiguration, setConfiguration
-from OFS.Application import Application, AppInitializer
-from Zope2.Startup.options import ZopeWSGIOptions
 
 test_cfg = """
 instancehome {instancehome}

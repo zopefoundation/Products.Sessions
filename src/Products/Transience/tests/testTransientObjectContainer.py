@@ -10,17 +10,20 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-import random
-
-from Products.Transience.Transience import TransientObjectContainer,\
-     MaxTransientObjectsExceeded, SPARE_BUCKETS
-from Products.Transience.TransientObject import TransientObject
-import Products.Transience.Transience
-import Products.Transience.TransientObject
-from unittest import TestCase, TestSuite, makeSuite
-import time as oldtime
 from . import fauxtime
 from . import slowfauxtime
+from Products.Transience.Transience import MaxTransientObjectsExceeded
+from Products.Transience.Transience import SPARE_BUCKETS
+from Products.Transience.Transience import TransientObjectContainer
+from Products.Transience.TransientObject import TransientObject
+from unittest import makeSuite
+from unittest import TestCase
+from unittest import TestSuite
+
+import Products.Transience.Transience
+import Products.Transience.TransientObject
+import random
+import time as oldtime
 
 
 class TestTransientObjectContainer(TestCase):
@@ -112,12 +115,12 @@ class TestTransientObjectContainer(TestCase):
         r = range(10, 110)
         for x in r:
             k = random.choice(r)
-            if not k in added:
+            if k not in added:
                 self.t[k] = x
                 added[k] = 1
         addl = list(added.keys())
         addl.sort()
-        self.assertEqual(lsubtract(list(self.t.keys()),addl), [])
+        self.assertEqual(lsubtract(list(self.t.keys()), addl), [])
 
     def testRandomOverlappingInserts(self):
         added = {}
@@ -215,8 +218,8 @@ class TestTransientObjectContainer(TestCase):
             194, 263, 203, 190, 111, 218, 199, 29, 81, 207, 18, 180,
             157, 172, 192, 135, 163, 275, 74, 296, 298, 265, 105, 191,
             282, 277, 83, 188, 144, 259, 6, 173, 81, 107, 292, 231,
-            129, 65, 161, 113, 103, 136, 255, 285, 289, 1
-            ]
+            129, 65, 161, 113, 103, 136, 255, 285, 289, 1,
+        ]
         delete_order = [
             276, 273, 12, 275, 2, 286, 127, 83, 92, 33, 101, 195,
             299, 191, 22, 232, 291, 226, 110, 94, 257, 233, 215, 184,
@@ -227,8 +230,8 @@ class TestTransientObjectContainer(TestCase):
             55, 245, 225, 32, 52, 40, 271, 29, 252, 239, 89, 87, 205,
             213, 180, 97, 108, 120, 218, 44, 187, 196, 251, 202, 203,
             172, 28, 188, 77, 90, 199, 297, 282, 141, 100, 161, 216,
-            73, 19, 17, 189, 30, 258
-            ]
+            73, 19, 17, 189, 30, 258,
+        ]
         for x in add_order:
             self.t[x] = 1
         for x in delete_order:
@@ -241,11 +244,11 @@ class TestTransientObjectContainer(TestCase):
         for x in range(10, 110):
             self.t[x] = x
         # current bucket will become old after we sleep for a while.
-        fauxtime.sleep(self.timeout/2)
+        fauxtime.sleep(self.timeout / 2)
         # these items will be added to the new current bucket by getitem
         for x in range(10, 110):
             self.t.get(x)
-        fauxtime.sleep(self.timeout/2)
+        fauxtime.sleep(self.timeout / 2)
         self.assertEqual(len(self.t.keys()), 100)
         for x in range(10, 110):
             self.assertEqual(self.t[x], x)
@@ -254,11 +257,11 @@ class TestTransientObjectContainer(TestCase):
         for x in range(10, 110):
             self.t[x] = x
         # current bucket will become old after we sleep for a while.
-        fauxtime.sleep(self.timeout/2)
+        fauxtime.sleep(self.timeout / 2)
         # these items will be added to the new current bucket by setitem
         for x in range(10, 110):
             self.t[x] = x + 1
-        fauxtime.sleep(self.timeout/2)
+        fauxtime.sleep(self.timeout / 2)
         assert len(self.t.keys()) == 100, len(self.t.keys())
         for x in range(10, 110):
             assert self.t[x] == x + 1
@@ -279,7 +282,6 @@ class TestTransientObjectContainer(TestCase):
             del self.t[k]
 
         self.assertEqual(len(self.t), 0)
-
 
     def testResetWorks(self):
         self.t[10] = 1
@@ -314,7 +316,10 @@ class TestTransientObjectContainer(TestCase):
 
     def testSubobjectLimitWorks(self):
         self.t = TransientObjectContainer(
-            'a', timeout_mins=self.timeout // 60, limit=10)
+            'a',
+            timeout_mins=self.timeout // 60,
+            limit=10,
+        )
         self.assertRaises(MaxTransientObjectsExceeded, self._maxOut)
 
     def testZeroTimeoutMeansPersistForever(self):
@@ -377,7 +382,7 @@ class TestSlowTransientObjectContainer(TestCase):
         slowfauxtime.sleep(self.timeout)
 
         self.assertEqual(len(self.t.keys()), 100)
-        slowfauxtime.sleep(self.timeout * (self.errmargin+1))
+        slowfauxtime.sleep(self.timeout * (self.errmargin + 1))
         self.assertEqual(len(self.t.keys()), 0)
 
         # 3 minutes
@@ -389,20 +394,20 @@ class TestSlowTransientObjectContainer(TestCase):
         self.assertEqual(len(self.t.keys()), 100)
         slowfauxtime.sleep(self.timeout)
         self.assertEqual(len(self.t.keys()), 100)
-        slowfauxtime.sleep(self.timeout * (self.errmargin+1))
+        slowfauxtime.sleep(self.timeout * (self.errmargin + 1))
         self.assertEqual(len(self.t.keys()), 0)
 
     def testItemsGetExpired(self):
         for x in range(10, 110):
             self.t[x] = x
         # these items will time out while we sleep
-        slowfauxtime.sleep(self.timeout * (self.errmargin+1))
+        slowfauxtime.sleep(self.timeout * (self.errmargin + 1))
         for x in range(110, 210):
             self.t[x] = x
         self.assertEqual(len(self.t.keys()), 100)
 
         # call _gc just to make sure __len__ gets changed after a gc
-        #self.t._gc()
+        # self.t._gc()
         self.assertEqual(len(self.t), 100)
 
         # we should still have 100 - 199
@@ -410,17 +415,20 @@ class TestSlowTransientObjectContainer(TestCase):
             self.assertEqual(self.t[x], x)
         # but we shouldn't have 0 - 100
         for x in range(10, 110):
-            try: self.t[x]
-            except KeyError: pass
-            else: assert 1 == 2, x
+            try:
+                self.t[x]
+            except KeyError:
+                pass
+            else:
+                assert 1 == 2, x
 
 
 def lsubtract(l1, l2):
-    l1=list(l1)
-    l2=list(l2)
-    l = [x for x in l2 if x not in l1]
-    l = l + [x for x in l1 if x not in l2]
-    return l
+    l1 = list(l1)
+    l2 = list(l2)
+    temp_list = [x for x in l2 if x not in l1]
+    temp_list = temp_list + [x for x in l1 if x not in l2]
+    return temp_list
 
 
 def test_suite():

@@ -10,34 +10,35 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+
 from __future__ import print_function
-
-import time
-
-from Testing import makerequest
-import ZODB # in order to get Persistence.Persistent working
-import transaction
-import Acquisition
-from Products.Sessions.BrowserIdManager import BrowserIdManager, \
-     getNewBrowserId
-from Products.Sessions.SessionDataManager import \
-    SessionDataManager
-from Products.Transience.Transience import \
-    TransientObjectContainer
-from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
-from ZODB.POSException import ConflictError, \
-     ReadConflictError, BTreesConflictError
-
-
-from unittest import TestCase, TestSuite, makeSuite
-import threading, random
-from ZODB.DemoStorage import DemoStorage
 from OFS.Application import Application
-import traceback
-
+from Products.Sessions.BrowserIdManager import BrowserIdManager
+from Products.Sessions.BrowserIdManager import getNewBrowserId
+from Products.Sessions.SessionDataManager import SessionDataManager
+from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from Products.Transience.tests import fauxtime
+from Products.Transience.Transience import TransientObjectContainer
+from Testing import makerequest
+from unittest import makeSuite
+from unittest import TestCase
+from unittest import TestSuite
+from ZODB.DemoStorage import DemoStorage
+from ZODB.POSException import BTreesConflictError
+from ZODB.POSException import ConflictError
+from ZODB.POSException import ReadConflictError
+
+import Acquisition
 import Products.Transience.Transience
 import Products.Transience.TransientObject
+import random
+import threading
+import time
+import traceback
+import transaction
+import ZODB  # in order to get Persistence.Persistent working
+
+
 Products.Transience.Transience.time = fauxtime
 Products.Transience.TransientObject.time = fauxtime
 
@@ -47,6 +48,7 @@ toc_name = 'temp_transient_container'
 sdm_name = 'session_data_manager'
 
 stuff = {}
+
 
 def log_time():
     """Return a simple time string without spaces suitable for logging."""
@@ -62,35 +64,52 @@ def _getDB():
         conn = db.open()
         root = conn.root()
         app = Application()
-        root['Application']= app
+        root['Application'] = app
         _populate(app)
         transaction.commit()
         stuff['db'] = db
         conn.close()
     return db
 
+
 def _delDB():
     transaction.abort()
     del stuff['db']
 
-class Foo(Acquisition.Implicit): pass
+
+class Foo(Acquisition.Implicit):
+    pass
+
 
 def _populate(app):
     bidmgr = BrowserIdManager(idmgr_name)
     tf = MountedTemporaryFolder(tf_name, 'Temporary Folder')
-    toc = TransientObjectContainer(toc_name, title='Temporary '
-        'Transient Object Container', timeout_mins=1)
-    session_data_manager=SessionDataManager(id=sdm_name,
-        path='/'+tf_name+'/'+toc_name, title='Session Data Manager')
+    toc = TransientObjectContainer(
+        toc_name,
+        title='Temporary '
+        'Transient Object Container',
+        timeout_mins=1
+    )
+    session_data_manager = SessionDataManager(
+        id=sdm_name,
+        path='/' + tf_name + '/' + toc_name,
+        title='Session Data Manager'
+    )
 
-    try: app._delObject(idmgr_name)
-    except AttributeError: pass
+    try:
+        app._delObject(idmgr_name)
+    except AttributeError:
+        pass
 
-    try: app._delObject(tf_name)
-    except AttributeError: pass
+    try:
+        app._delObject(tf_name)
+    except AttributeError:
+        pass
 
-    try: app._delObject(sdm_name)
-    except AttributeError: pass
+    try:
+        app._delObject(sdm_name)
+    except AttributeError:
+        pass
 
     app._setObject(idmgr_name, bidmgr)
 
@@ -102,7 +121,9 @@ def _populate(app):
     app.temp_folder._setObject(toc_name, toc)
     transaction.commit()
 
+
 class TestMultiThread(TestCase):
+
     def testOverlappingBrowserIds(self):
         token = getNewBrowserId()
         self.go(token)
@@ -142,19 +163,21 @@ class TestMultiThread(TestCase):
             time.sleep(0.1)
         active = threading.activeCount()
         while active > 0:
-            active = threading.activeCount()-1
+            active = threading.activeCount() - 1
             print('waiting for %s threads' % active)
             print("readers: ", numActive(readers), end=" ")
             print("writers: ", numActive(writers), end=" ")
             print("valuers: ", numActive(valuers))
             time.sleep(5)
 
+
 def numActive(threads):
     i = 0
     for thread in threads:
         if not thread.isFinished():
-            i+=1
+            i += 1
     return i
+
 
 class BaseReaderWriter(threading.Thread):
     def __init__(self, db, iters, token=None):
@@ -182,7 +205,7 @@ class BaseReaderWriter(threading.Thread):
                     self.run1()
                     return
                 except ReadConflictError:
-                    #traceback.print_exc()
+                    # traceback.print_exc()
                     print("R", end=' ')
                 except BTreesConflictError:
                     print("B", end=' ')
@@ -220,6 +243,7 @@ class ReaderThread(BaseReaderWriter):
             data = session_data_manager.getSessionData()
             time.sleep(random.choice(range(3)))
             transaction.commit()
+
 
 class WriterThread(BaseReaderWriter):
     def run1(self):

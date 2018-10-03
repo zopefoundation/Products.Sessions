@@ -13,8 +13,10 @@
 """
 Test suite for session id manager.
 """
-import unittest
+
 import Testing.ZopeTestCase
+import unittest
+
 
 class TestBrowserIdManager(unittest.TestCase):
 
@@ -203,10 +205,14 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setBrowserIdName('bid')
         mgr.setBrowserIdNamespaces(('cookies',))
         mgr.flushBrowserIdCookie()
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/',
-                          'expires': 'Sun, 10-May-1971 11:59:00 GMT',
-                          'value': 'deleted'})
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/',
+                'expires': 'Sun, 10-May-1971 11:59:00 GMT',
+                'value': 'deleted'
+            }
+        )
 
     def test_setBrowserIdCookieByForce_wrong_ns_raises(self):
         from Products.Sessions.BrowserIdManager import getNewBrowserId
@@ -232,8 +238,10 @@ class TestBrowserIdManager(unittest.TestCase):
         request = DummyRequest(browser_id_=bid)
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
-        self.assertEqual(mgr.getHiddenFormField(),
-                         '<input type="hidden" name="bid" value="%s" />' % bid)
+        self.assertEqual(
+            mgr.getHiddenFormField(),
+            '<input type="hidden" name="bid" value="%s" />' % bid
+        )
 
     def test_encodeUrl_no_create_no_bid_raises(self):
         URL = 'http://example.com/'
@@ -289,8 +297,11 @@ class TestBrowserIdManager(unittest.TestCase):
 
     def test_setBrowserIdNamespaces_invalid_raises(self):
         mgr = self._makeOne()
-        self.assertRaises(ValueError,
-                          mgr.setBrowserIdNamespaces, ('gummy', 'froopy'))
+        self.assertRaises(
+            ValueError,
+            mgr.setBrowserIdNamespaces,
+            ('gummy', 'froopy')
+        )
 
     def test_setBrowserIdNamespaces_normal(self):
         NAMESPACES = ('cookies', 'url', 'form')
@@ -318,7 +329,7 @@ class TestBrowserIdManager(unittest.TestCase):
 
     def test_setCookieDomain_non_string_raises(self):
         mgr = self._makeOne()
-        self.assertRaises(ValueError, mgr.setCookieDomain, {1:1})
+        self.assertRaises(ValueError, mgr.setCookieDomain, {1: 1})
 
     def test_setCookieDomain_no_dots_raises(self):
         mgr = self._makeOne()
@@ -388,9 +399,14 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
         mgr._setCookie('xxx', request, remove=True)
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/', 'value': 'xxx',
-                          'expires': 'Sun, 10-May-1971 11:59:00 GMT'})
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/',
+                'value': 'xxx',
+                'expires': 'Sun, 10-May-1971 11:59:00 GMT',
+            }
+        )
 
     def test__setCookie_cookie_life_days(self):
         response = DummyResponse(cookies={})
@@ -398,27 +414,34 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
         mgr.setCookieLifeDays(1)
-        mgr._setCookie('xxx', request,
-                       now=lambda: 1,
-                       strftime=lambda x, y: 'Seconds: %d' % y,
-                       gmtime=lambda x: x)
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/', 'value': 'xxx',
-                          'expires': 'Seconds: 86401'})
+        mgr._setCookie(
+            'xxx', request,
+            now=lambda: 1,
+            strftime=lambda x, y: 'Seconds: %d' % y,
+            gmtime=lambda x: x
+        )
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/',
+                'value': 'xxx',
+                'expires': 'Seconds: 86401',
+            }
+        )
 
     def test__setCookie_cookie_secure_no_URL1_sets_no_cookie(self):
         request = DummyRequest()
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
         mgr.setCookieSecure(True)
-        mgr._setCookie('xxx', request) # no response, doesn't blow up
+        mgr._setCookie('xxx', request)  # no response, doesn't blow up
 
     def test__setCookie_cookie_secure_not_https_sets_no_cookie(self):
         request = DummyRequest(URL1='http://example.com/')
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
         mgr.setCookieSecure(True)
-        mgr._setCookie('xxx', request) # no response, doesn't blow up
+        mgr._setCookie('xxx', request)  # no response, doesn't blow up
 
     def test__setCookie_cookie_secure_is_https(self):
         response = DummyResponse(cookies={})
@@ -427,8 +450,14 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setBrowserIdName('bid')
         mgr.setCookieSecure(True)
         mgr._setCookie('xxx', request)
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/', 'value': 'xxx', 'secure': True})
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/',
+                'value': 'xxx',
+                'secure': True,
+            }
+        )
 
     def test__setCookie_domain(self):
         response = DummyResponse(cookies={})
@@ -437,8 +466,14 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setBrowserIdName('bid')
         mgr.setCookieDomain('.zope.org')
         mgr._setCookie('xxx', request)
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/', 'value': 'xxx', 'domain': '.zope.org'})
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/',
+                'value': 'xxx',
+                'domain': '.zope.org',
+            }
+        )
 
     def test__setCookie_path(self):
         response = DummyResponse(cookies={})
@@ -447,8 +482,13 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setBrowserIdName('bid')
         mgr.setCookiePath('/path/')
         mgr._setCookie('xxx', request)
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/path/', 'value': 'xxx'})
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/path/',
+                'value': 'xxx',
+            }
+        )
 
     def test__setCookie_http_only(self):
         response = DummyResponse(cookies={})
@@ -457,19 +497,30 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setBrowserIdName('bid')
         mgr.setCookieHTTPOnly(True)
         mgr._setCookie('xxx', request)
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/', 'value': 'xxx', 'http_only': True})
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/',
+                'value': 'xxx',
+                'http_only': True,
+            }
+        )
 
     def test__setCookie_http_only_missing_attr(self):
         # See https://bugs.launchpad.net/bugs/374816
         response = DummyResponse(cookies={})
         request = DummyRequest(RESPONSE=response, URL1='https://example.com/')
         mgr = self._makeOne(request)
-        del mgr.cookie_http_only # pre-2.12 instances didn't have this
+        del mgr.cookie_http_only  # pre-2.12 instances didn't have this
         mgr.setBrowserIdName('bid')
         mgr._setCookie('xxx', request)
-        self.assertEqual(response.cookies['bid'],
-                         {'path': '/', 'value': 'xxx'})
+        self.assertEqual(
+            response.cookies['bid'],
+            {
+                'path': '/',
+                'value': 'xxx',
+            }
+        )
 
     def test__setId_same_id_noop(self):
         mgr = self._makeOne(name='foo')
@@ -487,7 +538,7 @@ class TestBrowserIdManager(unittest.TestCase):
         request = DummyRequest(RESPONSE=response, URL1='http://example.com/')
         mgr = self._makeOne(request)
         mgr.setCookieSecure(1)
-        bid = mgr.getBrowserId() # doesn't raise
+        bid = mgr.getBrowserId()  # doesn't raise
         self.assertEqual(len(response.cookies), 0)
 
     def test_hasTraversalHook_missing(self):
@@ -504,14 +555,16 @@ class TestBrowserIdManager(unittest.TestCase):
     def test_updateTraversalData_w_url_ns(self):
         from Acquisition import Implicit
         from ZPublisher.BeforeTraverse import queryBeforeTraverse
-        from Products.Sessions.BrowserIdManager import BrowserIdManagerTraverser
+        from Products.Sessions.BrowserIdManager import BrowserIdManagerTraverser  # NOQA: E501
+
         class Parent(Implicit):
             pass
+
         mgr = self._makeOne()
         mgr.setBrowserIdNamespaces(('url',))
         parent = Parent()
         parent.browser_id_manager = mgr
-        parent.browser_id_manager.updateTraversalData() # needs wrapper
+        parent.browser_id_manager.updateTraversalData()  # needs wrapper
         hooks = queryBeforeTraverse(parent, 'BrowserIdManager')
         self.assertEqual(len(hooks), 1)
         self.assertEqual(hooks[0][0], 40)
@@ -520,27 +573,31 @@ class TestBrowserIdManager(unittest.TestCase):
     def test_updateTraversalData_not_url_ns(self):
         from Acquisition import Implicit
         from ZPublisher.BeforeTraverse import queryBeforeTraverse
+
         class Parent(Implicit):
             pass
+
         mgr = self._makeOne()
         mgr.setBrowserIdNamespaces(('cookies', 'form'))
         parent = Parent()
         parent.__before_traverse__ = {(0, 'BrowserIdManager'): object()}
         parent.browser_id_manager = mgr
-        parent.browser_id_manager.updateTraversalData() # needs wrapper
+        parent.browser_id_manager.updateTraversalData()  # needs wrapper
         self.assertFalse(queryBeforeTraverse(mgr, 'BrowserIdManager'))
 
     def test_registerTraversalHook_doesnt_replace_existing(self):
         from Acquisition import Implicit
         from ZPublisher.BeforeTraverse import queryBeforeTraverse
+
         class Parent(Implicit):
             pass
+
         mgr = self._makeOne()
         parent = Parent()
         hook = object()
         parent.__before_traverse__ = {(0, 'BrowserIdManager'): hook}
         parent.browser_id_manager = mgr
-        parent.browser_id_manager.registerTraversalHook() # needs wrapper
+        parent.browser_id_manager.registerTraversalHook()  # needs wrapper
         hooks = queryBeforeTraverse(parent, 'BrowserIdManager')
         self.assertEqual(len(hooks), 1)
         self.assertEqual(hooks[0][0], 0)
@@ -549,13 +606,15 @@ class TestBrowserIdManager(unittest.TestCase):
     def test_registerTraversalHook_normal(self):
         from Acquisition import Implicit
         from ZPublisher.BeforeTraverse import queryBeforeTraverse
-        from Products.Sessions.BrowserIdManager import BrowserIdManagerTraverser
+        from Products.Sessions.BrowserIdManager import BrowserIdManagerTraverser  # NOQA: E501
+
         class Parent(Implicit):
             pass
+
         mgr = self._makeOne()
         parent = Parent()
         parent.browser_id_manager = mgr
-        parent.browser_id_manager.registerTraversalHook() # needs wrapper
+        parent.browser_id_manager.registerTraversalHook()  # needs wrapper
         hooks = queryBeforeTraverse(parent, 'BrowserIdManager')
         self.assertEqual(len(hooks), 1)
         self.assertEqual(hooks[0][0], 40)
@@ -563,25 +622,29 @@ class TestBrowserIdManager(unittest.TestCase):
 
     def test_unregisterTraversalHook_nonesuch_doesnt_raise(self):
         from Acquisition import Implicit
+
         class Parent(Implicit):
             pass
+
         mgr = self._makeOne()
         parent = Parent()
         parent.browser_id_manager = mgr
-        parent.browser_id_manager.unregisterTraversalHook() # needs wrapper
+        parent.browser_id_manager.unregisterTraversalHook()  # needs wrapper
 
     def test_unregisterTraversalHook_normal(self):
         from Acquisition import Implicit
         from ZPublisher.BeforeTraverse import queryBeforeTraverse
+
         class Parent(Implicit):
             pass
+
         mgr = self._makeOne()
         parent = Parent()
         parent.__before_traverse__ = {(0, 'BrowserIdManager'): object()}
         parent.browser_id_manager = mgr
-        parent.browser_id_manager.unregisterTraversalHook() # needs wrapper
+        parent.browser_id_manager.unregisterTraversalHook()  # needs wrapper
         self.assertFalse(queryBeforeTraverse(mgr, 'BrowserIdManager'))
-    
+
 
 class TestBrowserIdManagerTraverser(unittest.TestCase):
 
@@ -597,14 +660,14 @@ class TestBrowserIdManagerTraverser(unittest.TestCase):
         traverser = self._makeOne()
         container = DummyObject()
         request = DummyRequest()
-        traverser(container, request) # doesn't raise
+        traverser(container, request)  # doesn't raise
 
     def test___call___w_mgr_request_has_no_stack(self):
         traverser = self._makeOne()
         mgr = DummyBrowserIdManager()
         container = DummyObject(browser_id_manager=mgr)
         request = DummyRequest()
-        traverser(container, request) # doesn't raise
+        traverser(container, request)  # doesn't raise
 
     def test___call___w_mgr_request_has_stack_no_auto_encode(self):
         from Products.Sessions.BrowserIdManager import getNewBrowserId
@@ -613,7 +676,8 @@ class TestBrowserIdManagerTraverser(unittest.TestCase):
         mgr = DummyBrowserIdManager()
         container = DummyObject(browser_id_manager=mgr)
         request = DummyRequest(
-                    TraversalRequestNameStack=[bid, 'bid'])
+            TraversalRequestNameStack=[bid, 'bid']
+        )
         traverser(container, request)
         self.assertEqual(request.browser_id_, bid)
         self.assertEqual(request.browser_id_ns_, 'url')
@@ -626,7 +690,9 @@ class TestBrowserIdManagerTraverser(unittest.TestCase):
         mgr = DummyBrowserIdManager(True)
         container = DummyObject(browser_id_manager=mgr)
         request = DummyRequest(
-                    TraversalRequestNameStack=[bid, 'bid'], _script=[])
+            TraversalRequestNameStack=[bid, 'bid'],
+            _script=[]
+        )
         traverser(container, request)
         self.assertEqual(request.browser_id_, bid)
         self.assertEqual(request.browser_id_ns_, 'url')
@@ -640,7 +706,7 @@ class TestBrowserIdManagerTraverser(unittest.TestCase):
         traverser = self._makeOne()
         mgr = DummyBrowserIdManager(True)
         container = DummyObject(browser_id_manager=mgr)
-        request = DummyRequest( TraversalRequestNameStack=[], _script=[])
+        request = DummyRequest(TraversalRequestNameStack=[], _script=[])
         traverser(container, request)
         bid = request.browser_id_
         self.assertTrue(isAWellFormedBrowserId(bid))
@@ -660,30 +726,41 @@ class TestBrowserIdManagerPublish(Testing.ZopeTestCase.FunctionalTestCase):
             self.app._setObject('browser_id_manager', bid)
 
         res = self.publish(
-            '/browser_id_manager/encodeUrl?url=%3Chtml%3EEVIL%2Fhtml%3E%3C!--')
+            '/browser_id_manager/encodeUrl?url=%3Chtml%3EEVIL%2Fhtml%3E%3C!--'
+        )
         self.assertFalse(b"<html>EVIL/html>" in res.getBody())
 
 
 class DummyObject:
+
     def __init__(self, **kw):
         self.__dict__.update(kw)
+
 
 class DummyResponse(DummyObject):
     pass
 
+
 class DummyRequest(DummyObject):
+
     def __getitem__(self, key):
         return getattr(self, key)
+
     def get(self, key, default=None):
         return getattr(self, key, default)
 
+
 class DummyBrowserIdManager:
+
     def __init__(self, auto=False):
         self._auto = auto
+
     def getBrowserIdName(self):
         return 'bid'
+
     def getAutoUrlEncoding(self):
         return self._auto
+
 
 def test_suite():
     return unittest.TestSuite((

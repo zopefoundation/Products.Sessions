@@ -12,11 +12,17 @@
 ############################################################################
 # BBB location for APIs now defined in Products.Sessions.interfaces
 
-from Products.Sessions.interfaces import IBrowserIdManager
-BrowserIdManagerInterface = IBrowserIdManager # BBB
+# flake8: NOQA: E401
 
-from Products.Sessions.interfaces import ISessionDataManager
-SessionDataManagerInterface = ISessionDataManager
+# This is a file to define public API in the base namespace of the package.
+# use: isort:skip to supress all isort related warnings / errors,
+# as this file should be logically grouped imports
 
-from Products.Sessions.interfaces import SessionDataManagerErr
 from Products.Sessions.interfaces import BrowserIdManagerErr
+from Products.Sessions.interfaces import IBrowserIdManager
+from Products.Sessions.interfaces import ISessionDataManager
+from Products.Sessions.interfaces import SessionDataManagerErr
+
+
+BrowserIdManagerInterface = IBrowserIdManager
+SessionDataManagerInterface = ISessionDataManager

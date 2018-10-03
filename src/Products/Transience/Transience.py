@@ -14,15 +14,6 @@
 Transient Object Container Class ('timeslice'-based design, no index).
 """
 
-from cgi import escape
-from six.moves import _thread as thread
-from logging import getLogger
-import math
-import os
-import random
-import sys
-import time
-
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager
@@ -30,25 +21,26 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 from AccessControl.SpecialUsers import nobody
 from App.special_dtml import HTMLFile
+from BTrees.IOBTree import IOBTree
 from BTrees.Length import Length as BTreesLength
 from BTrees.OOBTree import OOBTree
-from BTrees.IOBTree import IOBTree
+from cgi import escape
+from logging import getLogger
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
+from Products.Transience.TransienceInterfaces import ItemWithId
+from Products.Transience.TransienceInterfaces import StringKeyedHomogeneousItemContainer  # NOQA: E501
+from Products.Transience.TransienceInterfaces import TransientItemContainer
+from Products.Transience.TransientObject import TransientObject
+from six.moves import _thread as thread
 from zope.interface import implementer
 
-from Products.Transience.TransienceInterfaces import DictionaryLike
-from Products.Transience.TransienceInterfaces \
-    import ImmutablyValuedMappingOfPickleableObjects
-from Products.Transience.TransienceInterfaces import ItemWithId
-from Products.Transience.TransienceInterfaces \
-    import StringKeyedHomogeneousItemContainer
-from Products.Transience.TransienceInterfaces import Transient
-from Products.Transience.TransienceInterfaces import TransientItemContainer
-from Products.Transience.TransienceInterfaces import TTWDictionary
+import math
+import os
+import random
+import sys
+import time
 
-from Products.Transience.TransientObject import TransientObject
-from Products.Transience.Fake import FakeIOBTree
 
 ADD_CONTAINER_PERM = 'Add Transient Object Container'
 MGMT_SCREEN_PERM = 'View management screens'
@@ -57,19 +49,21 @@ CREATE_TRANSIENTS_PERM = 'Create Transient Objects'
 ACCESS_TRANSIENTS_PERM = 'Access Transient Objects'
 MANAGE_CONTAINER_PERM = 'Manage Transient Object Container'
 
-SPARE_BUCKETS = 15 # minimum number of buckets to keep "spare"
-BUCKET_CLASS = OOBTree # constructor for buckets
-DATA_CLASS = IOBTree # const for main data structure (timeslice->"bucket")
+SPARE_BUCKETS = 15  # minimum number of buckets to keep "spare"
+BUCKET_CLASS = OOBTree  # constructor for buckets
+DATA_CLASS = IOBTree  # const for main data structure (timeslice->"bucket")
 STRICT = os.environ.get('Z_TOC_STRICT', '')
 DEBUG = int(os.environ.get('Z_TOC_DEBUG', 0))
 
 _marker = []
 LOG = getLogger('Transience')
 
+
 def setStrict(on=''):
     """ Turn on assertions (which may cause conflicts) """
     global STRICT
     STRICT = on
+
 
 def TLOG(*args):
     sargs = []
@@ -80,27 +74,46 @@ def TLOG(*args):
     msg = ' '.join(sargs)
     LOG.info(msg)
 
+
 constructTransientObjectContainerForm = HTMLFile(
     'dtml/addTransientObjectContainer', globals())
 
-def constructTransientObjectContainer(self, id, title='', timeout_mins=20,
-    addNotification=None, delNotification=None, limit=0, period_secs=20,
-    REQUEST=None):
+
+def constructTransientObjectContainer(
+    self,
+    id,
+    title='',
+    timeout_mins=20,
+    addNotification=None,
+    delNotification=None,
+    limit=0,
+    period_secs=20,
+    REQUEST=None
+):
     """ """
-    ob = TransientObjectContainer(id, title, timeout_mins,
-        addNotification, delNotification, limit=limit, period_secs=period_secs)
+    ob = TransientObjectContainer(
+        id,
+        title,
+        timeout_mins,
+        addNotification,
+        delNotification,
+        limit=limit,
+        period_secs=period_secs
+    )
     self._setObject(id, ob)
     if REQUEST is not None:
         return self.manage_main(self, REQUEST, update_menu=1)
+
 
 class MaxTransientObjectsExceeded(Exception):
     pass
 
 
-@implementer(ItemWithId,
-             StringKeyedHomogeneousItemContainer,
-             TransientItemContainer,
-             )
+@implementer(
+    ItemWithId,
+    StringKeyedHomogeneousItemContainer,
+    TransientItemContainer,
+)
 class TransientObjectContainer(SimpleItem):
     """ Object which contains items that are automatically flushed
     after a period of inactivity """
@@ -114,20 +127,32 @@ class TransientObjectContainer(SimpleItem):
     )
 
     security = ClassSecurityInfo()
-    security.setPermissionDefault(MANAGE_CONTAINER_PERM,
-                                ['Manager',])
-    security.setPermissionDefault(MGMT_SCREEN_PERM,
-                                ['Manager',])
-    security.setPermissionDefault(ACCESS_CONTENTS_PERM,
-                                ['Manager','Anonymous'])
-    security.setPermissionDefault(ACCESS_TRANSIENTS_PERM,
-                                ['Manager','Anonymous','Sessions'])
-    security.setPermissionDefault(CREATE_TRANSIENTS_PERM,
-                                ['Manager',])
+    security.setPermissionDefault(
+        MANAGE_CONTAINER_PERM,
+        ['Manager', ],
+    )
+    security.setPermissionDefault(
+        MGMT_SCREEN_PERM,
+        ['Manager', ],
+    )
+    security.setPermissionDefault(
+        ACCESS_CONTENTS_PERM,
+        ['Manager', 'Anonymous', ],
+    )
+    security.setPermissionDefault(
+        ACCESS_TRANSIENTS_PERM,
+        ['Manager', 'Anonymous', 'Sessions', ],
+    )
+    security.setPermissionDefault(
+        CREATE_TRANSIENTS_PERM,
+        ['Manager', ],
+    )
 
     security.declareProtected(MGMT_SCREEN_PERM, 'manage_container')
-    manage_container = HTMLFile('dtml/manageTransientObjectContainer',
-        globals())
+    manage_container = HTMLFile(
+        'dtml/manageTransientObjectContainer',
+        globals()
+    )
 
     _limit = 0
     _data = None
@@ -140,13 +165,13 @@ class TransientObjectContainer(SimpleItem):
     # respectively)
 
     finalize_lock = thread.allocate_lock()
-    replentish_lock =  thread.allocate_lock()
+    replentish_lock = thread.allocate_lock()
     gc_lock = thread.allocate_lock()
 
     def __init__(self, id, title='', timeout_mins=20, addNotification=None,
                  delNotification=None, limit=0, period_secs=20):
         self.id = id
-        self.title=title
+        self.title = title
         self._setTimeout(timeout_mins, period_secs)
         self._setLimit(limit)
         self.setDelNotificationTarget(delNotification)
@@ -173,14 +198,15 @@ class TransientObjectContainer(SimpleItem):
             if period_secs > timeout_secs:
                 raise ValueError(
                     'resolution cannot be greater than timeout '
-                    'minutes * 60 ( %s > %s )' % (period_secs, timeout_secs))
+                    'minutes * 60 ( %s > %s )' % (period_secs, timeout_secs)
+                )
 
             # we need the timeout to be evenly divisible by the period
             if timeout_secs % period_secs != 0:
                 raise ValueError(
                     'timeout seconds (%s) must be evenly divisible '
                     'by resolution (%s)' % (timeout_secs, period_secs)
-                    )
+                )
 
         # our timeout secs is the number of seconds that an item should
         # remain unexpired
@@ -190,7 +216,9 @@ class TransientObjectContainer(SimpleItem):
         self._period = period_secs
 
         # timeout_slices == fewest number of timeslices that's >= timeout_secs
-        self._timeout_slices=int(math.ceil(float(timeout_secs)/period_secs))
+        self._timeout_slices = int(
+            math.ceil(float(timeout_secs) / period_secs)
+        )
 
     def _setLimit(self, limit):
         if type(limit) is not type(1):
@@ -217,8 +245,9 @@ class TransientObjectContainer(SimpleItem):
         if self._timeout_slices:
             new_slices = getTimeslices(
                 getCurrentTimeslice(self._period),
-                SPARE_BUCKETS*2,
-                self._period)
+                SPARE_BUCKETS * 2,
+                self._period
+            )
             for i in new_slices:
                 self._data[i] = BUCKET_CLASS()
             # max_timeslice is at any time during operations the highest
@@ -226,7 +255,7 @@ class TransientObjectContainer(SimpleItem):
             # the maxKey of a BTree directly is read-conflict-prone.
             self._max_timeslice = Increaser(max(new_slices))
         else:
-            self._data[0] = BUCKET_CLASS() # sentinel value for non-expiring
+            self._data[0] = BUCKET_CLASS()  # sentinel value for non-expiring
             self._max_timeslice = Increaser(0)
 
         # '_last_finalized_timeslice' is a value that indicates which
@@ -264,7 +293,7 @@ class TransientObjectContainer(SimpleItem):
             # case, that seems preferable.
             num_slices = self._timeout_slices + 1
         else:
-            return [0] # sentinel for timeout value 0 (don't expire)
+            return [0]  # sentinel for timeout value 0 (don't expire)
         DEBUG and TLOG('_getCurrentSlices, now = %s ' % now)
         DEBUG and TLOG('_getCurrentSlices, begin = %s' % begin)
         DEBUG and TLOG('_getCurrentSlices, num_slices = %s' % num_slices)
@@ -296,17 +325,19 @@ class TransientObjectContainer(SimpleItem):
         found_ts = None
 
         for ts in current_slices:
-            abucket = self._data.get(ts, None) # XXX ReadConflictError hotspot
+            abucket = self._data.get(ts, None)  # XXX ReadConflictError hotspot
 
             if abucket is None:
                 DEBUG and TLOG('_move_item: no bucket for ts %s' % ts)
                 continue
             DEBUG and TLOG(
-                '_move_item: bucket for ts %s is %s' % (ts, id(abucket)))
+                '_move_item: bucket for ts %s is %s' % (ts, id(abucket))
+            )
             DEBUG and TLOG(
-                '_move_item: keys for ts %s (bucket %s)-- %s' %
-                (ts, id(abucket), str(list(abucket.keys())))
+                '_move_item: keys for ts %s (bucket %s)-- %s' % (
+                    ts, id(abucket), str(list(abucket.keys()))
                 )
+            )
             # uhghost?
             if abucket.get(k, None) is not None:
                 found_ts = ts
@@ -320,8 +351,10 @@ class TransientObjectContainer(SimpleItem):
 
         if found_ts != current_ts:
 
-            DEBUG and TLOG('_move_item: current_ts (%s) != found_ts (%s), '
-                           'moving to current' % (current_ts, found_ts))
+            DEBUG and TLOG(
+                '_move_item: current_ts (%s) != found_ts (%s), '
+                'moving to current' % (current_ts, found_ts)
+            )
             DEBUG and TLOG(
                 '_move_item: keys for found_ts %s (bucket %s): %r' % (
                     found_ts, id(self._data[found_ts]),
@@ -332,22 +365,26 @@ class TransientObjectContainer(SimpleItem):
                 self._data[current_ts] = self._data[current_ts]
             DEBUG and TLOG(
                 '_move_item: copied item %s from %s to %s (bucket %s)' % (
-                k, found_ts, current_ts, id(self._data[current_ts])))
+                    k, found_ts, current_ts, id(self._data[current_ts])
+                )
+            )
             del self._data[found_ts][k]
             if not issubclass(BUCKET_CLASS, Persistent):
                 # tickle persistence machinery
                 self._data[found_ts] = self._data[found_ts]
             DEBUG and TLOG(
                 '_move_item: deleted item %s from ts %s (bucket %s)' % (
-                k, found_ts, id(self._data[found_ts]))
+                    k, found_ts, id(self._data[found_ts])
                 )
+            )
             STRICT and _assert(self._data[found_ts].get(k, None) is None)
-            STRICT and _assert(not k in self._data[found_ts])
+            STRICT and _assert(k not in self._data[found_ts])
 
         if getattr(self._data[current_ts][k], 'setLastAccessed', None):
             self._data[current_ts][k].setLastAccessed()
-        DEBUG and TLOG('_move_item: returning %s from current_ts %s '
-                       % (k, current_ts))
+        DEBUG and TLOG(
+            '_move_item: returning %s from current_ts %s ' % (k, current_ts)
+        )
         return self._data[current_ts][k]
 
     def _all(self):
@@ -366,14 +403,14 @@ class TransientObjectContainer(SimpleItem):
         STRICT and _assert(current_ts in self._data)
         current = self._getCurrentSlices(current_ts)
 
-        current.reverse() # overwrite older with newer
+        current.reverse()  # overwrite older with newer
 
         d = {}
         for ts in current:
             bucket = self._data.get(ts)
             if bucket is None:
                 continue
-            for k,v in bucket.items():
+            for k, v in bucket.items():
                 d[k] = self._wrap(v)
 
         return d
@@ -385,14 +422,14 @@ class TransientObjectContainer(SimpleItem):
         # for debugging and unit testing
         current = self._getCurrentSlices(current_ts)
 
-        current.reverse() # overwrite older with newer
+        current.reverse()  # overwrite older with newer
 
         d = {}
         for ts in current:
             bucket = self._data.get(ts, None)
             if bucket is None:
                 continue
-            for k,v in bucket.items():
+            for k, v in bucket.items():
                 d[k] = self._wrap(v)
 
         return d
@@ -423,7 +460,7 @@ class TransientObjectContainer(SimpleItem):
         return self._wrap(item)
 
     def __setitem__(self, k, v):
-        DEBUG and TLOG('__setitem__: called with key %s, value %s' % (k,v))
+        DEBUG and TLOG('__setitem__: called with key %s, value %s' % (k, v))
         if self._timeout_slices:
             current_ts = getCurrentTimeslice(self._period)
         else:
@@ -433,15 +470,16 @@ class TransientObjectContainer(SimpleItem):
         if item is _marker:
             # the key didnt already exist, this is a new item
 
-            length = self._length() # XXX ReadConflictError hotspot
+            length = self._length()  # XXX ReadConflictError hotspot
 
             if self._limit and length >= self._limit:
                 LOG.warning('Transient object container %s max subobjects '
-                         'reached' % self.getId())
+                            'reached' % self.getId())
 
                 raise MaxTransientObjectsExceeded(
-                 "%s exceeds maximum number of subobjects %s" %
-                 (length, self._limit))
+                    "%s exceeds maximum number of subobjects %s" %
+                    (length, self._limit)
+                )
 
             self._length.increment(1)
 
@@ -516,8 +554,8 @@ class TransientObjectContainer(SimpleItem):
 
     def _in_emergency_bucket_shortage(self, now):
         max_ts = self._max_timeslice()
-        low = now/self._period
-        high = max_ts/self._period
+        low = now / self._period
+        high = max_ts / self._period
         required = high <= low
         return required
 
@@ -525,7 +563,7 @@ class TransientObjectContainer(SimpleItem):
         """ Call finalization handlers for the data in each stale bucket """
         if not self._timeout_slices:
             DEBUG and TLOG('_finalize: doing nothing (no timeout)')
-            return # don't do any finalization if there is no timeout
+            return  # don't do any finalization if there is no timeout
 
         # The nature of sessioning is that when the timeslice rolls
         # over, all active threads will try to do a lot of work during
@@ -549,7 +587,7 @@ class TransientObjectContainer(SimpleItem):
             # we want to start finalizing from one timeslice after the
             # timeslice which we last finalized.
 
-            start_finalize  = last_finalized + self._period
+            start_finalize = last_finalized + self._period
 
             # we want to finalize only up to the maximum expired timeslice
             max_ts = self._get_max_expired_ts(now)
@@ -611,8 +649,8 @@ class TransientObjectContainer(SimpleItem):
     def _invoke_finalize_and_gc(self):
         # for unit testing purposes only!
         last_finalized = self._last_finalized_timeslice()
-        now = getCurrentTimeslice(self._period) # for unit tests
-        start_finalize  = last_finalized + self._period
+        now = getCurrentTimeslice(self._period)  # for unit tests
+        start_finalize = last_finalized + self._period
         max_ts = self._get_max_expired_ts(now)
         self._do_finalize_work(now, max_ts, start_finalize)
         self._do_gc_work(now)
@@ -653,8 +691,8 @@ class TransientObjectContainer(SimpleItem):
                 DEBUG and TLOG('_replentish: attempting optional replentish '
                                '(lock acquired)')
                 max_ts = self._max_timeslice()
-                low = now/self._period
-                high = max_ts/self._period
+                low = now / self._period
+                high = max_ts / self._period
                 if roll(low, high, 'optional replentish'):
                     self._do_replentish_work(now, max_ts)
 
@@ -685,8 +723,7 @@ class TransientObjectContainer(SimpleItem):
         if available_spares >= SPARE_BUCKETS:
             DEBUG and TLOG('_do_replentish_work: available_spares (%s) >= '
                            'SPARE_BUCKETS (%s), doing '
-                           'nothing'% (available_spares,
-                                       SPARE_BUCKETS))
+                           'nothing' % (available_spares, SPARE_BUCKETS))
             return
 
         if max_ts < now:
@@ -696,7 +733,7 @@ class TransientObjectContainer(SimpleItem):
 
         else:
             replentish_start = max_ts + self._period
-            replentish_end = max_ts + (self._period * (SPARE_BUCKETS +1))
+            replentish_end = max_ts + (self._period * (SPARE_BUCKETS + 1))
 
         DEBUG and TLOG('_do_replentish_work: replentish_start = %s' %
                        replentish_start)
@@ -708,18 +745,19 @@ class TransientObjectContainer(SimpleItem):
         new_buckets.reverse()
         STRICT and _assert(new_buckets)
         DEBUG and TLOG('_do_replentish_work: adding %s new buckets' % n)
-        DEBUG and TLOG('_do_replentish_work: buckets to add = %s'
-                       % new_buckets)
+        DEBUG and TLOG(
+            '_do_replentish_work: buckets to add = %s' % new_buckets
+        )
         for k in new_buckets:
-            STRICT and _assert(not k in self._data)
-            self._data[k] = BUCKET_CLASS() # XXX ReadConflictError hotspot
+            STRICT and _assert(k not in self._data)
+            self._data[k] = BUCKET_CLASS()  # XXX ReadConflictError hotspot
 
         self._max_timeslice.set(max(new_buckets))
 
     def _gc(self, now=None):
-        """ Remove stale buckets """
+        """Remove stale buckets """
         if not self._timeout_slices:
-            return # dont do gc if there is no timeout
+            return  # dont do gc if there is no timeout
 
         # give callers a good chance to do nothing (gc isn't as important
         # as replentishment or finalization)
@@ -733,19 +771,25 @@ class TransientObjectContainer(SimpleItem):
 
         try:
             if now is None:
-                now = getCurrentTimeslice(self._period) # for unit tests
+                now = getCurrentTimeslice(self._period)  # for unit tests
 
             last_gc = self._last_gc_timeslice()
             gc_every = self._period * round(SPARE_BUCKETS / 2.0)
 
             if (now - last_gc) < gc_every:
-                DEBUG and TLOG('_gc: gc attempt not yet required '
-                               '( (%s - %s) < %s )' % (now, last_gc, gc_every))
+                DEBUG and TLOG(
+                    '_gc: gc attempt not yet required '
+                    '( (%s - %s) < %s )' % (now, last_gc, gc_every),
+                )
                 return
             else:
                 DEBUG and TLOG(
-                    '_gc:  (%s -%s) > %s, gc invoked' % (now, last_gc,
-                                                          gc_every))
+                    '_gc:  (%s -%s) > %s, gc invoked' % (
+                        now,
+                        last_gc,
+                        gc_every,
+                    ),
+                )
                 self._do_gc_work(now)
 
         finally:
@@ -786,7 +830,7 @@ class TransientObjectContainer(SimpleItem):
         callback = self._getCallback(self._delCallback)
         if callback is None:
             return
-        self._notify(item, callback, 'notifyDel' )
+        self._notify(item, callback, 'notifyDel')
 
     def _getCallback(self, callback):
         if not callback:
@@ -797,8 +841,10 @@ class TransientObjectContainer(SimpleItem):
             except (KeyError, AttributeError):
                 path = self.getPhysicalPath()
                 err = 'No such onAdd/onDelete method %s referenced via %s'
-                LOG.warning(err % (callback, '/'.join(path)),
-                         exc_info=sys.exc_info())
+                LOG.warning(
+                    err % (callback, '/'.join(path)),
+                    exc_info=sys.exc_info(),
+                )
                 return
         else:
             method = callback
@@ -815,16 +861,23 @@ class TransientObjectContainer(SimpleItem):
                 except:
                     # dont raise, just log
                     path = self.getPhysicalPath()
-                    LOG.warning('%s failed when calling %s in %s' % (name,callback,
-                                                                 '/'.join(path)),
-                             exc_info=sys.exc_info())
+                    LOG.warning(
+                        '%s failed when calling %s in %s' % (
+                            name,
+                            callback,
+                            '/'.join(path),
+                        ),
+                        exc_info=sys.exc_info(),
+                    )
             finally:
                 setSecurityManager(sm)
         else:
             err = '%s in %s attempted to call non-callable %s'
             path = self.getPhysicalPath()
-            LOG.warning(err % (name, '/'.join(path), callback),
-                     exc_info=sys.exc_info())
+            LOG.warning(
+                err % (name, '/'.join(path), callback),
+                exc_info=sys.exc_info(),
+            )
 
     def getId(self):
         return self.id
@@ -857,10 +910,12 @@ class TransientObjectContainer(SimpleItem):
         """ The period_secs parameter is defaulted to preserve backwards API
         compatibility.  In older versions of this code, period was
         hardcoded to 20. """
-        timeout_secs = timeout_mins * 60
+        # timeout_secs = timeout_mins * 60
 
-        if (timeout_mins != self.getTimeoutMinutes()
-            or period_secs != self.getPeriodSeconds()):
+        if (
+            timeout_mins != self.getTimeoutMinutes() or
+            period_secs != self.getPeriodSeconds()
+        ):
             # do nothing unless something has changed
             self._setTimeout(timeout_mins, period_secs)
             self._reset()
@@ -888,7 +943,10 @@ class TransientObjectContainer(SimpleItem):
     def getAddNotificationTarget(self):
         return self._addCallback or ''
 
-    security.declareProtected(MANAGE_CONTAINER_PERM,'setAddNotificationTarget')
+    security.declareProtected(
+        MANAGE_CONTAINER_PERM,
+        'setAddNotificationTarget',
+    )
     def setAddNotificationTarget(self, f):
         self._addCallback = f
 
@@ -896,7 +954,10 @@ class TransientObjectContainer(SimpleItem):
     def getDelNotificationTarget(self):
         return self._delCallback or ''
 
-    security.declareProtected(MANAGE_CONTAINER_PERM,'setDelNotificationTarget')
+    security.declareProtected(
+        MANAGE_CONTAINER_PERM,
+        'setDelNotificationTarget',
+    )
     def setDelNotificationTarget(self, f):
         self._delCallback = f
 
@@ -931,12 +992,20 @@ class TransientObjectContainer(SimpleItem):
         self._replentish(now)
         self._gc(now)
 
-    security.declareProtected(MANAGE_CONTAINER_PERM,
-        'manage_changeTransientObjectContainer')
+    security.declareProtected(
+        MANAGE_CONTAINER_PERM,
+        'manage_changeTransientObjectContainer',
+    )
     def manage_changeTransientObjectContainer(
-        self, title='', timeout_mins=20, addNotification=None,
-        delNotification=None, limit=0, period_secs=20, REQUEST=None
-        ):
+        self,
+        title='',
+        timeout_mins=20,
+        addNotification=None,
+        delNotification=None,
+        limit=0,
+        period_secs=20,
+        REQUEST=None
+    ):
         """ Change an existing transient object container. """
         self.title = title
         self.setTimeoutMinutes(timeout_mins, period_secs)
@@ -950,8 +1019,10 @@ class TransientObjectContainer(SimpleItem):
 
         if REQUEST is not None:
             return self.manage_container(
-                self, REQUEST, manage_tabs_message='Changes saved.'
-                )
+                self,
+                REQUEST,
+                manage_tabs_message='Changes saved.',
+            )
 
     def __setstate__(self, state):
         # upgrade versions of Transience in Zope versions less
@@ -975,17 +1046,18 @@ class TransientObjectContainer(SimpleItem):
 
         # TOCs prior to 2.7.1 took their period from a global
         if '_period' not in state:
-            self._period = 20 # this was the default for all prior releases
+            self._period = 20  # this was the default for all prior releases
 
         # TOCs prior to 2.7.1 used a different set of data structures
         # for efficiently keeping tabs on the maximum slice
         if '_max_timeslice' not in state:
             new_slices = getTimeslices(
                 getCurrentTimeslice(self._period),
-                SPARE_BUCKETS*2,
-                self._period)
+                SPARE_BUCKETS * 2,
+                self._period,
+            )
             for i in new_slices:
-                if not i in self._data:
+                if i not in self._data:
                     self._data[i] = BUCKET_CLASS()
             # create an Increaser for max timeslice
             self._max_timeslice = Increaser(max(new_slices))
@@ -1003,6 +1075,7 @@ class TransientObjectContainer(SimpleItem):
         # 2.7.1+ as necessary (although that has not been tested)
         self.__dict__.update(state)
 
+
 def getCurrentTimeslice(period):
     """
     Return an integer representing the 'current' timeslice.
@@ -1017,13 +1090,15 @@ def getCurrentTimeslice(period):
         if x % period == 0:
             return x
 
+
 def getTimeslices(begin, n, period):
     """ Get a list of future timeslice integers of 'n' size in descending
     order """
-    l = []
+    list = []
     for x in range(n):
-        l.insert(0, begin + (x * period))
-    return l
+        list.insert(0, begin + (x * period))
+    return list
+
 
 def roll(low, high, reason):
     try:
@@ -1041,9 +1116,11 @@ def roll(low, high, reason):
                        (low, high, result, reason))
         return False
 
+
 def _assert(case):
     if not case:
         raise AssertionError
+
 
 class Increaser(Persistent):
     """
@@ -1051,6 +1128,7 @@ class Increaser(Persistent):
     has conflict resolution which uses the greatest integer out of the three
     available states.
     """
+
     def __init__(self, v):
         self.value = v
 
@@ -1078,6 +1156,7 @@ class Length2(Persistent):
     Conflict resolution is sensitive to which methods are used to
     change the length.
     """
+
     def __init__(self, value=0):
         self.set(value)
 
@@ -1115,5 +1194,5 @@ class Length2(Persistent):
         new['value'] = new['ceiling'] - new['floor']
         return new
 
-InitializeClass(TransientObjectContainer)
 
+InitializeClass(TransientObjectContainer)

@@ -14,12 +14,20 @@
 Transience initialization routines
 """
 
-import ZODB # this is to help out testrunner, don't remove.
+# flake8: NOQA: E401
+
+# This is a file to define public API in the base namespace of the package.
+# use: isort:skip to supress all isort related warnings / errors,
+# as this file should be logically grouped imports
+
 from . import Transience
 # import of MaxTransientObjectsExceeded for easy import from scripts,
 # this is protected by a module security info declaration in the
 # Sessions package.
 from .Transience import MaxTransientObjectsExceeded
+
+import ZODB  # this is to help out testrunner, don't remove.
+
 
 def initialize(context):
     context.registerClass(

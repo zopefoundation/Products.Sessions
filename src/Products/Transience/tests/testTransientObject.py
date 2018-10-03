@@ -13,7 +13,10 @@
 
 from . import fauxtime
 from Products.Transience.Transience import TransientObjectContainer
-from unittest import TestCase, TestSuite, makeSuite
+from unittest import makeSuite
+from unittest import TestCase
+from unittest import TestSuite
+
 import Products.Transience.Transience
 import Products.Transience.TransientObject
 import six
@@ -21,6 +24,7 @@ import time as oldtime
 
 
 class TestTransientObject(TestCase):
+
     def setUp(self):
         Products.Transience.Transience.time = fauxtime
         Products.Transience.TransientObject.time = fauxtime
@@ -39,7 +43,7 @@ class TestTransientObject(TestCase):
 
     def test_id(self):
         t = self.t.new('xyzzy')
-        self.assertNotEqual(t.getId(), 'xyzzy') # dont acquire
+        self.assertNotEqual(t.getId(), 'xyzzy')  # dont acquire
         self.assertEqual(t.getContainerKey(), 'xyzzy')
 
     def test_validate(self):
@@ -104,7 +108,7 @@ class TestTransientObject(TestCase):
         self.assertIsNone(t.get('foobie'))
         with self.assertRaises(AttributeError):
             self._genLenError(t)
-        self.assertIsNone(t.get('foobie',None))
+        self.assertIsNone(t.get('foobie', None))
         self.assertTrue(t.has_key('a'))
         self.assertFalse(t.has_key('foobie'))
         t.clear()
@@ -129,13 +133,14 @@ class TestTransientObject(TestCase):
 
 def test_suite():
     testsuite = makeSuite(TestTransientObject, 'test')
-    alltests = TestSuite((testsuite,))
+    alltests = TestSuite((testsuite, ))
     return alltests
+
 
 data = {
     'a': 'a',
     1: 1,
     'Mary': 'no little lamb for you today!',
     'epoch': 999999999,
-    'fauxtime': fauxtime
-    }
+    'fauxtime': fauxtime,
+}
