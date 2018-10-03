@@ -858,7 +858,7 @@ class TransientObjectContainer(SimpleItem):
                 try:
                     newSecurityManager(None, nobody)
                     callback(item, self)
-                except:
+                except Exception as err:
                     # dont raise, just log
                     path = self.getPhysicalPath()
                     LOG.warning(
@@ -869,6 +869,7 @@ class TransientObjectContainer(SimpleItem):
                         ),
                         exc_info=sys.exc_info(),
                     )
+                    LOG.warning(err.msg)
             finally:
                 setSecurityManager(sm)
         else:

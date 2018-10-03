@@ -274,7 +274,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             return self.unrestrictedTraverse(self.obpath)
         except ConflictError:
             raise
-        except:
+        except Exception:
             raise SessionDataManagerErr(
                 "External session data container '%s' not found." %
                 '/'.join(self.obpath)
@@ -339,7 +339,7 @@ class SessionDataManagerTraverser(Persistent):
                 sdmName = sdmName.id
             sdm = getattr(container, sdmName)
             getSessionData = sdm.getSessionData
-        except:
+        except Exception:
             msg = 'Session automatic traversal failed to get session data'
             LOG.warn(msg, exc_info=sys.exc_info())
             return
