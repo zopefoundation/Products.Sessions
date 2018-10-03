@@ -20,8 +20,9 @@ import sys
 
 
 class FakeIOBTree(PersistentMapping):
+
     def keys(self, min, max):
-        L = []
+        List = []
         if min is None:
             min = 0
 
@@ -30,5 +31,5 @@ class FakeIOBTree(PersistentMapping):
 
         for k in self.data:
             if min <= k <= max:
-                L.append(k)
-        return L
+                List.append(k)
+        return List

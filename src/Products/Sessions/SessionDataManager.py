@@ -10,6 +10,7 @@
 # FOR A PARTICULAR PURPOSE
 #
 ############################################################################
+
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_inner
@@ -40,16 +41,25 @@ import re
 import sys
 
 
-bad_path_chars_in=re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search
+bad_path_chars_in = re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search
 LOG = getLogger('SessionDataManager')
 
-constructSessionDataManagerForm = DTMLFile('dtml/addDataManager',
-    globals())
+constructSessionDataManagerForm = DTMLFile(
+    'dtml/addDataManager',
+    globals()
+)
 
-ADD_SESSION_DATAMANAGER_PERM="Add Session Data Manager"
+ADD_SESSION_DATAMANAGER_PERM = "Add Session Data Manager"
 
-def constructSessionDataManager(self, id, title='', path=None,
-                                requestName=None, REQUEST=None):
+
+def constructSessionDataManager(
+    self,
+    id,
+    title='',
+    path=None,
+    requestName=None,
+    REQUEST=None
+):
     """ """
     ob = SessionDataManager(id, path, title, requestName)
     self._setObject(id, ob)
@@ -63,37 +73,53 @@ class SessionIdManagerErr(Exception):
 
 @implementer(ISessionDataManager)
 class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
-    """ The Zope default session data manager implementation """
+    """The Zope default session data manager implementation."""
 
     meta_type = 'Session Data Manager'
     zmi_icon = 'far fa-clock'
 
-    manage_options=(
-        {'label': 'Settings',
-         'action':'manage_sessiondatamgr',
-         },
-        {'label': 'Security',
-         'action':'manage_access',
-         },
-        {'label': 'Ownership',
-         'action':'manage_owner'
-         },
-        )
+    manage_options = (
+        {
+            'label': 'Settings',
+            'action': 'manage_sessiondatamgr',
+        },
+        {
+            'label': 'Security',
+            'action': 'manage_access',
+        },
+        {
+            'label': 'Ownership',
+            'action': 'manage_owner',
+        },
+    )
 
     security = ClassSecurityInfo()
     security.declareObjectPublic()
 
-    ok = {'meta_type': 1, 'id': 1, 'title': 1, 'zmi_icon': 1, 'title_or_id': 1}
+    ok = {
+        'meta_type': 1,
+        'id': 1,
+        'title': 1,
+        'zmi_icon': 1,
+        'title_or_id': 1,
+    }
     security.setDefaultAccess(ok)
     security.setPermissionDefault(CHANGE_DATAMGR_PERM, ['Manager'])
     security.setPermissionDefault(MGMT_SCREEN_PERM, ['Manager'])
-    security.setPermissionDefault(ACCESS_CONTENTS_PERM,['Manager','Anonymous'])
-    security.setPermissionDefault(ARBITRARY_SESSIONDATA_PERM,['Manager'])
-    security.setPermissionDefault(ACCESS_SESSIONDATA_PERM,
-                                  ['Manager','Anonymous'])
+    security.setPermissionDefault(
+        ACCESS_CONTENTS_PERM,
+        ['Manager', 'Anonymous'],
+    )
+    security.setPermissionDefault(ARBITRARY_SESSIONDATA_PERM, ['Manager'])
+    security.setPermissionDefault(
+        ACCESS_SESSIONDATA_PERM,
+        ['Manager', 'Anonymous', ],
+    )
 
-    manage_sessiondatamgr = DTMLFile('dtml/manageDataManager',
-        globals())
+    manage_sessiondatamgr = DTMLFile(
+        'dtml/manageDataManager',
+        globals()
+    )
 
     # INTERFACE METHODS FOLLOW
 
@@ -112,7 +138,10 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             return 0
         return self._hasSessionDataObject(key)
 
-    security.declareProtected(ARBITRARY_SESSIONDATA_PERM,'getSessionDataByKey')
+    security.declareProtected(
+        ARBITRARY_SESSIONDATA_PERM,
+        'getSessionDataByKey'
+    )
     def getSessionDataByKey(self, key):
         return self._getSessionDataObjectByKey(key)
 
@@ -124,7 +153,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             raise SessionDataManagerErr(
                 'No browser id manager named %s could be found.' %
                 BROWSERID_MANAGER_NAME
-                )
+            )
         return mgr
 
     # END INTERFACE METHODS
@@ -136,8 +165,13 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         self._requestSessionName = requestName
 
     security.declareProtected(CHANGE_DATAMGR_PERM, 'manage_changeSDM')
-    def manage_changeSDM(self, title, path=None, requestName=None,
-                         REQUEST=None):
+    def manage_changeSDM(
+        self,
+        title,
+        path=None,
+        requestName=None,
+        REQUEST=None
+    ):
         """ """
         self.setContainerPath(path)
         self.setTitle(title)
@@ -148,29 +182,33 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             self.updateTraversalData(None)
         if REQUEST is not None:
             return self.manage_sessiondatamgr(
-                self, REQUEST, manage_tabs_message = 'Changes saved.'
-                )
+                self,
+                REQUEST,
+                manage_tabs_message='Changes saved.'
+            )
 
     security.declareProtected(CHANGE_DATAMGR_PERM, 'setTitle')
     def setTitle(self, title):
         """ """
-        if not title: self.title = ''
-        else: self.title = str(title)
+        if not title:
+            self.title = ''
+        else:
+            self.title = str(title)
 
     security.declareProtected(CHANGE_DATAMGR_PERM, 'setContainerPath')
     def setContainerPath(self, path=None):
         """ """
         if not path:
-            self.obpath = None # undefined state
+            self.obpath = None  # undefined state
         elif type(path) is type(''):
             if bad_path_chars_in(path):
                 raise SessionDataManagerErr(
                     'Container path contains characters invalid in a Zope '
                     'object path'
-                    )
+                )
             self.obpath = path.split('/')
         elif type(path) in (type([]), type(())):
-            self.obpath = list(path) # sequence
+            self.obpath = list(path)  # sequence
         else:
             raise SessionDataManagerErr('Bad path value %s' % path)
 
@@ -178,8 +216,8 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     def getContainerPath(self):
         """ """
         if self.obpath is not None:
-            return  '/'.join(self.obpath)
-        return '' # blank string represents undefined state
+            return '/'.join(self.obpath)
+        return ''  # blank string represents undefined state
 
     def _hasSessionDataObject(self, key):
         """ """
@@ -192,8 +230,10 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         ob = container.new_or_existing(key)
         # hasattr hides conflicts; be explicit by comparing to None
         # because otherwise __len__ of the requested object might be called!
-        if ( getattr(ob, '__of__', None) is not None and
-             getattr(ob, 'aq_parent', None) is not None ):
+        if (
+            getattr(ob, '__of__', None) is not None and
+            getattr(ob, 'aq_parent', None) is not None
+        ):
             # splice ourselves into the acquisition chain
             return ob.__of__(self.__of__(ob.aq_parent))
         return ob.__of__(self)
@@ -206,8 +246,10 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             # hasattr hides conflicts; be explicit by comparing to None
             # because otherwise __len__ of the requested object might be
             # called!
-            if ( getattr(ob, '__of__', None) is not None and
-                 getattr(ob, 'aq_parent', None) is not None ):
+            if (
+                getattr(ob, '__of__', None) is not None and
+                getattr(ob, 'aq_parent', None) is not None
+            ):
                 # splice ourselves into the acquisition chain
                 return ob.__of__(self.__of__(ob.aq_parent))
             return ob.__of__(self)
@@ -236,7 +278,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             raise SessionDataManagerErr(
                 "External session data container '%s' not found." %
                 '/'.join(self.obpath)
-                )
+            )
 
     security.declareProtected(MGMT_SCREEN_PERM, 'getRequestName')
     def getRequestName(self):
@@ -256,7 +298,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         # work though.
         parent = aq_parent(aq_inner(self))
 
-        if getattr(self,'_hasTraversalHook', None):
+        if getattr(self, '_hasTraversalHook', None):
             unregisterBeforeTraverse(parent, 'SessionDataManager')
             del self._hasTraversalHook
             self._requestSessionName = None
@@ -267,9 +309,12 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             self._hasTraversalHook = 1
             self._requestSessionName = requestSessionName
 
+
 InitializeClass(SessionDataManager)
 
+
 class SessionDataManagerTraverser(Persistent):
+
     def __init__(self, requestSessionName, sessionDataManagerName):
         self._requestSessionName = requestSessionName
         self._sessionDataManager = sessionDataManagerName

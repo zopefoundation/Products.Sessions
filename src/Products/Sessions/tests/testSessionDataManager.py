@@ -33,7 +33,7 @@ def _getDB():
         conn = db.open()
         root = conn.root()
         app = Application()
-        root['Application']= app
+        root['Application'] = app
         transaction.savepoint(optimistic=True)
         _populate(app)
         stuff['db'] = db
@@ -56,11 +56,18 @@ def _populate(app):
     import transaction
     bidmgr = BrowserIdManager(idmgr_name)
     tf = MountedTemporaryFolder(tf_name, title="Temporary Folder")
-    toc = TransientObjectContainer(toc_name, title='Temporary '
-        'Transient Object Container', timeout_mins=20)
-    session_data_manager=SessionDataManager(id=sdm_name,
-        path='/'+tf_name+'/'+toc_name, title='Session Data Manager',
-        requestName='TESTOFSESSION')
+    toc = TransientObjectContainer(
+        toc_name,
+        title='Temporary '
+        'Transient Object Container',
+        timeout_mins=20
+    )
+    session_data_manager = SessionDataManager(
+        id=sdm_name,
+        path='/' + tf_name + '/' + toc_name,
+        title='Session Data Manager',
+        requestName='TESTOFSESSION'
+    )
 
     try:
         app._delObject(idmgr_name)
@@ -113,12 +120,14 @@ class TestSessionManager(unittest.TestCase):
         del self.app
 
     def testHasId(self):
-        self.assertTrue(self.app.session_data_manager.id == \
-                        sdm_name)
+        self.assertTrue(
+            self.app.session_data_manager.id == sdm_name
+        )
 
     def testHasTitle(self):
-        self.assertTrue(self.app.session_data_manager.title \
-                        == 'Session Data Manager')
+        self.assertTrue(
+            self.app.session_data_manager.title == 'Session Data Manager'
+        )
 
     def testGetSessionDataNoCreate(self):
         sd = self.app.session_data_manager.getSessionData(0)
@@ -194,11 +203,13 @@ class TestSessionManager(unittest.TestCase):
         self.assertTrue(sdm.getSessionData().get('foo') == 'bar')
 
     def testSubcommitAssignsPJar(self):
-        global DummyPersistent # so pickle can find it
+        global DummyPersistent  # so pickle can find it
         from Persistence import Persistent
         import transaction
+
         class DummyPersistent(Persistent):
             pass
+
         sd = self.app.session_data_manager.getSessionData()
         dummy = DummyPersistent()
         sd.set('dp', dummy)

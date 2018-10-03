@@ -49,7 +49,8 @@ def TLOG(*args):
 
 
 _notfound = []
-WRITEGRANULARITY = 30  # Timing granularity for access write clustering, seconds
+WRITEGRANULARITY = 30
+# Timing granularity for access write clustering, seconds
 
 
 @implementer(
@@ -158,7 +159,8 @@ class TransientObject(Persistent, Implicit):
         return v
 
     def has_key(self, k):
-        if self._container.get(k, _notfound) is not _notfound: return 1
+        if self._container.get(k, _notfound) is not _notfound:
+            return 1
         return 0
 
     def clear(self):

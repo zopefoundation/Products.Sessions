@@ -7,13 +7,14 @@ class PreventTransactionCommit(Exception):
 
     def __str__(self):
         return "Uncommittable transaction: " % self.reason
-    
+
+
 class UncommittableJar:
     """ A jar that cannot be committed """
     def __init__(self, reason):
         self.reason = reason
         self.time = time.time()
-        
+
     def sortKey(self):
         return str(id(self))
 
@@ -28,6 +29,7 @@ class UncommittableJar:
 
     def abort(*args):
         pass
+
 
 class makeTransactionUncommittable:
     """
