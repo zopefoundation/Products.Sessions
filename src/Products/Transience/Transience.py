@@ -221,7 +221,7 @@ class TransientObjectContainer(SimpleItem):
         )
 
     def _setLimit(self, limit):
-        if type(limit) is not type(1):
+        if not isinstance(limit, int):
             raise TypeError(escape(limit), "Must be integer")
         self._limit = limit
 
@@ -835,7 +835,7 @@ class TransientObjectContainer(SimpleItem):
     def _getCallback(self, callback):
         if not callback:
             return None
-        if type(callback) is type(''):
+        if isinstance(callback, str):
             try:
                 method = self.unrestrictedTraverse(callback)
             except (KeyError, AttributeError):
@@ -895,7 +895,7 @@ class TransientObjectContainer(SimpleItem):
     security.declareProtected(CREATE_TRANSIENTS_PERM, 'new')
     def new(self, key):
         DEBUG and TLOG('new called with %s' % key)
-        if type(key) is not type(''):
+        if not isinstance(key, str):
             raise TypeError((key, "key is not a string type"))
         if key in self:
             raise KeyError("cannot duplicate key %s" % key)

@@ -200,14 +200,14 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         """ """
         if not path:
             self.obpath = None  # undefined state
-        elif type(path) is type(''):
+        elif isinstance(path, str):
             if bad_path_chars_in(path):
                 raise SessionDataManagerErr(
                     'Container path contains characters invalid in a Zope '
                     'object path'
                 )
             self.obpath = path.split('/')
-        elif type(path) in (type([]), type(())):
+        elif isinstance(path, (list, tuple)):
             self.obpath = list(path)  # sequence
         else:
             raise SessionDataManagerErr('Bad path value %s' % path)
