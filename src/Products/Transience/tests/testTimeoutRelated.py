@@ -1,17 +1,22 @@
-import ZODB # in order to get Persistence.Persistent working
-import transaction
-from Testing import makerequest
+from . import fauxtime
+from OFS.Application import Application
 from Products.Transience.Transience import TransientObjectContainer
+from Testing import makerequest
+from unittest import makeSuite
+from unittest import TestCase
+from unittest import TestSuite
+from ZODB.DemoStorage import DemoStorage
+
 import Products.Transience.Transience
 import Products.Transience.TransientObject
-from unittest import TestCase, TestSuite, makeSuite
-from ZODB.DemoStorage import DemoStorage
-from OFS.Application import Application
-from . import fauxtime
 import time as oldtime
+import transaction
+import ZODB  # in order to get Persistence.Persistent working
+
 
 WRITEGRANULARITY = 30
 stuff = {}
+
 
 def _getApp():
     app = stuff.get('app', None)
@@ -21,18 +26,20 @@ def _getApp():
         conn = db.open()
         root = conn.root()
         app = Application()
-        root['Application']= app
+        root['Application'] = app
         transaction.commit()
         stuff['app'] = app
         stuff['conn'] = conn
         stuff['db'] = db
     return app
 
+
 def _openApp():
     conn = stuff['db'].open()
     root = conn.root()
     app = root['Application']
     return conn, app
+
 
 def _delApp():
     transaction.abort()
@@ -43,14 +50,17 @@ def _delApp():
 
 
 class TestBase(TestCase):
+
     def setUp(self):
         Products.Transience.Transience.time = fauxtime
         Products.Transience.TransientObject.time = fauxtime
         Products.Transience.Transience.setStrict(1)
         self.app = makerequest.makerequest(_getApp())
         timeout = self.timeout = 1
-        sm=TransientObjectContainer(
-            id='sm', timeout_mins=timeout, title='SessionThing',
+        sm = TransientObjectContainer(
+            id='sm',
+            timeout_mins=timeout,
+            title='SessionThing',
             addNotification=addNotificationTarget,
             delNotification=delNotificationTarget)
         self.app._setObject('sm', sm)
@@ -63,7 +73,9 @@ class TestBase(TestCase):
         Products.Transience.TransientObject.time = oldtime
         Products.Transience.Transience.setStrict(0)
 
+
 class TestLastAccessed(TestBase):
+
     def testLastAccessed(self):
         sdo = self.app.sm.new_or_existing('TempObject')
         la1 = sdo.getLastAccessed()
@@ -84,7 +96,9 @@ class TestLastAccessed(TestBase):
         sdo = self.app.sm.get('TempObject')
         self.assertGreater(sdo.getLastAccessed(), la1)
 
+
 class TestNotifications(TestBase):
+
     def testAddNotification(self):
         self.app.sm.setAddNotificationTarget(addNotificationTarget)
         sdo = self.app.sm.new_or_existing('TempObject')

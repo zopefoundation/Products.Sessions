@@ -13,6 +13,7 @@
 
 import six
 
+
 if six.PY2:
     from cgi import escape as html_escape
 else:

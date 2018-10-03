@@ -13,8 +13,9 @@
 """
 Test suite for session id manager.
 """
-import unittest
 import Testing.ZopeTestCase
+import unittest
+
 
 class TestBrowserIdManager(unittest.TestCase):
 

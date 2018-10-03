@@ -12,22 +12,35 @@
 ##############################################################################
 """ Session managemnt product initialization
 """
-from Products.Sessions.interfaces import BrowserIdManagerErr    #BBB
-from Products.Sessions.interfaces import SessionDataManagerErr  #BBB
+
+# flake8: NOQA: E401
+
+# This is a file to define public API in the base namespace of the package.
+# use: isort:skip to supress all isort related warnings / errors,
+# as this file should be logically grouped imports
+
+from Products.Sessions.interfaces import BrowserIdManagerErr
+from Products.Sessions.interfaces import SessionDataManagerErr
+
 
 def commit(note):
     import transaction
     transaction.get().note(note)
     transaction.commit()
 
+
 def install_browser_id_manager(app):
     if hasattr(app, 'browser_id_manager'):
         return
 
     from . import BrowserIdManager
-    bid = BrowserIdManager.BrowserIdManager('browser_id_manager', 'Browser Id Manager')
+    bid = BrowserIdManager.BrowserIdManager(
+        'browser_id_manager',
+        'Browser Id Manager',
+    )
     app._setObject('browser_id_manager', bid)
     commit(u'Added browser_id_manager')
+
 
 def install_session_data_manager(app):
     # Ensure that a session data manager exists
@@ -35,12 +48,15 @@ def install_session_data_manager(app):
         return
 
     from . import SessionDataManager
-    sdm = SessionDataManager.SessionDataManager('session_data_manager',
+    sdm = SessionDataManager.SessionDataManager(
+        'session_data_manager',
         title='Session Data Manager',
         path='/temp_folder/session_data',
-        requestName='SESSION')
+        requestName='SESSION',
+    )
     app._setObject('session_data_manager', sdm)
     commit(u'Added session_data_manager')
+
 
 def initialize(context):
 
@@ -79,12 +95,12 @@ def initialize(context):
     security = ModuleSecurityInfo('Products.Transience')
     security.declarePublic('MaxTransientObjectsExceeded')
 
-    #BBB for names which should be imported from Products.Sessions.interfaces
+    # BBB: for names which should be imported from Products.Sessions.interfaces
     security = ModuleSecurityInfo('Products.Sessions')
     security.declarePublic('BrowserIdManagerErr')
     security.declarePublic('SessionDataManagerErr')
 
-    app = context.getApplication() # new API added in Zope 4.0b5
+    app = context.getApplication()  # new API added in Zope 4.0b5
     if app is not None:
         install_browser_id_manager(app)
         install_session_data_manager(app)

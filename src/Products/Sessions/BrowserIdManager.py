@@ -12,6 +12,7 @@
 ############################################################################
 
 
+from ._compat import html_escape as escape
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_inner
@@ -19,7 +20,6 @@ from Acquisition import aq_parent
 from Acquisition import Implicit
 from App.Management import Tabs
 from App.special_dtml import DTMLFile
-from ._compat import html_escape as escape
 from hashlib import sha256
 from OFS.owner import Owned
 from OFS.role import RoleManager
@@ -42,6 +42,8 @@ from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 import binascii
 import logging
 import os
+# Use the system PRNG if possible
+import random
 import re
 import six
 import sys
@@ -63,8 +65,6 @@ TRAVERSAL_APPHANDLE = 'BrowserIdManager'
 
 LOG = logging.getLogger('Zope.BrowserIdManager')
 
-# Use the system PRNG if possible
-import random
 
 try:
     random = random.SystemRandom()

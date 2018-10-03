@@ -1,5 +1,6 @@
 import time
 
+
 class PreventTransactionCommit(Exception):
     def __init__(self, reason):
         self. reason = reason
@@ -36,4 +37,3 @@ class makeTransactionUncommittable:
     def __init__(self, transaction, reason):
         self._p_jar = UncommittableJar(reason)
         transaction.register(self)
-        

@@ -11,33 +11,33 @@
 #
 ##############################################################################
 from __future__ import print_function
-
-import time
-
-from Testing import makerequest
-import ZODB # in order to get Persistence.Persistent working
-import transaction
-import Acquisition
-from Products.Sessions.BrowserIdManager import BrowserIdManager, \
-     getNewBrowserId
-from Products.Sessions.SessionDataManager import \
-    SessionDataManager
-from Products.Transience.Transience import \
-    TransientObjectContainer
-from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
-from ZODB.POSException import ConflictError, \
-     ReadConflictError, BTreesConflictError
-
-
-from unittest import TestCase, TestSuite, makeSuite
-import threading, random
-from ZODB.DemoStorage import DemoStorage
 from OFS.Application import Application
-import traceback
-
+from Products.Sessions.BrowserIdManager import BrowserIdManager
+from Products.Sessions.BrowserIdManager import getNewBrowserId
+from Products.Sessions.SessionDataManager import SessionDataManager
+from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from Products.Transience.tests import fauxtime
+from Products.Transience.Transience import TransientObjectContainer
+from Testing import makerequest
+from unittest import makeSuite
+from unittest import TestCase
+from unittest import TestSuite
+from ZODB.DemoStorage import DemoStorage
+from ZODB.POSException import BTreesConflictError
+from ZODB.POSException import ConflictError
+from ZODB.POSException import ReadConflictError
+
+import Acquisition
 import Products.Transience.Transience
 import Products.Transience.TransientObject
+import random
+import threading
+import time
+import traceback
+import transaction
+import ZODB  # in order to get Persistence.Persistent working
+
+
 Products.Transience.Transience.time = fauxtime
 Products.Transience.TransientObject.time = fauxtime
 

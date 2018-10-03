@@ -10,26 +10,20 @@
 # FOR A PARTICULAR PURPOSE
 #
 ############################################################################
-from logging import getLogger
-import re
-import sys
-
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition import Implicit
-from App.special_dtml import DTMLFile
 from App.Management import Tabs
+from App.special_dtml import DTMLFile
+from logging import getLogger
 from OFS.owner import Owned
 from OFS.role import RoleManager
 from OFS.SimpleItem import Item
 from Persistence import Persistent
-from ZPublisher.BeforeTraverse import registerBeforeTraverse
-from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
-from ZODB.POSException import ConflictError
-from zope.interface import implementer
-
+from Products.Sessions.BrowserIdManager import BROWSERID_MANAGER_NAME
+from Products.Sessions.common import DEBUG
 from Products.Sessions.interfaces import ISessionDataManager
 from Products.Sessions.interfaces import SessionDataManagerErr
 from Products.Sessions.SessionPermissions import ACCESS_CONTENTS_PERM
@@ -37,8 +31,14 @@ from Products.Sessions.SessionPermissions import ACCESS_SESSIONDATA_PERM
 from Products.Sessions.SessionPermissions import ARBITRARY_SESSIONDATA_PERM
 from Products.Sessions.SessionPermissions import CHANGE_DATAMGR_PERM
 from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
-from Products.Sessions.common import DEBUG
-from Products.Sessions.BrowserIdManager import BROWSERID_MANAGER_NAME
+from ZODB.POSException import ConflictError
+from zope.interface import implementer
+from ZPublisher.BeforeTraverse import registerBeforeTraverse
+from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
+
+import re
+import sys
+
 
 bad_path_chars_in=re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search
 LOG = getLogger('SessionDataManager')

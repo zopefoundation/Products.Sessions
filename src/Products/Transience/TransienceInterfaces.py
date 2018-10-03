@@ -13,68 +13,69 @@
 """
 Transient Objects
 
-  TransientObjectContainers are objects which contain zero or more
-  TransientObjects.  They implement the following interfaces:
+TransientObjectContainers are objects which contain zero or more
+TransientObjects.  They implement the following interfaces:
 
-    - ItemWithId
+- ItemWithId
 
-    - StringKeyedHomogenousItemContainer
+- StringKeyedHomogenousItemContainer
 
-    - TransientItemContainer
+- TransientItemContainer
 
-  In particular, one uses the 'new_or_existing' method on
-  TransientObjectContainers to retrieve or create a TransientObject
-  based on a given string key.
+In particular, one uses the 'new_or_existing' method on
+TransientObjectContainers to retrieve or create a TransientObject
+based on a given string key.
 
-  If add or delete notifications are registered with the container,
-  they will be called back when items in the container are added or
-  deleted, with the item and the container as arguments.  The
-  callbacks may be registered either as bound methods, functions, or
-  physical paths to Zope Script (Python Script or External Method)
-  objects (e.g. '/some/resolvable/script/name').  In any of these
-  cases, the delete and add notifications will be called with
-  arguments allowing the callbacks to operate on data representing the
-  state of the transient object at the moment of addition or deletion
-  (see setAddNotificationTarget and setDelNotificationTarget below).
+If add or delete notifications are registered with the container,
+they will be called back when items in the container are added or
+deleted, with the item and the container as arguments.  The
+callbacks may be registered either as bound methods, functions, or
+physical paths to Zope Script (Python Script or External Method)
+objects (e.g. '/some/resolvable/script/name').  In any of these
+cases, the delete and add notifications will be called with
+arguments allowing the callbacks to operate on data representing the
+state of the transient object at the moment of addition or deletion
+(see setAddNotificationTarget and setDelNotificationTarget below).
 
-  TransientObjects are containerish items held within
-  TransientObjectContainers and they implement the following
-  interfaces:
+TransientObjects are containerish items held within
+TransientObjectContainers and they implement the following
+interfaces:
 
-    - ItemWithId
+- ItemWithId
 
-    - Transient
+- Transient
 
-    - DictionaryLike
+- DictionaryLike
 
-    - TTWDictionary
+- TTWDictionary
 
-    - ImmutablyValuedMappingOfPickleableObjects
+- ImmutablyValuedMappingOfPickleableObjects
 
-  Of particular importance is the idea that TransientObjects do not
-  offer the contract of "normal" ZODB container objects; mutations
-  made to items which are contained within a TransientObject cannot be
-  expected to persist.  Developers need explicitly resave the state of
-  a subobject of a TransientObject by placing it back into the
-  TransientObject via the TransientObject.__setitem__ or .set methods.
-  This requirement is due to the desire to allow people to create
-  alternate TransientObject implementations that are *not* based on
-  the ZODB.  Practically, this means that when working with a
-  TransientObject which contains mutable subobjects (even if they
-  inherit from Persistence.Persistent), you *must* resave them back
-  into the TransientObject.  For example::
+Of particular importance is the idea that TransientObjects do not
+offer the contract of "normal" ZODB container objects; mutations
+made to items which are contained within a TransientObject cannot be
+expected to persist.  Developers need explicitly resave the state of
+a subobject of a TransientObject by placing it back into the
+TransientObject via the TransientObject.__setitem__ or .set methods.
+This requirement is due to the desire to allow people to create
+alternate TransientObject implementations that are *not* based on
+the ZODB.  Practically, this means that when working with a
+TransientObject which contains mutable subobjects (even if they
+inherit from Persistence.Persistent), you *must* resave them back
+into the TransientObject.  For example::
 
-    class Foo(Persistence.Persistent):
-        pass
+class Foo(Persistence.Persistent):
+    pass
 
-    transient_object = transient_data_container.new('t')
-    foo = transient_object['foo'] = Foo()
-    foo.bar = 1
-    # the following is *necessary* to repersist the data
-    transient_object['foo'] = foo
-  """
+transient_object = transient_data_container.new('t')
+foo = transient_object['foo'] = Foo()
+foo.bar = 1
+# the following is *necessary* to repersist the data
+transient_object['foo'] = foo
+"""
 
 from zope.interface import Interface
+
 
 class Transient(Interface):
     def invalidate():
@@ -131,21 +132,16 @@ class Transient(Interface):
         container.
         """
 
+
 class DictionaryLike(Interface):
     def keys():
-        """
-        Return sequence of key elements.
-        """
+        """Return sequence of key elements."""
 
     def values():
-        """
-        Return sequence of value elements.
-        """
+        """Return sequence of value elements."""
 
     def items():
-        """
-        Return sequence of (key, value) elements.
-        """
+        """Return sequence of (key, value) elements."""
 
     def get(k, default='marker'):
         """
@@ -154,14 +150,10 @@ class DictionaryLike(Interface):
         """
 
     def has_key(k):
-        """
-        Return true if item referenced by key k exists.
-        """
+        """Return true if item referenced by key k exists."""
 
     def clear():
-        """
-        Remove all key/value pairs.
-        """
+        """Remove all key/value pairs."""
 
     def update(d):
         """
@@ -170,14 +162,18 @@ class DictionaryLike(Interface):
 
     # DictionaryLike does NOT support copy()
 
+
 class ItemWithId(Interface):
+
     def getId():
         """
         Returns a meaningful unique id for the object.  Note that this id
         need not the key under which the object is stored in its container.
         """
 
+
 class TTWDictionary(DictionaryLike, ItemWithId):
+
     def set(k, v):
         """
         Call __setitem__ with key k, value v.
@@ -193,7 +189,9 @@ class TTWDictionary(DictionaryLike, ItemWithId):
         Call __setitem__ with key k, value v.
         """
 
+
 class ImmutablyValuedMappingOfPickleableObjects(Interface):
+
     def __setitem__(k, v):
         """
         Sets key k to value v, if k is both hashable and pickleable and
@@ -215,6 +213,7 @@ class ImmutablyValuedMappingOfPickleableObjects(Interface):
         """
         Remove the key/value pair related to key k.
         """
+
 
 class HomogeneousItemContainer(Interface):
     """
@@ -238,7 +237,9 @@ class HomogeneousItemContainer(Interface):
         return false.
         """
 
+
 class StringKeyedHomogeneousItemContainer(HomogeneousItemContainer):
+
     def new(k):
         """
         Creates a new subobject of the type supported by this container
@@ -271,7 +272,9 @@ class StringKeyedHomogeneousItemContainer(HomogeneousItemContainer):
         Returned object is acquisition-wrapped in self.
         """
 
+
 class TransientItemContainer(Interface):
+
     def setTimeoutMinutes(timeout_mins):
         """
         Set the number of minutes of inactivity allowable for subobjects

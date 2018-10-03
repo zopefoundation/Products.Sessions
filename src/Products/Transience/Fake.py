@@ -15,7 +15,9 @@ Module used for testing transience (BTree-API-conforming data structure)
 """
 
 from Persistence.mapping import PersistentMapping
+
 import sys
+
 
 class FakeIOBTree(PersistentMapping):
     def keys(self, min, max):
@@ -30,4 +32,3 @@ class FakeIOBTree(PersistentMapping):
             if min <= k <= max:
                 L.append(k)
         return L
-    

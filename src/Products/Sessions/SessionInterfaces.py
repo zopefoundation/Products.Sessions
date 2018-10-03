@@ -12,11 +12,12 @@
 ############################################################################
 # BBB location for APIs now defined in Products.Sessions.interfaces
 
+from Products.Sessions.interfaces import BrowserIdManagerErr
 from Products.Sessions.interfaces import IBrowserIdManager
+from Products.Sessions.interfaces import ISessionDataManager
+from Products.Sessions.interfaces import SessionDataManagerErr
+
+
 BrowserIdManagerInterface = IBrowserIdManager # BBB
 
-from Products.Sessions.interfaces import ISessionDataManager
 SessionDataManagerInterface = ISessionDataManager
-
-from Products.Sessions.interfaces import SessionDataManagerErr
-from Products.Sessions.interfaces import BrowserIdManagerErr
