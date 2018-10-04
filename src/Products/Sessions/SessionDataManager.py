@@ -123,14 +123,14 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
 
     # INTERFACE METHODS FOLLOW
 
-    security.declareProtected(ACCESS_SESSIONDATA_PERM, 'getSessionData')
+    @security.protected(ACCESS_SESSIONDATA_PERM)
     def getSessionData(self, create=1):
         """ """
         key = self.getBrowserIdManager().getBrowserId(create=create)
         if key is not None:
             return self._getSessionDataObject(key)
 
-    security.declareProtected(ACCESS_SESSIONDATA_PERM, 'hasSessionData')
+    @security.protected(ACCESS_SESSIONDATA_PERM)
     def hasSessionData(self):
         """ """
         key = self.getBrowserIdManager().getBrowserId(create=0)
@@ -138,14 +138,11 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             return 0
         return self._hasSessionDataObject(key)
 
-    security.declareProtected(
-        ARBITRARY_SESSIONDATA_PERM,
-        'getSessionDataByKey'
-    )
+    @security.protected(ARBITRARY_SESSIONDATA_PERM)
     def getSessionDataByKey(self, key):
         return self._getSessionDataObjectByKey(key)
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserIdManager')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getBrowserIdManager(self):
         """ """
         mgr = getattr(self, BROWSERID_MANAGER_NAME, None)
@@ -164,7 +161,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         self.setTitle(title)
         self._requestSessionName = requestName
 
-    security.declareProtected(CHANGE_DATAMGR_PERM, 'manage_changeSDM')
+    @security.protected(CHANGE_DATAMGR_PERM)
     def manage_changeSDM(
         self,
         title,
@@ -187,7 +184,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
                 manage_tabs_message='Changes saved.'
             )
 
-    security.declareProtected(CHANGE_DATAMGR_PERM, 'setTitle')
+    @security.protected(CHANGE_DATAMGR_PERM)
     def setTitle(self, title):
         """ """
         if not title:
@@ -195,7 +192,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         else:
             self.title = str(title)
 
-    security.declareProtected(CHANGE_DATAMGR_PERM, 'setContainerPath')
+    @security.protected(CHANGE_DATAMGR_PERM)
     def setContainerPath(self, path=None):
         """ """
         if not path:
@@ -212,7 +209,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         else:
             raise SessionDataManagerErr('Bad path value %s' % path)
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'getContainerPath')
+    @security.protected(MGMT_SCREEN_PERM)
     def getContainerPath(self):
         """ """
         if self.obpath is not None:
@@ -280,7 +277,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
                 '/'.join(self.obpath)
             )
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'getRequestName')
+    @security.protected(MGMT_SCREEN_PERM)
     def getRequestName(self):
         """ """
         return self._requestSessionName or ''
