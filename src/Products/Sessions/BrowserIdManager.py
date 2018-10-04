@@ -620,7 +620,7 @@ class BrowserIdManagerTraverser(Persistent):
                     request.browser_id_ = browser_id = getNewBrowserId()
                 request._script.append(quote(bid_name))
                 request._script.append(quote(browser_id))
-        except:
+        except Exception:
             LOG.error('indeterminate error', exc_info=sys.exc_info())
 
 
