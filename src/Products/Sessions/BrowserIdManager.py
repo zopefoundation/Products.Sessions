@@ -321,7 +321,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
 
         o Enforce "valid" values.
         """
-        if not (type(k) is type('') and k and not badidnamecharsin(k)):
+        if not (isinstance(k, str) and k and not badidnamecharsin(k)):
             raise BrowserIdManagerErr(
                 'Bad id name string %s' % escape(repr(k))
             )
@@ -347,7 +347,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     security.declareProtected(CHANGE_IDMGR_PERM, 'setCookiePath')
     def setCookiePath(self, path=''):
         """ sets cookie 'path' element for id cookie """
-        if not (type(path) is type('') and not badcookiecharsin(path)):
+        if not (isinstance(path, str) and not badcookiecharsin(path)):
             raise BrowserIdManagerErr(
                 'Bad cookie path %s' % escape(repr(path))
             )
@@ -361,7 +361,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     security.declareProtected(CHANGE_IDMGR_PERM, 'setCookieLifeDays')
     def setCookieLifeDays(self, days):
         """ offset for id cookie 'expires' element """
-        if type(days) not in (type(1), type(1.0)):
+        if not isinstance(days, (int, float)):
             raise BrowserIdManagerErr(
                 'Bad cookie lifetime in days %s '
                 '(requires integer value)' % escape(repr(days))
@@ -376,7 +376,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     security.declareProtected(CHANGE_IDMGR_PERM, 'setCookieDomain')
     def setCookieDomain(self, domain):
         """ sets cookie 'domain' element for id cookie """
-        if type(domain) is not type(''):
+        if not isinstance(domain, str):
             raise BrowserIdManagerErr(
                 'Cookie domain must be string: %s' % escape(repr(domain))
             )
