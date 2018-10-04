@@ -110,7 +110,6 @@ class TestBrowserIdManager(unittest.TestCase):
         self.assertEqual(response.cookies['bid'], {'path': '/', 'value': bid})
 
     def test_getBrowserId_considers_replaced_characters_well_formed(self):
-        from Products.Sessions.BrowserIdManager import getNewBrowserId
         bid = '92778276A8eYSMj-.iI'
         request = DummyRequest(browser_id_=bid)
         mgr = self._makeOne(request)
