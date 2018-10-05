@@ -11,7 +11,7 @@ matrix:
           sudo: true
 install:
     - pip install coveralls coverage
-    - pip install -U setuptools==33.1.1
+    - pip install -U setuptools
     - pip install zc.buildout
     - buildout bootstrap
     - buildout
