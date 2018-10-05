@@ -7,6 +7,8 @@ Changelog
 - Update the forms to Bootstrap ZMI.
   (`#8 <https://github.com/zopefoundation/Products.Sessions/pull/8>`_)
 
+- Add support for Python 3.7.
+
 
 4.1 (2018-06-06)
 ----------------
