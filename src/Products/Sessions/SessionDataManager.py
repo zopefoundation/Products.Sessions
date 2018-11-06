@@ -228,8 +228,8 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         # hasattr hides conflicts; be explicit by comparing to None
         # because otherwise __len__ of the requested object might be called!
         if (
-            getattr(ob, '__of__', None) is not None and
-            getattr(ob, 'aq_parent', None) is not None
+            getattr(ob, '__of__', None) is not None
+            and getattr(ob, 'aq_parent', None) is not None
         ):
             # splice ourselves into the acquisition chain
             return ob.__of__(self.__of__(ob.aq_parent))
@@ -244,8 +244,8 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             # because otherwise __len__ of the requested object might be
             # called!
             if (
-                getattr(ob, '__of__', None) is not None and
-                getattr(ob, 'aq_parent', None) is not None
+                getattr(ob, '__of__', None) is not None
+                and getattr(ob, 'aq_parent', None) is not None
             ):
                 # splice ourselves into the acquisition chain
                 return ob.__of__(self.__of__(ob.aq_parent))
