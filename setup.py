@@ -18,7 +18,7 @@ from setuptools import setup
 
 setup(
     name='Products.Sessions',
-    version='4.2',
+    version='4.3.dev0',
     url='https://github.com/zopefoundation/Products.Sessions/',
     license='ZPL 2.1',
     description="Zope session management.",
