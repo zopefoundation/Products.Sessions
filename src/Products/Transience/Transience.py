@@ -914,8 +914,8 @@ class TransientObjectContainer(SimpleItem):
         # timeout_secs = timeout_mins * 60
 
         if (
-            timeout_mins != self.getTimeoutMinutes() or
-            period_secs != self.getPeriodSeconds()
+            timeout_mins != self.getTimeoutMinutes()
+            or period_secs != self.getPeriodSeconds()
         ):
             # do nothing unless something has changed
             self._setTimeout(timeout_mins, period_secs)

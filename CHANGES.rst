@@ -1,7 +1,13 @@
 Changelog
 =========
 
-4.2 (unreleased)
+4.3 (unreleased)
+----------------
+
+- Nothing changed yet.
+
+
+4.2 (2018-11-06)
 ----------------
 
 - Update the forms to Bootstrap ZMI.

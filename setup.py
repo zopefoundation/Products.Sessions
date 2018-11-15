@@ -18,14 +18,15 @@ from setuptools import setup
 
 setup(
     name='Products.Sessions',
-    version='4.2.dev0',
+    version='4.3.dev0',
     url='https://github.com/zopefoundation/Products.Sessions/',
     license='ZPL 2.1',
     description="Zope session management.",
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
-    long_description=(open('README.rst').read() + '\n' +
-                      open('CHANGES.rst').read()),
+    long_description=(open('README.rst').read()
+                      + '\n'
+                      + open('CHANGES.rst').read()),
     packages=find_packages('src'),
     namespace_packages=['Products'],
     package_dir={'': 'src'},
