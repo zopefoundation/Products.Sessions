@@ -4,7 +4,8 @@ Changelog
 4.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix ZMI layout.
+  (`#19 <https://github.com/zopefoundation/Products.Sessions/pull/19>`_)
 
 
 4.2 (2018-11-06)
