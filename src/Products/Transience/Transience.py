@@ -859,23 +859,16 @@ class TransientObjectContainer(SimpleItem):
             except:
                 # dont raise, just log
                 path = self.getPhysicalPath()
-                LOG.warning(
-                    '%s failed when calling %s in %s' % (
-                        name,
-                        callback,
-                        '/'.join(path),
-                    ),
-                    exc_info=sys.exc_info(),
-                )
+                LOG.warning('%s failed when calling %s in %s',
+                            name, callback, '/'.join(path),
+                            exc_info=sys.exc_info())
             finally:
                 setSecurityManager(sm)
         else:
-            err = '%s in %s attempted to call non-callable %s'
             path = self.getPhysicalPath()
-            LOG.warning(
-                err % (name, '/'.join(path), callback),
-                exc_info=sys.exc_info(),
-            )
+            LOG.warning('%s in %s attempted to call non-callable %s',
+                        name, '/'.join(path), callback,
+                        exc_info=sys.exc_info())
 
     def getId(self):
         return self.id
@@ -910,10 +903,8 @@ class TransientObjectContainer(SimpleItem):
         hardcoded to 20. """
         # timeout_secs = timeout_mins * 60
 
-        if (
-            timeout_mins != self.getTimeoutMinutes() or
-            period_secs != self.getPeriodSeconds()
-        ):
+        if timeout_mins != self.getTimeoutMinutes() or \
+           period_secs != self.getPeriodSeconds():
             # do nothing unless something has changed
             self._setTimeout(timeout_mins, period_secs)
             self._reset()

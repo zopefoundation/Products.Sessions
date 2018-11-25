@@ -540,7 +540,7 @@ class TestBrowserIdManager(unittest.TestCase):
         try:
             mgr.getBrowserId()  # doesn't raise
         except Exception:
-            self.assertTrue(False)
+            self.fail()
         self.assertEqual(len(response.cookies), 0)
 
     def test_hasTraversalHook_missing(self):
