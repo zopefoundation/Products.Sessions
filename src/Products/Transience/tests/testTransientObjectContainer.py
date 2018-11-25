@@ -294,6 +294,10 @@ class TestTransientObjectContainer(TestCase):
         self.assertEqual(self.t.getTimeoutMinutes(), 10)
         self.assertEqual(self.t.getPeriodSeconds(), 30)
 
+        # Make sure we always return an integer, our ZMI forms require it
+        self.t._timeout_secs = 125
+        self.assertTrue(isinstance(self.t.getTimeoutMinutes(), int))
+
     def test_new(self):
         t = self.t.new('foobieblech')
         self.assertTrue(issubclass(t.__class__, TransientObject))
