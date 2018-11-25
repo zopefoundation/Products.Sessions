@@ -148,7 +148,7 @@ class TransientObjectContainer(SimpleItem):
         ['Manager', ],
     )
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'manage_container')
+    security.declareProtected(MGMT_SCREEN_PERM, 'manage_container')  # NOQA: D001,E501  # @protected --> decorators only work on function / method definitions not on variables.
     manage_container = HTMLFile(
         'dtml/manageTransientObjectContainer',
         globals()
@@ -221,7 +221,7 @@ class TransientObjectContainer(SimpleItem):
         )
 
     def _setLimit(self, limit):
-        if type(limit) is not type(1):
+        if not isinstance(limit, int):
             raise TypeError(escape(limit), "Must be integer")
         self._limit = limit
 
@@ -519,7 +519,7 @@ class TransientObjectContainer(SimpleItem):
     def __len__(self):
         return self._length()
 
-    security.declareProtected(ACCESS_TRANSIENTS_PERM, 'get')
+    @security.protected(ACCESS_TRANSIENTS_PERM)
     def get(self, k, default=None):
         DEBUG and TLOG('get: called with key %s, default %s' % (k, default))
         if self._timeout_slices:
@@ -533,7 +533,7 @@ class TransientObjectContainer(SimpleItem):
             return default
         return self._wrap(item)
 
-    security.declareProtected(ACCESS_TRANSIENTS_PERM, '__contains__')
+    @security.protected(ACCESS_TRANSIENTS_PERM)
     def __contains__(self, k):
         if self._timeout_slices:
             current_ts = getCurrentTimeslice(self._period)
@@ -835,7 +835,7 @@ class TransientObjectContainer(SimpleItem):
     def _getCallback(self, callback):
         if not callback:
             return None
-        if type(callback) is type(''):
+        if isinstance(callback, str):
             try:
                 method = self.unrestrictedTraverse(callback)
             except (KeyError, AttributeError):
@@ -854,14 +854,22 @@ class TransientObjectContainer(SimpleItem):
         if callable(callback):
             sm = getSecurityManager()
             try:
-                newSecurityManager(None, nobody)
-                callback(item, self)
-            except:
-                # dont raise, just log
-                path = self.getPhysicalPath()
-                LOG.warning('%s failed when calling %s in %s',
-                            name, callback, '/'.join(path),
-                            exc_info=sys.exc_info())
+                user = sm.getUser()
+                try:
+                    newSecurityManager(None, nobody)
+                    callback(item, self)
+                except Exception as err:
+                    # dont raise, just log
+                    path = self.getPhysicalPath()
+                    LOG.warning(
+                        '%s failed when calling %s in %s' % (
+                            name,
+                            callback,
+                            '/'.join(path),
+                        ),
+                        exc_info=sys.exc_info(),
+                    )
+                    LOG.warning(err.msg)
             finally:
                 setSecurityManager(sm)
         else:
@@ -873,7 +881,7 @@ class TransientObjectContainer(SimpleItem):
     def getId(self):
         return self.id
 
-    security.declareProtected(CREATE_TRANSIENTS_PERM, 'new_or_existing')
+    @security.protected(CREATE_TRANSIENTS_PERM)
     def new_or_existing(self, key):
         DEBUG and TLOG('new_or_existing called with %s' % key)
         item = self.get(key, _marker)
@@ -883,10 +891,10 @@ class TransientObjectContainer(SimpleItem):
             item = self._wrap(item)
         return item
 
-    security.declareProtected(CREATE_TRANSIENTS_PERM, 'new')
+    @security.protected(CREATE_TRANSIENTS_PERM)
     def new(self, key):
         DEBUG and TLOG('new called with %s' % key)
-        if type(key) is not type(''):
+        if not isinstance(key, str):
             raise TypeError((key, "key is not a string type"))
         if key in self:
             raise KeyError("cannot duplicate key %s" % key)
@@ -896,7 +904,7 @@ class TransientObjectContainer(SimpleItem):
 
     # TransientItemContainer methods
 
-    security.declareProtected(MANAGE_CONTAINER_PERM, 'setTimeoutMinutes')
+    @security.protected(MANAGE_CONTAINER_PERM)
     def setTimeoutMinutes(self, timeout_mins, period_secs=20):
         """ The period_secs parameter is defaulted to preserve backwards API
         compatibility.  In older versions of this code, period was
@@ -917,55 +925,49 @@ class TransientObjectContainer(SimpleItem):
         """ """
         return self._period
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'getSubobjectLimit')
+    @security.protected(MGMT_SCREEN_PERM)
     def getSubobjectLimit(self):
         """ """
         return self._limit
 
-    security.declareProtected(MANAGE_CONTAINER_PERM, 'setSubobjectLimit')
+    @security.protected(MANAGE_CONTAINER_PERM)
     def setSubobjectLimit(self, limit):
         """ """
         if limit != self.getSubobjectLimit():
             self._setLimit(limit)
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'getAddNotificationTarget')
+    @security.protected(MGMT_SCREEN_PERM)
     def getAddNotificationTarget(self):
         return self._addCallback or ''
 
-    security.declareProtected(
-        MANAGE_CONTAINER_PERM,
-        'setAddNotificationTarget',
-    )
+    @security.protected(MANAGE_CONTAINER_PERM)
     def setAddNotificationTarget(self, f):
         self._addCallback = f
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'getDelNotificationTarget')
+    @security.protected(MGMT_SCREEN_PERM)
     def getDelNotificationTarget(self):
         return self._delCallback or ''
 
-    security.declareProtected(
-        MANAGE_CONTAINER_PERM,
-        'setDelNotificationTarget',
-    )
+    @security.protected(MANAGE_CONTAINER_PERM)
     def setDelNotificationTarget(self, f):
         self._delCallback = f
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'disableInbandHousekeeping')
+    @security.protected(MGMT_SCREEN_PERM)
     def disableInbandHousekeeping(self):
         """ No longer perform inband housekeeping """
         self._inband_housekeeping = False
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'enableInbandHousekeeping')
+    @security.protected(MGMT_SCREEN_PERM)
     def enableInbandHousekeeping(self):
         """ (Re)enable inband housekeeping """
         self._inband_housekeeping = True
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'isInbandHousekeepingEnabled')
+    @security.protected(MGMT_SCREEN_PERM)
     def isInbandHousekeepingEnabled(self):
         """ Report if inband housekeeping is enabled """
         return self._inband_housekeeping
 
-    security.declareProtected('View', 'housekeep')
+    @security.protected('View')
     def housekeep(self):
         """ Call this from a scheduler at least every
         self._period * (SPARE_BUCKETS - 1) seconds to perform out of band
@@ -981,10 +983,7 @@ class TransientObjectContainer(SimpleItem):
         self._replentish(now)
         self._gc(now)
 
-    security.declareProtected(
-        MANAGE_CONTAINER_PERM,
-        'manage_changeTransientObjectContainer',
-    )
+    @security.protected(MANAGE_CONTAINER_PERM)
     def manage_changeTransientObjectContainer(
         self,
         title='',

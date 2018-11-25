@@ -190,7 +190,10 @@ class TestSessionManager(unittest.TestCase):
         sd = sdm.getSessionData()
         sd['test'] = 'Its alive!  Alive!'
         sd.invalidate()
-        self.assertTrue(not sdm.getSessionData().has_key('test'))
+        # getSessionData() object did not implement a ``__contains__`` method
+        # so a new style ```'test' not in sdm.getSessionData() did not work.```
+        self.assertTrue(not sdm.getSessionData().has_key('test'))  # NOQA: W601
+        # self.assertTrue('test' not in sdm.getSessionData())
 
     def testGhostUnghostSessionManager(self):
         import transaction
@@ -250,7 +253,7 @@ class TestSessionManager(unittest.TestCase):
         self.app.REQUEST['PARENTS'] = [self.app]
         self.app.REQUEST['URL'] = 'a'
         self.app.REQUEST.traverse('/')
-        self.assertTrue(self.app.REQUEST.has_key('TESTOFSESSION'))
+        self.assertTrue('TESTOFSESSION' in self.app.REQUEST)
 
     def testUnlazifyAutoPopulated(self):
         from Acquisition import aq_base

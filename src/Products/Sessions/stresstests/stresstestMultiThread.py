@@ -211,10 +211,11 @@ class BaseReaderWriter(threading.Thread):
                     print("B", end=' ')
                 except ConflictError:
                     print("W", end=' ')
-                except:
+                except Exception as err:
                     transaction.abort()
                     print(log_time())
                     traceback.print_exc()
+                    print(err.msg)
                     raise
 
                 i = i + 1

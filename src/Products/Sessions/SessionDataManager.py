@@ -123,14 +123,14 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
 
     # INTERFACE METHODS FOLLOW
 
-    security.declareProtected(ACCESS_SESSIONDATA_PERM, 'getSessionData')
+    @security.protected(ACCESS_SESSIONDATA_PERM)
     def getSessionData(self, create=1):
         """ """
         key = self.getBrowserIdManager().getBrowserId(create=create)
         if key is not None:
             return self._getSessionDataObject(key)
 
-    security.declareProtected(ACCESS_SESSIONDATA_PERM, 'hasSessionData')
+    @security.protected(ACCESS_SESSIONDATA_PERM)
     def hasSessionData(self):
         """ """
         key = self.getBrowserIdManager().getBrowserId(create=0)
@@ -138,14 +138,11 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             return 0
         return self._hasSessionDataObject(key)
 
-    security.declareProtected(
-        ARBITRARY_SESSIONDATA_PERM,
-        'getSessionDataByKey'
-    )
+    @security.protected(ARBITRARY_SESSIONDATA_PERM)
     def getSessionDataByKey(self, key):
         return self._getSessionDataObjectByKey(key)
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserIdManager')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getBrowserIdManager(self):
         """ """
         mgr = getattr(self, BROWSERID_MANAGER_NAME, None)
@@ -164,7 +161,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         self.setTitle(title)
         self._requestSessionName = requestName
 
-    security.declareProtected(CHANGE_DATAMGR_PERM, 'manage_changeSDM')
+    @security.protected(CHANGE_DATAMGR_PERM)
     def manage_changeSDM(
         self,
         title,
@@ -187,7 +184,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
                 manage_tabs_message='Changes saved.'
             )
 
-    security.declareProtected(CHANGE_DATAMGR_PERM, 'setTitle')
+    @security.protected(CHANGE_DATAMGR_PERM)
     def setTitle(self, title):
         """ """
         if not title:
@@ -195,24 +192,24 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         else:
             self.title = str(title)
 
-    security.declareProtected(CHANGE_DATAMGR_PERM, 'setContainerPath')
+    @security.protected(CHANGE_DATAMGR_PERM)
     def setContainerPath(self, path=None):
         """ """
         if not path:
             self.obpath = None  # undefined state
-        elif type(path) is type(''):
+        elif isinstance(path, str):
             if bad_path_chars_in(path):
                 raise SessionDataManagerErr(
                     'Container path contains characters invalid in a Zope '
                     'object path'
                 )
             self.obpath = path.split('/')
-        elif type(path) in (type([]), type(())):
+        elif isinstance(path, (list, tuple)):
             self.obpath = list(path)  # sequence
         else:
             raise SessionDataManagerErr('Bad path value %s' % path)
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'getContainerPath')
+    @security.protected(MGMT_SCREEN_PERM)
     def getContainerPath(self):
         """ """
         if self.obpath is not None:
@@ -270,13 +267,13 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             return self.unrestrictedTraverse(self.obpath)
         except ConflictError:
             raise
-        except:
+        except Exception:
             raise SessionDataManagerErr(
                 "External session data container '%s' not found." %
                 '/'.join(self.obpath)
             )
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'getRequestName')
+    @security.protected(MGMT_SCREEN_PERM)
     def getRequestName(self):
         """ """
         return self._requestSessionName or ''
@@ -335,7 +332,7 @@ class SessionDataManagerTraverser(Persistent):
                 sdmName = sdmName.id
             sdm = getattr(container, sdmName)
             getSessionData = sdm.getSessionData
-        except:
+        except Exception:
             msg = 'Session automatic traversal failed to get session data'
             LOG.warn(msg, exc_info=sys.exc_info())
             return

@@ -1,11 +1,22 @@
 Changelog
 =========
 
-4.2 (unreleased)
+4.3 (unreleased)
+----------------
+
+- Add ``tox``-based testing for unit tests, code coverage and linting
+
+- Fix ZMI layout.
+  (`#19 <https://github.com/zopefoundation/Products.Sessions/pull/19>`_)
+
+
+4.2 (2018-11-06)
 ----------------
 
 - Update the forms to Bootstrap ZMI.
   (`#8 <https://github.com/zopefoundation/Products.Sessions/pull/8>`_)
+
+- Add support for Python 3.7.
 
 
 4.1 (2018-06-06)

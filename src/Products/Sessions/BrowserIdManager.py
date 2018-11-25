@@ -164,7 +164,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         self.setAutoUrlEncoding(auto_url_encoding)
 
     # IBrowserIdManager
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'hasBrowserId')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def hasBrowserId(self):
         """ See IBrowserIdManager.
         """
@@ -173,7 +173,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         except BrowserIdManagerErr:
             return False
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserId')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getBrowserId(self, create=1):
         """ See IBrowserIdManager.
         """
@@ -220,13 +220,13 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         # implies a return of None if:
         # (not create=1) and (invalid or ((not in req) and (not in ns)))
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserIdName')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getBrowserIdName(self):
         """ See IBrowserIdManager.
         """
         return self.browserid_name
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'isBrowserIdNew')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def isBrowserIdNew(self):
         """ See IBrowserIdManager.
         """
@@ -235,7 +235,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         # ns will be None if new
         return getattr(self.REQUEST, 'browser_id_ns_', None) is None
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'isBrowserIdFromCookie')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def isBrowserIdFromCookie(self):
         """ See IBrowserIdManager.
         """
@@ -244,7 +244,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         if getattr(self.REQUEST, 'browser_id_ns_') == 'cookies':
             return 1
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'isBrowserIdFromForm')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def isBrowserIdFromForm(self):
         """ See IBrowserIdManager.
         """
@@ -253,7 +253,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         if getattr(self.REQUEST, 'browser_id_ns_') == 'form':
             return 1
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'isBrowserIdFromUrl')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def isBrowserIdFromUrl(self):
         """ See IBrowserIdManager.
         """
@@ -262,10 +262,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         if getattr(self.REQUEST, 'browser_id_ns_') == 'url':
             return 1
 
-    security.declareProtected(
-        ACCESS_CONTENTS_PERM,
-        'flushBrowserIdCookie'
-    )
+    @security.protected(ACCESS_CONTENTS_PERM)
     def flushBrowserIdCookie(self):
         """ See IBrowserIdManager.
         """
@@ -276,10 +273,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             )
         self._setCookie('deleted', self.REQUEST, remove=1)
 
-    security.declareProtected(
-        ACCESS_CONTENTS_PERM,
-        'setBrowserIdCookieByForce'
-    )
+    @security.protected(ACCESS_CONTENTS_PERM)
     def setBrowserIdCookieByForce(self, bid):
         """ See IBrowserIdManager.
         """
@@ -290,14 +284,14 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             )
         self._setCookie(bid, self.REQUEST)
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getHiddenFormField')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getHiddenFormField(self):
         """ See IBrowserIdManager.
         """
         s = '<input type="hidden" name="%s" value="%s" />'
         return s % (self.getBrowserIdName(), self.getBrowserId())
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'encodeUrl')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def encodeUrl(self, url, style='querystring', create=1):
         # See IBrowserIdManager
         bid = self.getBrowserId(create)
@@ -315,19 +309,19 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             return urlunparse((proto, host, path, params, query, frag))
 
     # Non-IBrowserIdManager accessors / mutators.
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setBrowserIdName')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setBrowserIdName(self, k):
         """ Set browser id name string
 
         o Enforce "valid" values.
         """
-        if not (type(k) is type('') and k and not badidnamecharsin(k)):
+        if not (isinstance(k, str) and k and not badidnamecharsin(k)):
             raise BrowserIdManagerErr(
                 'Bad id name string %s' % escape(repr(k))
             )
         self.browserid_name = k
 
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setBrowserIdNamespaces')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setBrowserIdNamespaces(self, ns):
         """
         accepts list of allowable browser id namespaces
@@ -339,44 +333,44 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
                 )
         self.browserid_namespaces = tuple(ns)
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getBrowserIdNamespaces')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getBrowserIdNamespaces(self):
         """ """
         return self.browserid_namespaces
 
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setCookiePath')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setCookiePath(self, path=''):
         """ sets cookie 'path' element for id cookie """
-        if not (type(path) is type('') and not badcookiecharsin(path)):
+        if not (isinstance(path, str) and not badcookiecharsin(path)):
             raise BrowserIdManagerErr(
                 'Bad cookie path %s' % escape(repr(path))
             )
         self.cookie_path = path
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getCookiePath')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getCookiePath(self):
         """ """
         return self.cookie_path
 
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setCookieLifeDays')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setCookieLifeDays(self, days):
         """ offset for id cookie 'expires' element """
-        if type(days) not in (type(1), type(1.0)):
+        if not isinstance(days, (int, float)):
             raise BrowserIdManagerErr(
                 'Bad cookie lifetime in days %s '
                 '(requires integer value)' % escape(repr(days))
             )
         self.cookie_life_days = int(days)
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getCookieLifeDays')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getCookieLifeDays(self):
         """ """
         return self.cookie_life_days
 
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setCookieDomain')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setCookieDomain(self, domain):
         """ sets cookie 'domain' element for id cookie """
-        if type(domain) is not type(''):
+        if not isinstance(domain, str):
             raise BrowserIdManagerErr(
                 'Cookie domain must be string: %s' % escape(repr(domain))
             )
@@ -396,42 +390,42 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             )
         self.cookie_domain = domain
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getCookieDomain')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getCookieDomain(self):
         """ """
         return self.cookie_domain
 
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setCookieHTTPOnly')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setCookieHTTPOnly(self, http_only):
         """ sets cookie 'HTTPOnly' on or off """
         self.cookie_http_only = bool(http_only)
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getCookieHTTPOnly')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getCookieHTTPOnly(self):
         """ retrieve the 'HTTPOnly' flag """
         return self.cookie_http_only
 
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setCookieSecure')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setCookieSecure(self, secure):
         """ sets cookie 'secure' element for id cookie """
         self.cookie_secure = not not secure
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getCookieSecure')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getCookieSecure(self):
         """ """
         return self.cookie_secure
 
-    security.declareProtected(CHANGE_IDMGR_PERM, 'setAutoUrlEncoding')
+    @security.protected(CHANGE_IDMGR_PERM)
     def setAutoUrlEncoding(self, auto_url_encoding):
         """ sets 'auto url encoding' on or off """
         self.auto_url_encoding = not not auto_url_encoding
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'getAutoUrlEncoding')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def getAutoUrlEncoding(self):
         """ """
         return self.auto_url_encoding
 
-    security.declareProtected(ACCESS_CONTENTS_PERM, 'isUrlInBidNamespaces')
+    @security.protected(ACCESS_CONTENTS_PERM)
     def isUrlInBidNamespaces(self):
         """ Returns true if 'url' is in the browser id namespaces
         for this browser id """
@@ -531,14 +525,10 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         """ Remove our traversal hook if it exists """
         self.unregisterTraversalHook()
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'manage_browseridmgr')
+    security.declareProtected(MGMT_SCREEN_PERM, 'manage_browseridmgr')  # NOQA: D001,E501  # @protected --> decorators only work on function / method declaration not on variables.
     manage_browseridmgr = DTMLFile('dtml/manageIdManager', globals())
 
-    security.declareProtected(
-        CHANGE_IDMGR_PERM,
-        'manage_changeBrowserIdManager'
-    )
-
+    @security.protected(CHANGE_IDMGR_PERM)
     def manage_changeBrowserIdManager(
         self,
         title='',
@@ -620,7 +610,7 @@ class BrowserIdManagerTraverser(Persistent):
                     request.browser_id_ = browser_id = getNewBrowserId()
                 request._script.append(quote(bid_name))
                 request._script.append(quote(browser_id))
-        except:
+        except Exception:
             LOG.error('indeterminate error', exc_info=sys.exc_info())
 
 

@@ -23,7 +23,7 @@ def _read(fname):
 
 setup(
     name='Products.Sessions',
-    version='4.2.dev0',
+    version='4.3.dev0',
     url='https://github.com/zopefoundation/Products.Sessions/',
     license='ZPL 2.1',
     description="Zope session management.",
@@ -45,6 +45,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     keywords="Zope sessions management Transience product ZMI",
