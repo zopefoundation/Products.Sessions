@@ -923,7 +923,7 @@ class TransientObjectContainer(SimpleItem):
 
     def getTimeoutMinutes(self):
         """ """
-        return self._timeout_secs / 60
+        return self._timeout_secs // 60
 
     def getPeriodSeconds(self):
         """ """
