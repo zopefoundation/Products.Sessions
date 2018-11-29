@@ -597,7 +597,7 @@ class BrowserIdManagerTraverser(Persistent):
             # traversal stack if they are a "well-formed pair".
             if len(stack) >= 2 and stack[-1] == bid_name:
                 if isAWellFormedBrowserId(stack[-2]):
-                    name = stack.pop()  # pop the name off the stack
+                    stack.pop()  # pop the name off the stack
                     browser_id = stack.pop()  # pop id off the stack
                     request.browser_id_ = browser_id
                     request.browser_id_ns_ = 'url'

@@ -16,6 +16,11 @@ from setuptools import find_packages
 from setuptools import setup
 
 
+def _read(fname):
+    with open(fname) as fp:
+        return fp.read()
+
+
 setup(
     name='Products.Sessions',
     version='4.3.dev0',
@@ -24,9 +29,7 @@ setup(
     description="Zope session management.",
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
-    long_description=(open('README.rst').read()
-                      + '\n'
-                      + open('CHANGES.rst').read()),
+    long_description=_read('README.rst') + '\n' + _read('CHANGES.rst'),
     packages=find_packages('src'),
     namespace_packages=['Products'],
     package_dir={'': 'src'},

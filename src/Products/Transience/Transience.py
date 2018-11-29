@@ -474,7 +474,7 @@ class TransientObjectContainer(SimpleItem):
 
             if self._limit and length >= self._limit:
                 LOG.warning('Transient object container %s max subobjects '
-                            'reached' % self.getId())
+                            'reached', self.getId())
 
                 raise MaxTransientObjectsExceeded(
                     "%s exceeds maximum number of subobjects %s" %
@@ -842,8 +842,7 @@ class TransientObjectContainer(SimpleItem):
                 path = self.getPhysicalPath()
                 err = 'No such onAdd/onDelete method %s referenced via %s'
                 LOG.warning(
-                    err % (callback, '/'.join(path)),
-                    exc_info=sys.exc_info(),
+                    err, callback, '/'.join(path), exc_info=sys.exc_info(),
                 )
                 return
         else:
@@ -854,31 +853,26 @@ class TransientObjectContainer(SimpleItem):
         if callable(callback):
             sm = getSecurityManager()
             try:
-                user = sm.getUser()
-                try:
-                    newSecurityManager(None, nobody)
-                    callback(item, self)
-                except Exception as err:
-                    # dont raise, just log
-                    path = self.getPhysicalPath()
-                    LOG.warning(
-                        '%s failed when calling %s in %s' % (
-                            name,
-                            callback,
-                            '/'.join(path),
-                        ),
-                        exc_info=sys.exc_info(),
-                    )
-                    LOG.warning(err.msg)
+                newSecurityManager(None, nobody)
+                callback(item, self)
+            except Exception as err:
+                # dont raise, just log
+                path = self.getPhysicalPath()
+                LOG.warning(
+                    '%s failed when calling %s in %s',
+                    name,
+                    callback,
+                    '/'.join(path),
+                    exc_info=sys.exc_info(),
+                )
+                LOG.warning(err.msg)
             finally:
                 setSecurityManager(sm)
         else:
-            err = '%s in %s attempted to call non-callable %s'
             path = self.getPhysicalPath()
-            LOG.warning(
-                err % (name, '/'.join(path), callback),
-                exc_info=sys.exc_info(),
-            )
+            LOG.warning('%s in %s attempted to call non-callable %s',
+                        name, '/'.join(path), callback,
+                        exc_info=sys.exc_info())
 
     def getId(self):
         return self.id
@@ -913,10 +907,8 @@ class TransientObjectContainer(SimpleItem):
         hardcoded to 20. """
         # timeout_secs = timeout_mins * 60
 
-        if (
-            timeout_mins != self.getTimeoutMinutes()
-            or period_secs != self.getPeriodSeconds()
-        ):
+        if timeout_mins != self.getTimeoutMinutes() or \
+           period_secs != self.getPeriodSeconds():
             # do nothing unless something has changed
             self._setTimeout(timeout_mins, period_secs)
             self._reset()
