@@ -474,7 +474,7 @@ class TransientObjectContainer(SimpleItem):
 
             if self._limit and length >= self._limit:
                 LOG.warning('Transient object container %s max subobjects '
-                            'reached' % self.getId())
+                            'reached', self.getId())
 
                 raise MaxTransientObjectsExceeded(
                     "%s exceeds maximum number of subobjects %s" %
@@ -842,8 +842,7 @@ class TransientObjectContainer(SimpleItem):
                 path = self.getPhysicalPath()
                 err = 'No such onAdd/onDelete method %s referenced via %s'
                 LOG.warning(
-                    err % (callback, '/'.join(path)),
-                    exc_info=sys.exc_info(),
+                    err, callback, '/'.join(path), exc_info=sys.exc_info(),
                 )
                 return
         else:
@@ -854,22 +853,19 @@ class TransientObjectContainer(SimpleItem):
         if callable(callback):
             sm = getSecurityManager()
             try:
-                user = sm.getUser()
-                try:
-                    newSecurityManager(None, nobody)
-                    callback(item, self)
-                except Exception as err:
-                    # dont raise, just log
-                    path = self.getPhysicalPath()
-                    LOG.warning(
-                        '%s failed when calling %s in %s' % (
-                            name,
-                            callback,
-                            '/'.join(path),
-                        ),
-                        exc_info=sys.exc_info(),
-                    )
-                    LOG.warning(err.msg)
+                newSecurityManager(None, nobody)
+                callback(item, self)
+            except Exception as err:
+                # dont raise, just log
+                path = self.getPhysicalPath()
+                LOG.warning(
+                    '%s failed when calling %s in %s',
+                    name,
+                    callback,
+                    '/'.join(path),
+                    exc_info=sys.exc_info(),
+                )
+                LOG.warning(err.msg)
             finally:
                 setSecurityManager(sm)
         else:
