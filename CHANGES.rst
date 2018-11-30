@@ -4,10 +4,10 @@ Changelog
 4.3 (unreleased)
 ----------------
 
-- Make sure ``TransientObjectContainer.getTimeoutMinutes`` returns ints
+- Make sure ``TransientObjectContainer.getTimeoutMinutes`` returns ints.
   (`#17 <https://github.com/zopefoundation/Products.Sessions/issues/17>`_)
 
-- Add ``tox``-based testing for unit tests, code coverage and linting
+- Add ``tox``-based testing for unit tests, code coverage and linting.
 
 - Fix ZMI layout.
   (`#19 <https://github.com/zopefoundation/Products.Sessions/pull/19>`_)
