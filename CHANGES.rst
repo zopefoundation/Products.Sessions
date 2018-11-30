@@ -1,8 +1,8 @@
 Changelog
 =========
 
-4.3 (unreleased)
-----------------
+4.2.1 (2018-11-30)
+------------------
 
 - Make sure ``TransientObjectContainer.getTimeoutMinutes`` returns ints.
   (`#17 <https://github.com/zopefoundation/Products.Sessions/issues/17>`_)
