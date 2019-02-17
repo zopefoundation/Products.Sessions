@@ -24,7 +24,10 @@ from App.special_dtml import HTMLFile
 from BTrees.IOBTree import IOBTree
 from BTrees.Length import Length as BTreesLength
 from BTrees.OOBTree import OOBTree
-from cgi import escape
+try:
+    from html import escape as html_escape  # noqa
+except ImportError:
+    from cgi import escape as html_escape  # noqa
 from logging import getLogger
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent

@@ -4,7 +4,10 @@ Changelog
 4.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Specify supported Python versions using ``python_requires`` in setup.py
+  (`Zope#481 <https://github.com/zopefoundation/Zope/issues/481>`_)
+
+- Add support for Python 3.8
 
 
 4.2.1 (2018-11-30)
