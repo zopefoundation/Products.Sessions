@@ -43,7 +43,7 @@
 
 	</form>
 
-</main
+</main>
 
 <dtml-var manage_page_footer>
 
