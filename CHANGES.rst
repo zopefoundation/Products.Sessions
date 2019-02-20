@@ -4,6 +4,8 @@ Changelog
 4.4 (unreleased)
 ----------------
 
+- Fix HTML of ``manageDataManager.dtml``.
+  (`#22 <https://github.com/zopefoundation/Products.Sessions/pull/22>`_) 
 
 4.3 (2019-02-17)
 ----------------
