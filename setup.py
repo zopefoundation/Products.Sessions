@@ -23,7 +23,7 @@ def _read(fname):
 
 setup(
     name='Products.Sessions',
-    version='4.4.dev0',
+    version='4.3.1',
     url='https://github.com/zopefoundation/Products.Sessions/',
     license='ZPL 2.1',
     description="Zope session management.",
