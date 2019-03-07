@@ -4,7 +4,8 @@ Changelog
 4.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix ``NameError`` in ``Products/Transience/Transience.py`` introduced in
+  version 4.3.
 
 
 4.3.1 (2019-03-07)

@@ -186,10 +186,11 @@ class TransientObjectContainer(SimpleItem):
 
     def _setTimeout(self, timeout_mins, period_secs):
         if not isinstance(timeout_mins, int):
-            raise TypeError((escape(str(timeout_mins)), "Must be integer"))
+            raise TypeError(
+                (html_escape(str(timeout_mins)), "Must be integer"))
 
         if not isinstance(period_secs, int):
-            raise TypeError((escape(str(period_secs)), "Must be integer"))
+            raise TypeError((html_escape(str(period_secs)), "Must be integer"))
 
         timeout_secs = timeout_mins * 60
 
@@ -226,7 +227,7 @@ class TransientObjectContainer(SimpleItem):
 
     def _setLimit(self, limit):
         if not isinstance(limit, int):
-            raise TypeError(escape(limit), "Must be integer")
+            raise TypeError(html_escape(limit), "Must be integer")
         self._limit = limit
 
     def _reset(self):
