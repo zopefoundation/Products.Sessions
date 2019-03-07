@@ -12,7 +12,7 @@ Changelog
 ------------------
 
 - Fix HTML of ``manageDataManager.dtml``.
-  (`#22 <https://github.com/zopefoundation/Products.Sessions/pull/22>`_) 
+  (`#22 <https://github.com/zopefoundation/Products.Sessions/pull/22>`_)
 
 4.3 (2019-02-17)
 ----------------
@@ -20,7 +20,7 @@ Changelog
 - Specify supported Python versions using ``python_requires`` in setup.py
   (`Zope#481 <https://github.com/zopefoundation/Zope/issues/481>`_)
 
-- Add support for Python 3.8 
+- Add support for Python 3.8
 
 
 4.2.1 (2018-11-30)
