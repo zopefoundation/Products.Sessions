@@ -25,7 +25,7 @@
 		<div class="form-group row">
 			<label for="getContainerPath" class="col-sm-4 col-md-3">Transient Object Container Path</label>
 			<div class="col-sm-8 col-md-9">
-				<input id="getContainerPath" class="form-control" type="text" name="getContainerPath" value="<dtml-if getContainerPath>&dtml-getContainerPath;</dtml-if>">
+				<input id="getContainerPath" class="form-control" type="text" name="path" value="<dtml-if getContainerPath>&dtml-getContainerPath;</dtml-if>">
 				<small>e.g. '/temp_folder/session_data'</small>
 			</div>
 		</div>

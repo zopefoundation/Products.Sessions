@@ -4,7 +4,7 @@ Changelog
 4.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix session data manager edit form
 
 
 4.3.2 (2019-03-07)
