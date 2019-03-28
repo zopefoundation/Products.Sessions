@@ -158,10 +158,12 @@ class TransientObject(Persistent, Implicit):
             return None
         return v
 
-    def has_key(self, k):
+    def __contains__(self, k):
         if self._container.get(k, _notfound) is not _notfound:
             return 1
         return 0
+
+    has_key = __contains__
 
     def clear(self):
         self._p_changed = 1

@@ -28,7 +28,8 @@ from logging import getLogger
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
 from Products.Transience.TransienceInterfaces import ItemWithId
-from Products.Transience.TransienceInterfaces import StringKeyedHomogeneousItemContainer  # NOQA: E501
+from Products.Transience.TransienceInterfaces import \
+    StringKeyedHomogeneousItemContainer
 from Products.Transience.TransienceInterfaces import TransientItemContainer
 from Products.Transience.TransientObject import TransientObject
 from six.moves import _thread as thread

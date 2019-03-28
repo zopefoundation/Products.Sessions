@@ -4,6 +4,9 @@ Changelog
 4.4 (unreleased)
 ----------------
 
+- Implement ``__contains__`` on ``TransientObject``
+  (`#21 <https://github.com/zopefoundation/Products.Sessions/issues/21>`_)
+
 - Fix session data manager edit form
 
 

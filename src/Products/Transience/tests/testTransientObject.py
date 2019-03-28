@@ -109,13 +109,14 @@ class TestTransientObject(TestCase):
         with self.assertRaises(AttributeError):
             self._genLenError(t)
         self.assertIsNone(t.get('foobie', None))
-        # Test with .has_key() are necessary:
-        # as t did not have a __contains__ method
-        # normally you would test like that:
-        # >>> self.assertTrue('a' in t)
-        # >>> self.assertFalse('foobie' in t)
+        # Test old has_key
         self.assertTrue(t.has_key('a'))  # NOQA: W601
         self.assertFalse(t.has_key('foobie'))  # NOQA: W601
+
+        # Test new __contains__
+        self.assertIn('a', t)
+        self.assertNotIn('foobie', t)
+
         t.clear()
         self.assertEqual(len(t.keys()), 0)
 

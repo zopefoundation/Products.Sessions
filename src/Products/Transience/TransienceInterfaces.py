@@ -152,6 +152,9 @@ class DictionaryLike(Interface):
     def has_key(k):
         """Return true if item referenced by key k exists."""
 
+    def __contains__(key):
+        """Return true if item referenced by key k exists."""
+
     def clear():
         """Remove all key/value pairs."""
 

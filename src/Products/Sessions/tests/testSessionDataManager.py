@@ -190,10 +190,8 @@ class TestSessionManager(unittest.TestCase):
         sd = sdm.getSessionData()
         sd['test'] = 'Its alive!  Alive!'
         sd.invalidate()
-        # getSessionData() object did not implement a ``__contains__`` method
-        # so a new style ```'test' not in sdm.getSessionData() did not work.```
         self.assertTrue(not sdm.getSessionData().has_key('test'))  # NOQA: W601
-        # self.assertTrue('test' not in sdm.getSessionData())
+        self.assertTrue('test' not in sdm.getSessionData())
 
     def testGhostUnghostSessionManager(self):
         import transaction
