@@ -1,8 +1,10 @@
 Changelog
 =========
 
-4.4 (unreleased)
+4.4 (2019-03-28)
 ----------------
+
+- improve flake8 compliance
 
 - Implement ``__contains__`` on ``TransientObject``
   (`#21 <https://github.com/zopefoundation/Products.Sessions/issues/21>`_)
