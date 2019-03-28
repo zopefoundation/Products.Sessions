@@ -12,16 +12,10 @@
 ############################################################################
 # BBB location for APIs now defined in Products.Sessions.interfaces
 
-# flake8: NOQA: E401
-
-# This is a file to define public API in the base namespace of the package.
-# use: isort:skip to supress all isort related warnings / errors,
-# as this file should be logically grouped imports
-
-from Products.Sessions.interfaces import BrowserIdManagerErr
-from Products.Sessions.interfaces import IBrowserIdManager
-from Products.Sessions.interfaces import ISessionDataManager
-from Products.Sessions.interfaces import SessionDataManagerErr
+from .interfaces import BrowserIdManagerErr  # NOQA: flake8: F401
+from .interfaces import IBrowserIdManager
+from .interfaces import ISessionDataManager
+from .interfaces import SessionDataManagerErr  # NOQA: flake8: F401
 
 
 BrowserIdManagerInterface = IBrowserIdManager

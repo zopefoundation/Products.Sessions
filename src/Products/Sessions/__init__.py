@@ -13,14 +13,10 @@
 """ Session managemnt product initialization
 """
 
-# flake8: NOQA: E401
-
 # This is a file to define public API in the base namespace of the package.
-# use: isort:skip to supress all isort related warnings / errors,
-# as this file should be logically grouped imports
 
-from Products.Sessions.interfaces import BrowserIdManagerErr
-from Products.Sessions.interfaces import SessionDataManagerErr
+from .interfaces import BrowserIdManagerErr  # NOQA: flake8: F401
+from .interfaces import SessionDataManagerErr  # NOQA: flake8: F40
 
 
 def commit(note):
@@ -67,15 +63,13 @@ def initialize(context):
         BrowserIdManager.BrowserIdManager,
         permission=BrowserIdManager.ADD_BROWSER_ID_MANAGER_PERM,
         constructors=(BrowserIdManager.constructBrowserIdManagerForm,
-                      BrowserIdManager.constructBrowserIdManager)
-        )
+                      BrowserIdManager.constructBrowserIdManager))
 
     context.registerClass(
         SessionDataManager.SessionDataManager,
         permission=SessionDataManager.ADD_SESSION_DATAMANAGER_PERM,
         constructors=(SessionDataManager.constructSessionDataManagerForm,
-                      SessionDataManager.constructSessionDataManager)
-        )
+                      SessionDataManager.constructSessionDataManager))
 
     # do module security declarations so folks can use some of the
     # module-level stuff in PythonScripts
@@ -85,20 +79,20 @@ def initialize(context):
     # with the other. :-(
     from AccessControl import ModuleSecurityInfo
     security = ModuleSecurityInfo('Products')
-    security.declarePublic('Sessions')
-    security.declarePublic('Transience')
+    security.declarePublic('Sessions')  # NOQA: flake8: D001
+    security.declarePublic('Transience')  # NOQA: flake8: D001
 
     security = ModuleSecurityInfo('Products.Sessions.interfaces')
     security.declareObjectPublic()
     security.setDefaultAccess('allow')
 
     security = ModuleSecurityInfo('Products.Transience')
-    security.declarePublic('MaxTransientObjectsExceeded')
+    security.declarePublic('MaxTransientObjectsExceeded')  # NOQA: flake8: D001
 
     # BBB: for names which should be imported from Products.Sessions.interfaces
     security = ModuleSecurityInfo('Products.Sessions')
-    security.declarePublic('BrowserIdManagerErr')
-    security.declarePublic('SessionDataManagerErr')
+    security.declarePublic('BrowserIdManagerErr')  # NOQA: flake8: D001
+    security.declarePublic('SessionDataManagerErr')  # NOQA: flake8: D001
 
     app = context.getApplication()  # new API added in Zope 4.0b5
     if app is not None:

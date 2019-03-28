@@ -527,7 +527,8 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         """ Remove our traversal hook if it exists """
         self.unregisterTraversalHook()
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'manage_browseridmgr')  # NOQA: D001,E501  # @protected --> decorators only work on function / method declaration not on variables.
+    security.declareProtected(MGMT_SCREEN_PERM,  # NOQA: flake8: D001
+                              'manage_browseridmgr')
     manage_browseridmgr = DTMLFile('dtml/manageIdManager', globals())
 
     @security.protected(CHANGE_IDMGR_PERM)

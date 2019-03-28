@@ -44,9 +44,9 @@ from zope.interface import implementer
 
 
 try:
-    from html import escape as html_escape  # noqa
+    from html import escape as html_escape
 except ImportError:
-    from cgi import escape as html_escape  # noqa
+    from cgi import escape as html_escape
 
 ADD_CONTAINER_PERM = 'Add Transient Object Container'
 MGMT_SCREEN_PERM = 'View management screens'
@@ -154,7 +154,8 @@ class TransientObjectContainer(SimpleItem):
         ['Manager', ],
     )
 
-    security.declareProtected(MGMT_SCREEN_PERM, 'manage_container')  # NOQA: D001,E501  # @protected --> decorators only work on function / method definitions not on variables.
+    security.declareProtected(MGMT_SCREEN_PERM,  # NOQA: flake8: D001
+                              'manage_container')
     manage_container = HTMLFile(
         'dtml/manageTransientObjectContainer',
         globals()
