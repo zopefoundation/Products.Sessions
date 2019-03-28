@@ -11,14 +11,17 @@
 #
 ############################################################################
 
+import re
+import sys
+from logging import getLogger
+
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
+from Acquisition import Implicit
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from Acquisition import Implicit
 from App.Management import Tabs
 from App.special_dtml import DTMLFile
-from logging import getLogger
 from OFS.owner import Owned
 from OFS.role import RoleManager
 from OFS.SimpleItem import Item
@@ -36,9 +39,6 @@ from ZODB.POSException import ConflictError
 from zope.interface import implementer
 from ZPublisher.BeforeTraverse import registerBeforeTraverse
 from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
-
-import re
-import sys
 
 
 bad_path_chars_in = re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search

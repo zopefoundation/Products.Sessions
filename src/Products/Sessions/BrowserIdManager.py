@@ -12,15 +12,28 @@
 ############################################################################
 
 
-from ._compat import html_escape as escape
+import binascii
+import logging
+import os
+# Use the system PRNG if possible
+import random
+import re
+import sys
+import time
+from hashlib import sha256
+
+import six
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import urlunparse
+
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
+from Acquisition import Implicit
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from Acquisition import Implicit
 from App.Management import Tabs
 from App.special_dtml import DTMLFile
-from hashlib import sha256
 from OFS.owner import Owned
 from OFS.role import RoleManager
 from OFS.SimpleItem import Item
@@ -31,23 +44,12 @@ from Products.Sessions.interfaces import IBrowserIdManager
 from Products.Sessions.SessionPermissions import ACCESS_CONTENTS_PERM
 from Products.Sessions.SessionPermissions import CHANGE_IDMGR_PERM
 from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.parse import urlunparse
 from zope.interface import implementer
 from ZPublisher.BeforeTraverse import queryBeforeTraverse
 from ZPublisher.BeforeTraverse import registerBeforeTraverse
 from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 
-import binascii
-import logging
-import os
-# Use the system PRNG if possible
-import random
-import re
-import six
-import sys
-import time
+from ._compat import html_escape as escape
 
 
 badidnamecharsin = re.compile(r'[\?&;,<> ]').search

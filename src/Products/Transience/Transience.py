@@ -14,6 +14,15 @@
 Transient Object Container Class ('timeslice'-based design, no index).
 """
 
+import math
+import os
+import random
+import sys
+import time
+from logging import getLogger
+
+from six.moves import _thread as thread
+
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager
@@ -24,7 +33,6 @@ from App.special_dtml import HTMLFile
 from BTrees.IOBTree import IOBTree
 from BTrees.Length import Length as BTreesLength
 from BTrees.OOBTree import OOBTree
-from logging import getLogger
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
 from Products.Transience.TransienceInterfaces import ItemWithId
@@ -32,14 +40,7 @@ from Products.Transience.TransienceInterfaces import \
     StringKeyedHomogeneousItemContainer
 from Products.Transience.TransienceInterfaces import TransientItemContainer
 from Products.Transience.TransientObject import TransientObject
-from six.moves import _thread as thread
 from zope.interface import implementer
-
-import math
-import os
-import random
-import sys
-import time
 
 
 try:

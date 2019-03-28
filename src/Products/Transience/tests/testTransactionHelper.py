@@ -11,12 +11,12 @@
 #
 ##############################################################################
 
-from Products.Transience.TransactionHelper import makeTransactionUncommittable
-from Products.Transience.TransactionHelper import PreventTransactionCommit
-from unittest import makeSuite
 from unittest import TestCase
+from unittest import makeSuite
 
 import transaction
+from Products.Transience.TransactionHelper import PreventTransactionCommit
+from Products.Transience.TransactionHelper import makeTransactionUncommittable
 
 
 class TestTransactionHelper(TestCase):

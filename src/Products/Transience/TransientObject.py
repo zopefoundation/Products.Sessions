@@ -13,25 +13,27 @@
 """Simple ZODB-based transient object implementation.
 """
 
-from AccessControl.class_init import InitializeClass
-from AccessControl.SecurityInfo import ClassSecurityInfo
-from Acquisition import Implicit
-from Persistence import Persistent
-from Products.Transience.TransienceInterfaces import DictionaryLike
-from Products.Transience.TransienceInterfaces import ImmutablyValuedMappingOfPickleableObjects  # NOQA: E501
-from Products.Transience.TransienceInterfaces import ItemWithId
-from Products.Transience.TransienceInterfaces import Transient
-from Products.Transience.TransienceInterfaces import TransientItemContainer
-from Products.Transience.TransienceInterfaces import TTWDictionary
-from six.moves import _thread as thread
-from ZODB.POSException import ConflictError
-from zope.interface import implementer
-
 import logging
 import os
 import random
 import sys
 import time
+
+from six.moves import _thread as thread
+
+from AccessControl.class_init import InitializeClass
+from AccessControl.SecurityInfo import ClassSecurityInfo
+from Acquisition import Implicit
+from Persistence import Persistent
+from Products.Transience.TransienceInterfaces import DictionaryLike
+from Products.Transience.TransienceInterfaces import \
+    ImmutablyValuedMappingOfPickleableObjects  # NOQA: E501
+from Products.Transience.TransienceInterfaces import ItemWithId
+from Products.Transience.TransienceInterfaces import Transient
+from Products.Transience.TransienceInterfaces import TransientItemContainer
+from Products.Transience.TransienceInterfaces import TTWDictionary
+from ZODB.POSException import ConflictError
+from zope.interface import implementer
 
 
 DEBUG = int(os.environ.get('Z_TOC_DEBUG', 0))

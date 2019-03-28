@@ -11,16 +11,18 @@
 #
 ##############################################################################
 
-from . import fauxtime
-from Products.Transience.Transience import TransientObjectContainer
-from unittest import makeSuite
+import time as oldtime
 from unittest import TestCase
 from unittest import TestSuite
+from unittest import makeSuite
+
+import six
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
-import six
-import time as oldtime
+from Products.Transience.Transience import TransientObjectContainer
+
+from . import fauxtime
 
 
 class TestTransientObject(TestCase):

@@ -1,17 +1,18 @@
-from . import fauxtime
-from OFS.Application import Application
-from Products.Transience.Transience import TransientObjectContainer
-from Testing import makerequest
-from unittest import makeSuite
+import time as oldtime
 from unittest import TestCase
 from unittest import TestSuite
-from ZODB.DemoStorage import DemoStorage
+from unittest import makeSuite
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
-import time as oldtime
 import transaction
 import ZODB  # in order to get Persistence.Persistent working
+from OFS.Application import Application
+from Products.Transience.Transience import TransientObjectContainer
+from Testing import makerequest
+from ZODB.DemoStorage import DemoStorage
+
+from . import fauxtime
 
 
 WRITEGRANULARITY = 30

@@ -10,20 +10,21 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-from . import fauxtime
-from . import slowfauxtime
-from Products.Transience.Transience import MaxTransientObjectsExceeded
-from Products.Transience.Transience import SPARE_BUCKETS
-from Products.Transience.Transience import TransientObjectContainer
-from Products.Transience.TransientObject import TransientObject
-from unittest import makeSuite
+import random
+import time as oldtime
 from unittest import TestCase
 from unittest import TestSuite
+from unittest import makeSuite
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
-import random
-import time as oldtime
+from Products.Transience.Transience import SPARE_BUCKETS
+from Products.Transience.Transience import MaxTransientObjectsExceeded
+from Products.Transience.Transience import TransientObjectContainer
+from Products.Transience.TransientObject import TransientObject
+
+from . import fauxtime
+from . import slowfauxtime
 
 
 class TestTransientObjectContainer(TestCase):

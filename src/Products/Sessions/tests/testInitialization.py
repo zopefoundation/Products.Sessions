@@ -12,17 +12,17 @@
 #
 ##############################################################################
 
+import os
+import shutil
+import tempfile
+import unittest
+
+import Products
 from App.config import getConfiguration
 from App.config import setConfiguration
 from OFS.Application import AppInitializer
 from OFS.Application import Application
 from Zope2.Startup.options import ZopeWSGIOptions
-
-import os
-import Products
-import shutil
-import tempfile
-import unittest
 
 
 test_cfg = """

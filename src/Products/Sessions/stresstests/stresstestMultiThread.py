@@ -12,6 +12,20 @@
 ##############################################################################
 
 from __future__ import print_function
+
+import random
+import threading
+import time
+import traceback
+from unittest import TestCase
+from unittest import TestSuite
+from unittest import makeSuite
+
+import Acquisition
+import Products.Transience.Transience
+import Products.Transience.TransientObject
+import transaction
+import ZODB  # in order to get Persistence.Persistent working
 from OFS.Application import Application
 from Products.Sessions.BrowserIdManager import BrowserIdManager
 from Products.Sessions.BrowserIdManager import getNewBrowserId
@@ -20,23 +34,10 @@ from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 from Products.Transience.tests import fauxtime
 from Products.Transience.Transience import TransientObjectContainer
 from Testing import makerequest
-from unittest import makeSuite
-from unittest import TestCase
-from unittest import TestSuite
 from ZODB.DemoStorage import DemoStorage
 from ZODB.POSException import BTreesConflictError
 from ZODB.POSException import ConflictError
 from ZODB.POSException import ReadConflictError
-
-import Acquisition
-import Products.Transience.Transience
-import Products.Transience.TransientObject
-import random
-import threading
-import time
-import traceback
-import transaction
-import ZODB  # in order to get Persistence.Persistent working
 
 
 Products.Transience.Transience.time = fauxtime

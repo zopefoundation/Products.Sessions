@@ -14,9 +14,9 @@
 Module used for testing transience (BTree-API-conforming data structure)
 """
 
-from Persistence.mapping import PersistentMapping
-
 import sys
+
+from Persistence.mapping import PersistentMapping
 
 
 class FakeIOBTree(PersistentMapping):
