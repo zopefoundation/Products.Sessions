@@ -19,16 +19,16 @@ Zope server side session management.
 
 This package contains ``Products.Sessions`` and ``Products.Transience``.
 
-.. note::
+Please note
+-----------
+If you use the standard Zope session implementation, don't forget to add
+or uncomment the temporary storage database definition in your Zope
+configuration::
 
-   If you use the standard Zope session implementation, don't forget to add
-   or uncomment the temporary storage database definition in your Zope
-   configuration::
-
-     <zodb_db temporary>
-         <temporarystorage>
-           name Temporary database (for sessions)
-         </temporarystorage>
-         mount-point /temp_folder
-         container-class Products.TemporaryFolder.TemporaryContainer
-     </zodb_db>
+  <zodb_db temporary>
+      <temporarystorage>
+        name Temporary database (for sessions)
+      </temporarystorage>
+      mount-point /temp_folder
+      container-class Products.TemporaryFolder.TemporaryContainer
+  </zodb_db>
