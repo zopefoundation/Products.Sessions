@@ -4,6 +4,10 @@ Changelog
 4.5 (unreleased)
 ----------------
 
+- add badges to the README
+
+- add additional links on PyPI
+
 
 4.4 (2019-03-28)
 ----------------

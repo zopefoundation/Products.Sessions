@@ -25,6 +25,11 @@ setup(
     name='Products.Sessions',
     version='4.5.dev0',
     url='https://github.com/zopefoundation/Products.Sessions/',
+    project_urls={
+        'Issue Tracker': ('https://github.com/zopefoundation'
+                          '/Products.Sessions/issues'),
+        'Sources': 'https://github.com/zopefoundation/Products.Sessions',
+    },
     license='ZPL 2.1',
     description="Zope session management.",
     author='Zope Foundation and Contributors',
