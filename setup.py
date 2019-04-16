@@ -23,7 +23,7 @@ def _read(fname):
 
 setup(
     name='Products.Sessions',
-    version='4.5',
+    version='4.6.dev0',
     url='https://github.com/zopefoundation/Products.Sessions/',
     project_urls={
         'Issue Tracker': ('https://github.com/zopefoundation'
