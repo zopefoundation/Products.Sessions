@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.5 (unreleased)
+4.5 (2019-04-15)
 ----------------
 
 - add badges to the README
