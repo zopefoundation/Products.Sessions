@@ -18,6 +18,7 @@ import os
 import random
 import sys
 import time
+from functools import cmp_to_key
 
 from six.moves import _thread as thread
 
@@ -253,7 +254,7 @@ class TransientObject(Persistent, Implicit):
 
         # We return the state which was most recently modified, if
         # possible.
-        states.sort(lastmodified_sort)
+        states.sort(key=cmp_to_key(lastmodified_sort))
         if states[0].get('_last_modified'):
             DEBUG and TLOG('TO _p_rc: returning last mod state')
             return states[0]
@@ -263,7 +264,7 @@ class TransientObject(Persistent, Implicit):
         # the object that was most recently accessed (last pulled out of
         # our parent).  This will return an essentially arbitrary state if
         # all last_accessed values are equal.
-        states.sort(lastaccessed_sort)
+        states.sort(key=cmp_to_key(lastaccessed_sort))
         DEBUG and TLOG('TO _p_rc: returning last_accessed state')
         return states[0]
 
