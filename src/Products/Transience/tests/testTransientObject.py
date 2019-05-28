@@ -137,6 +137,58 @@ class TestTransientObject(TestCase):
         t = self.t.new('password-storing-session')
         t.set('__ac_password__', 'secret')
         self.assertNotIn('secret', repr(t), '__repr__ leaks: %s' % repr(t))
+    
+    def test_p_resolveConflict_doesnt_fail_on_wrong_sort_usage(self):
+        transient_object = self.t.new('fnord')
+        
+        # objects with _last_modified
+        saved = {
+            'token': '63234647A8.Wt5y4vrs', 
+            'id': '15589683027087205627414298864', 
+            '_created': 1558968302.813777, 
+            '_last_accessed': 1558968302.813777, 
+            '_last_modified': 1558968303.205633
+        }
+        state1 = {
+            'token': '63234647A8.Wt5y4vrs', 
+            'id': '15589683027087205627414298864', 
+            '_created': 1558968302.813777, 
+            '_last_accessed': 1558968302.813777, 
+            '_last_modified': 1558968304.196779
+        }
+        state2 = {
+            'token': '63234647A8.Wt5y4vrs', 
+            'id': '15589683027087205627414298864', 
+            '_created': 1558968302.813777, 
+            '_last_accessed': 1558968302.813777, 
+            '_last_modified': 1558968304.079772
+        }
+        
+        # should not raise
+        transient_object._p_resolveConflict(saved, state1, state2)
+        
+        # objects with only _last_accessed
+        saved = {
+            'token': '63234647A8.Wt5y4vrs', 
+            'id': '15589683027087205627414298864', 
+            '_created': 1558968302.813777, 
+            '_last_accessed': 1558968302.813777
+        }
+        state1 = {
+            'token': '63234647A8.Wt5y4vrs', 
+            'id': '15589683027087205627414298864', 
+            '_created': 1558968302.813777, 
+            '_last_accessed': 1558968302.813777
+        }
+        state2 = {
+            'token': '63234647A8.Wt5y4vrs', 
+            'id': '15589683027087205627414298864', 
+            '_created': 1558968302.813777, 
+            '_last_accessed': 1558968302.813777
+        }
+        
+        # should not raise
+        transient_object._p_resolveConflict(saved, state1, state2)
 
 
 def test_suite():
