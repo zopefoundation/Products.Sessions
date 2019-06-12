@@ -4,9 +4,12 @@ Changelog
 4.6 (unreleased)
 ----------------
 
-- Fix Access permissions for ``meta_type`` and ``zmi_icon`` properties so
+- Fix access permissions for ``meta_type`` and ``zmi_icon`` properties so
   they don't raise when accessed in the admin interface.
   (`#24 <https://github.com/zopefoundation/Products.Sessions/pull/24>`_)
+  
+- Fix Python 3 compatibility of ``_p_resolveConflict``.
+  (`#25 <https://github.com/zopefoundation/Products.Sessions/pull/25>`_)
 
 
 4.5 (2019-04-15)
