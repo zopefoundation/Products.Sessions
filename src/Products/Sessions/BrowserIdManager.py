@@ -527,7 +527,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         """ Remove our traversal hook if it exists """
         self.unregisterTraversalHook()
 
-    security.declareProtected(MGMT_SCREEN_PERM,  # NOQA: flake8: D001
+    security.declareProtected(MGMT_SCREEN_PERM,  # noqa: D001
                               'manage_browseridmgr')
     manage_browseridmgr = DTMLFile('dtml/manageIdManager', globals())
 

@@ -15,8 +15,8 @@
 
 # This is a file to define public API in the base namespace of the package.
 
-from .interfaces import BrowserIdManagerErr  # NOQA: flake8: F401
-from .interfaces import SessionDataManagerErr  # NOQA: flake8: F40
+from .interfaces import BrowserIdManagerErr  # noqa: F401
+from .interfaces import SessionDataManagerErr  # noqa: F40
 
 
 def commit(note):
@@ -79,20 +79,20 @@ def initialize(context):
     # with the other. :-(
     from AccessControl import ModuleSecurityInfo
     security = ModuleSecurityInfo('Products')
-    security.declarePublic('Sessions')  # NOQA: flake8: D001
-    security.declarePublic('Transience')  # NOQA: flake8: D001
+    security.declarePublic('Sessions')  # noqa: D001
+    security.declarePublic('Transience')  # noqa: D001
 
     security = ModuleSecurityInfo('Products.Sessions.interfaces')
     security.declareObjectPublic()
     security.setDefaultAccess('allow')
 
     security = ModuleSecurityInfo('Products.Transience')
-    security.declarePublic('MaxTransientObjectsExceeded')  # NOQA: flake8: D001
+    security.declarePublic('MaxTransientObjectsExceeded')  # noqa: D001
 
     # BBB: for names which should be imported from Products.Sessions.interfaces
     security = ModuleSecurityInfo('Products.Sessions')
-    security.declarePublic('BrowserIdManagerErr')  # NOQA: flake8: D001
-    security.declarePublic('SessionDataManagerErr')  # NOQA: flake8: D001
+    security.declarePublic('BrowserIdManagerErr')  # noqa: D001
+    security.declarePublic('SessionDataManagerErr')  # noqa: D001
 
     app = context.getApplication()  # new API added in Zope 4.0b5
     if app is not None:

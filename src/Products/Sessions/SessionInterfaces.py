@@ -12,10 +12,10 @@
 ############################################################################
 # BBB location for APIs now defined in Products.Sessions.interfaces
 
-from .interfaces import BrowserIdManagerErr  # NOQA: flake8: F401
+from .interfaces import BrowserIdManagerErr  # noqa: F401
 from .interfaces import IBrowserIdManager
 from .interfaces import ISessionDataManager
-from .interfaces import SessionDataManagerErr  # NOQA: flake8: F401
+from .interfaces import SessionDataManagerErr  # noqa: F401
 
 
 BrowserIdManagerInterface = IBrowserIdManager

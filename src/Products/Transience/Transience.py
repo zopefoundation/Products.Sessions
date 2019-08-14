@@ -123,7 +123,7 @@ class MaxTransientObjectsExceeded(Exception):
 class TransientObjectContainer(SimpleItem):
     """ Object which contains items that are automatically flushed
     after a period of inactivity """
-    
+
     security = ClassSecurityInfo()
     security.setPermissionDefault(
         MANAGE_CONTAINER_PERM,
@@ -148,18 +148,17 @@ class TransientObjectContainer(SimpleItem):
 
     meta_type = "Transient Object Container"
     zmi_icon = 'far fa-clock'
-    security.declareProtected(ACCESS_CONTENTS_PERM,  # NOQA: flake8: D001
+    security.declareProtected(ACCESS_CONTENTS_PERM,  # noqa: D001
                               'meta_type')
-    security.declareProtected(ACCESS_CONTENTS_PERM,  # NOQA: flake8: D001
+    security.declareProtected(ACCESS_CONTENTS_PERM,  # noqa: D001
                               'zmi_icon')
-    
-    
+
     manage_options = (
         {'label': 'Manage', 'action': 'manage_container'},
         {'label': 'Security', 'action': 'manage_access'},
     )
 
-    security.declareProtected(MGMT_SCREEN_PERM,  # NOQA: flake8: D001
+    security.declareProtected(MGMT_SCREEN_PERM,  # noqa: D001
                               'manage_container')
     manage_container = HTMLFile(
         'dtml/manageTransientObjectContainer',

@@ -17,4 +17,4 @@ import six
 if six.PY2:
     from cgi import escape as html_escape
 else:
-    from html import escape as html_escape  # NOQA: flake8: F401
+    from html import escape as html_escape  # noqa: F401
