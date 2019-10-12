@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.6 (unreleased)
+4.6 (2019-10-12)
 ----------------
 
 - Banish dependency on ``Products.TemporaryFolder`` into a tests extra
