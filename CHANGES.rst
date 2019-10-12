@@ -4,6 +4,8 @@ Changelog
 4.6 (unreleased)
 ----------------
 
+- Switch tests dependencies to Zope 4.x branch to retain Python 2 compatibility
+
 - Fix access permissions for ``meta_type`` and ``zmi_icon`` properties so
   they don't raise when accessed in the admin interface.
   (`#24 <https://github.com/zopefoundation/Products.Sessions/pull/24>`_)
