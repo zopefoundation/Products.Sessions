@@ -5,6 +5,7 @@ Changelog
 ----------------
 
 - Banish dependency on ``Products.TemporaryFolder`` into a tests extra
+  and point out its issues under Zope 4 in the README.
   (`#25 <https://github.com/zopefoundation/Products.Sessions/issues/26>`_)
 
 - Switch tests dependencies to Zope 4.x branch to retain Python 2 compatibility
