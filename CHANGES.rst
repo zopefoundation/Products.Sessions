@@ -4,6 +4,9 @@ Changelog
 4.6 (unreleased)
 ----------------
 
+- Banish dependency on ``Products.TemporaryFolder`` into a tests extra
+  (`#25 <https://github.com/zopefoundation/Products.Sessions/issues/26>`_)
+
 - Switch tests dependencies to Zope 4.x branch to retain Python 2 compatibility
 
 - Fix access permissions for ``meta_type`` and ``zmi_icon`` properties so

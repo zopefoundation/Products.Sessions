@@ -61,15 +61,16 @@ setup(
         'six',
         'AccessControl',
         'Acquisition',
-        'BTrees',
         'persistent',
         'Persistence',
-        'Products.TemporaryFolder >= 5',
         'transaction',
         'ZODB',
         'Zope >= 4.0b5',
         'zope.interface',
     ],
+    extras_require={
+        'tests': ['Products.TemporaryFolder >= 5'],
+    },
     include_package_data=True,
     zip_safe=False,
     entry_points="""
