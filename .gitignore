@@ -15,4 +15,5 @@ eggs/
 htmlcov/
 lib/
 parts/
+pyvenv.cfg
 /_build/
