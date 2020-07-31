@@ -38,7 +38,7 @@ If you use sessions heavily, or if the workaround above leads to an
 unacceptable number of ZODB conflict errors, you should either try using
 cookies or local browser storage via Javascript for storing session data, or 
 switch to a different session implementation that does not store session data
-in the ZODB at all.
+in the ZODB at all. See `the Zope book on Sessions for details <https://zope.readthedocs.io/en/latest/zopebook/Sessions.html#alternative-server-side-session-backends-for-zope-4>`_.
 
 
 Using sessions under Zope 2
