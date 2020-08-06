@@ -4,7 +4,9 @@ Changelog
 4.7 (unreleased)
 ----------------
 
-- Pin to ``transaction < 3`` until https://github.com/zopefoundation/Products.Sessions/issues/32 is solved.
+- Make the product compatible with ``transaction`` version 3
+  (`#32 <https://github.com/zopefoundation/Products.Sessions/issues/32>`_)
+
 
 4.6 (2019-10-12)
 ----------------
