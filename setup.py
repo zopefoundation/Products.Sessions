@@ -63,7 +63,7 @@ setup(
         'Acquisition',
         'persistent',
         'Persistence',
-        'transaction < 3',
+        'transaction',
         'ZODB',
         'Zope >= 4.0b5',
         'zope.interface',

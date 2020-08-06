@@ -18,10 +18,10 @@ class UncommittableJar:
     def sortKey(self):
         return str(id(self))
 
-    def tpc_begin(self, *arg, **kw):
+    def tpc_begin(self, *args):
         pass
 
-    def commit(self, obj, transaction):
+    def commit(self, *args):
         pass
 
     def tpc_vote(self, transaction):
@@ -38,4 +38,4 @@ class makeTransactionUncommittable:
     """
     def __init__(self, transaction, reason):
         self._p_jar = UncommittableJar(reason)
-        transaction.register(self)
+        transaction.join(self._p_jar)
