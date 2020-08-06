@@ -35,12 +35,12 @@ from BTrees.Length import Length as BTreesLength
 from BTrees.OOBTree import OOBTree
 from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
-from Products.Transience.TransienceInterfaces import ItemWithId
-from Products.Transience.TransienceInterfaces import \
-    StringKeyedHomogeneousItemContainer
-from Products.Transience.TransienceInterfaces import TransientItemContainer
-from Products.Transience.TransientObject import TransientObject
 from zope.interface import implementer
+
+from .TransienceInterfaces import ItemWithId
+from .TransienceInterfaces import StringKeyedHomogeneousItemContainer
+from .TransienceInterfaces import TransientItemContainer
+from .TransientObject import TransientObject
 
 
 try:

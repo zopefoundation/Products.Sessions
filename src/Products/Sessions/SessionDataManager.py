@@ -26,6 +26,11 @@ from OFS.owner import Owned
 from OFS.role import RoleManager
 from OFS.SimpleItem import Item
 from Persistence import Persistent
+from ZODB.POSException import ConflictError
+from zope.interface import implementer
+from ZPublisher.BeforeTraverse import registerBeforeTraverse
+from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
+
 from Products.Sessions.BrowserIdManager import BROWSERID_MANAGER_NAME
 from Products.Sessions.common import DEBUG
 from Products.Sessions.interfaces import ISessionDataManager
@@ -35,10 +40,6 @@ from Products.Sessions.SessionPermissions import ACCESS_SESSIONDATA_PERM
 from Products.Sessions.SessionPermissions import ARBITRARY_SESSIONDATA_PERM
 from Products.Sessions.SessionPermissions import CHANGE_DATAMGR_PERM
 from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
-from ZODB.POSException import ConflictError
-from zope.interface import implementer
-from ZPublisher.BeforeTraverse import registerBeforeTraverse
-from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 
 
 bad_path_chars_in = re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search

@@ -18,11 +18,10 @@ from unittest import makeSuite
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
-from Products.Transience.Transience import SPARE_BUCKETS
-from Products.Transience.Transience import MaxTransientObjectsExceeded
-from Products.Transience.Transience import TransientObjectContainer
-from Products.Transience.TransientObject import TransientObject
-
+from ..Transience import SPARE_BUCKETS
+from ..Transience import MaxTransientObjectsExceeded
+from ..Transience import TransientObjectContainer
+from ..TransientObject import TransientObject
 from . import fauxtime
 from . import slowfauxtime
 
