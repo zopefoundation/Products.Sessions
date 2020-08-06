@@ -1,6 +1,0 @@
-[run]
-branch = True
-source = Products.Sessions
-
-[report]
-precision = 2
