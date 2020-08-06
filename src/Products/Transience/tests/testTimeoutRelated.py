@@ -3,15 +3,15 @@ from unittest import TestCase
 from unittest import TestSuite
 from unittest import makeSuite
 
-import Products.Transience.Transience
-import Products.Transience.TransientObject
 import transaction
 import ZODB  # in order to get Persistence.Persistent working
 from OFS.Application import Application
-from Products.Transience.Transience import TransientObjectContainer
 from Testing import makerequest
 from ZODB.DemoStorage import DemoStorage
 
+import Products.Transience.Transience
+import Products.Transience.TransientObject
+from ..Transience import TransientObjectContainer
 from . import fauxtime
 
 

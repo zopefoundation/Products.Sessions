@@ -22,8 +22,8 @@ stuff = {}
 
 
 def _getDB():
-    from OFS.Application import Application
     import transaction
+    from OFS.Application import Application
     db = stuff.get('db')
     if not db:
         from ZODB import DB
@@ -48,12 +48,14 @@ def _delDB():
 
 
 def _populate(app):
+    import transaction
     from OFS.DTMLMethod import DTMLMethod
+
+    from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
+
     from Products.Sessions.BrowserIdManager import BrowserIdManager
     from Products.Sessions.SessionDataManager import SessionDataManager
-    from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
     from Products.Transience.Transience import TransientObjectContainer
-    import transaction
     bidmgr = BrowserIdManager(idmgr_name)
     tf = MountedTemporaryFolder(tf_name, title="Temporary Folder")
     toc = TransientObjectContainer(
@@ -156,7 +158,9 @@ class TestSessionManager(unittest.TestCase):
 
     def testNewSessionDataObjectIsValid(self):
         from Acquisition import aq_base
+
         from Products.Transience.Transience import TransientObject
+
         sdType = type(TransientObject(1))
         sd = self.app.session_data_manager.getSessionData()
         self.assertTrue(type(aq_base(sd)) is sdType)
@@ -205,8 +209,8 @@ class TestSessionManager(unittest.TestCase):
 
     def testSubcommitAssignsPJar(self):
         global DummyPersistent  # so pickle can find it
-        from Persistence import Persistent
         import transaction
+        from Persistence import Persistent
 
         class DummyPersistent(Persistent):
             pass
@@ -235,8 +239,8 @@ class TestSessionManager(unittest.TestCase):
         transaction.commit()
 
     def testAqWrappedObjectsFail(self):
-        from Acquisition import Implicit
         import transaction
+        from Acquisition import Implicit
 
         class DummyAqImplicit(Implicit):
             pass
@@ -255,7 +259,9 @@ class TestSessionManager(unittest.TestCase):
 
     def testUnlazifyAutoPopulated(self):
         from Acquisition import aq_base
+
         from Products.Transience.Transience import TransientObject
+
         self.app.REQUEST['PARENTS'] = [self.app]
         self.app.REQUEST['URL'] = 'a'
         self.app.REQUEST.traverse('/')

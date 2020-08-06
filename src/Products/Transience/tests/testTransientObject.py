@@ -20,8 +20,7 @@ import six
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
-from Products.Transience.Transience import TransientObjectContainer
-
+from ..Transience import TransientObjectContainer
 from . import fauxtime
 
 

@@ -39,17 +39,17 @@ from OFS.role import RoleManager
 from OFS.SimpleItem import Item
 from Persistence import Persistent
 from persistent import TimeStamp
-from Products.Sessions.interfaces import BrowserIdManagerErr
-from Products.Sessions.interfaces import IBrowserIdManager
-from Products.Sessions.SessionPermissions import ACCESS_CONTENTS_PERM
-from Products.Sessions.SessionPermissions import CHANGE_IDMGR_PERM
-from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
 from zope.interface import implementer
 from ZPublisher.BeforeTraverse import queryBeforeTraverse
 from ZPublisher.BeforeTraverse import registerBeforeTraverse
 from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 
 from ._compat import html_escape as escape
+from .interfaces import BrowserIdManagerErr
+from .interfaces import IBrowserIdManager
+from .SessionPermissions import ACCESS_CONTENTS_PERM
+from .SessionPermissions import CHANGE_IDMGR_PERM
+from .SessionPermissions import MGMT_SCREEN_PERM
 
 
 badidnamecharsin = re.compile(r'[\?&;,<> ]').search

@@ -15,8 +15,9 @@ from unittest import TestCase
 from unittest import makeSuite
 
 import transaction
-from Products.Transience.TransactionHelper import PreventTransactionCommit
-from Products.Transience.TransactionHelper import makeTransactionUncommittable
+
+from ..TransactionHelper import PreventTransactionCommit
+from ..TransactionHelper import makeTransactionUncommittable
 
 
 class TestTransactionHelper(TestCase):

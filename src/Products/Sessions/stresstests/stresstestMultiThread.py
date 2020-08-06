@@ -22,22 +22,24 @@ from unittest import TestSuite
 from unittest import makeSuite
 
 import Acquisition
-import Products.Transience.Transience
-import Products.Transience.TransientObject
 import transaction
 import ZODB  # in order to get Persistence.Persistent working
 from OFS.Application import Application
-from Products.Sessions.BrowserIdManager import BrowserIdManager
-from Products.Sessions.BrowserIdManager import getNewBrowserId
-from Products.Sessions.SessionDataManager import SessionDataManager
-from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
-from Products.Transience.tests import fauxtime
-from Products.Transience.Transience import TransientObjectContainer
 from Testing import makerequest
 from ZODB.DemoStorage import DemoStorage
 from ZODB.POSException import BTreesConflictError
 from ZODB.POSException import ConflictError
 from ZODB.POSException import ReadConflictError
+
+from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
+
+import Products.Transience.Transience
+import Products.Transience.TransientObject
+from Products.Sessions.BrowserIdManager import BrowserIdManager
+from Products.Sessions.BrowserIdManager import getNewBrowserId
+from Products.Sessions.SessionDataManager import SessionDataManager
+from Products.Transience.tests import fauxtime
+from Products.Transience.Transience import TransientObjectContainer
 
 
 Products.Transience.Transience.time = fauxtime

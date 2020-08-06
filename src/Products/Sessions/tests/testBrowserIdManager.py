@@ -558,8 +558,8 @@ class TestBrowserIdManager(unittest.TestCase):
     def test_updateTraversalData_w_url_ns(self):
         from Acquisition import Implicit
         from ZPublisher.BeforeTraverse import queryBeforeTraverse
-        from Products.Sessions.BrowserIdManager import \
-            BrowserIdManagerTraverser
+
+        from ..BrowserIdManager import BrowserIdManagerTraverser
 
         class Parent(Implicit):
             pass
@@ -610,8 +610,8 @@ class TestBrowserIdManager(unittest.TestCase):
     def test_registerTraversalHook_normal(self):
         from Acquisition import Implicit
         from ZPublisher.BeforeTraverse import queryBeforeTraverse
-        from Products.Sessions.BrowserIdManager import \
-            BrowserIdManagerTraverser
+
+        from ..BrowserIdManager import BrowserIdManagerTraverser
 
         class Parent(Implicit):
             pass
@@ -654,8 +654,7 @@ class TestBrowserIdManager(unittest.TestCase):
 class TestBrowserIdManagerTraverser(unittest.TestCase):
 
     def _getTargetClass(self):
-        from Products.Sessions.BrowserIdManager \
-            import BrowserIdManagerTraverser
+        from ..BrowserIdManager import BrowserIdManagerTraverser
         return BrowserIdManagerTraverser
 
     def _makeOne(self):
