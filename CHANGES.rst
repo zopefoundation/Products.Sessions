@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.7 (unreleased)
+4.7 (2020-08-07)
 ----------------
 
 - Make the product compatible with ``transaction`` version 3
