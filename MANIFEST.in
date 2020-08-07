@@ -1,6 +1,14 @@
+include *.py
 include *.txt
 include *.rst
+include buildout.cfg
 include tox.ini
+
+include *.yml
+exclude *.yml
+
+include .gitignore
+exclude .gitignore
 
 exclude MANIFEST.in
 
