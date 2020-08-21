@@ -13,6 +13,14 @@
 		REQUEST.SESSION object to do sessioning-related tasks.
 	</p>
 
+    <dtml-unless hasSessionDataContainer>
+      <div class="alert alert-warning">
+        Sessioning is currently disabled because the session data container
+        path setting is invalid. Please enter the path to a valid session data
+        container object.
+      </div>
+    </dtml-unless>
+
 	<form action="manage_changeSDM" method="post">
 
 		<div class="form-group row">
@@ -23,10 +31,10 @@
 		</div>
 
 		<div class="form-group row">
-			<label for="getContainerPath" class="col-sm-4 col-md-3">Transient Object Container Path</label>
+			<label for="getContainerPath" class="col-sm-4 col-md-3">Session data container path</label>
 			<div class="col-sm-8 col-md-9">
 				<input id="getContainerPath" class="form-control" type="text" name="path" value="<dtml-if getContainerPath>&dtml-getContainerPath;</dtml-if>">
-				<small>e.g. '/temp_folder/session_data'</small>
+				<small>e.g. <code>/temp_folder/session_data</code></small>
 			</div>
 		</div>
 

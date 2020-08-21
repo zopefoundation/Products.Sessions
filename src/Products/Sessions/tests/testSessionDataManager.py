@@ -179,15 +179,12 @@ class TestSessionManager(unittest.TestCase):
         self.assertTrue(sd == bykeysd)
 
     def testBadExternalSDCPath(self):
-        from Products.Sessions.SessionDataManager import SessionDataManagerErr
         sdm = self.app.session_data_manager
         # fake out webdav
         sdm.REQUEST['REQUEST_METHOD'] = 'GET'
         sdm.setContainerPath('/fudgeffoloo')
-        self.assertRaises(SessionDataManagerErr, self._testbadsdcpath)
-
-    def _testbadsdcpath(self):
-        self.app.session_data_manager.getSessionData()
+        self.assertFalse(sdm.hasSessionDataContainer())
+        self.assertIsNone(self.app.session_data_manager.getSessionData())
 
     def testInvalidateSessionDataObject(self):
         sdm = self.app.session_data_manager

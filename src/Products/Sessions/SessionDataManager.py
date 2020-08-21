@@ -217,6 +217,14 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             return '/'.join(self.obpath)
         return ''  # blank string represents undefined state
 
+    @security.protected(MGMT_SCREEN_PERM)
+    def hasSessionDataContainer(self):
+        """ ZMI helper: do we have a valid session data container? """
+        container = self._getSessionDataContainer()
+        if container is not None and \
+           getattr(container, 'new_or_existing', None) is not None:
+            return True
+
     def _hasSessionDataObject(self, key):
         """ """
         c = self._getSessionDataContainer()
@@ -225,6 +233,9 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     def _getSessionDataObject(self, key):
         """ returns new or existing session data object """
         container = self._getSessionDataContainer()
+        if container is None:
+            return None
+
         ob = container.new_or_existing(key)
         # hasattr hides conflicts; be explicit by comparing to None
         # because otherwise __len__ of the requested object might be called!
@@ -237,6 +248,9 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     def _getSessionDataObjectByKey(self, key):
         """ returns new or existing session data object """
         container = self._getSessionDataContainer()
+        if container is None:
+            return None
+
         ob = container.get(key)
         if ob is not None:
             # hasattr hides conflicts; be explicit by comparing to None
@@ -253,8 +267,9 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         transactions for mounted storages. """
         if self.obpath is None:
             err = 'Session data container is unspecified in %s' % self.getId()
-            LOG.warn(err)
-            raise SessionIdManagerErr(err)
+            LOG.warning(err)
+            return None
+
         try:
             # This should arguably use restrictedTraverse, but it
             # currently fails for mounted storages.  This might
@@ -269,10 +284,9 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         except ConflictError:
             raise
         except Exception:
-            raise SessionDataManagerErr(
-                "External session data container '%s' not found." %
-                '/'.join(self.obpath)
-            )
+            err = "External session data container '%s' not found."
+            LOG.warning(err % '/'.join(self.obpath))
+            return None
 
     @security.protected(MGMT_SCREEN_PERM)
     def getRequestName(self):
@@ -335,7 +349,7 @@ class SessionDataManagerTraverser(Persistent):
             getSessionData = sdm.getSessionData
         except Exception:
             msg = 'Session automatic traversal failed to get session data'
-            LOG.warn(msg, exc_info=sys.exc_info())
+            LOG.warning(msg, exc_info=sys.exc_info())
             return
 
         # set the getSessionData method in the "lazy" namespace
