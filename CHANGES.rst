@@ -4,6 +4,9 @@ Changelog
 4.8 (unreleased)
 ----------------
 
+- Don't break completely when no session data container is available
+  (`#35 <https://github.com/zopefoundation/Products.Sessions/issues/35>`_)
+
 
 4.7 (2020-08-07)
 ----------------

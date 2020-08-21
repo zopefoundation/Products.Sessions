@@ -33,7 +33,7 @@
 			<label for="path" class="form-label col-sm-3 col-md-2">Path</label>
 			<div class=" col-sm-9 col-md-10">
 				<input id="path" class="form-control" type="text" name="path" />
-				<small class="text-muted">Transient Object Container Path e.g. <em>/temp_folder/session_data</em></small>
+				<small class="text-muted">Session data container path e.g. <code>/temp_folder/session_data</code></small>
 			</div>
 		</div>
 	

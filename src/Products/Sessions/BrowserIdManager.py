@@ -44,12 +44,17 @@ from ZPublisher.BeforeTraverse import queryBeforeTraverse
 from ZPublisher.BeforeTraverse import registerBeforeTraverse
 from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 
-from ._compat import html_escape as escape
 from .interfaces import BrowserIdManagerErr
 from .interfaces import IBrowserIdManager
 from .SessionPermissions import ACCESS_CONTENTS_PERM
 from .SessionPermissions import CHANGE_IDMGR_PERM
 from .SessionPermissions import MGMT_SCREEN_PERM
+
+
+try:
+    from html import escape
+except ImportError:  # Python 2
+    from cgi import escape
 
 
 badidnamecharsin = re.compile(r'[\?&;,<> ]').search
