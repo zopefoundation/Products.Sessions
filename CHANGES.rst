@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.8 (unreleased)
+4.8 (2020-08-21)
 ----------------
 
 - Don't break completely when no session data container is available
