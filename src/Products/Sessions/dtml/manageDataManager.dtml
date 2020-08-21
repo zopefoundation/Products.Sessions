@@ -3,56 +3,62 @@
 <dtml-var "manage_tabs(this(), _, form_title='Manage Session Data Manager')">
 
 <main class="container-fluid">
-	
-	<p class="form-help mb-4">
-		A Session Data Manager object is responsible for maintaining a 
-		relationship between session data objects and Zope browser ids.
-		It is part of the Zope sessioning machinery.  Programmers may
-		interact with a session data manager in order to obtain
-		information about session data, but will more often use the
-		REQUEST.SESSION object to do sessioning-related tasks.
-	</p>
+  
+  <p class="form-help mb-4">
+    A Session Data Manager object is responsible for maintaining a 
+    relationship between session data objects and Zope browser ids.
+    It is part of the Zope sessioning machinery.  Programmers may
+    interact with a session data manager in order to obtain
+    information about session data, but will more often use the
+    REQUEST.SESSION object to do sessioning-related tasks.
+  </p>
 
-    <dtml-unless hasSessionDataContainer>
-      <div class="alert alert-warning">
-        Sessioning is currently disabled because the session data container
-        path setting is invalid. Please enter the path to a valid session data
-        container object.
+  <dtml-unless hasSessionDataContainer>
+    <div class="alert alert-warning">
+      Sessioning is currently disabled because the session data container
+      path setting is invalid. Please enter the path to a valid session data
+      container object.
+    </div>
+  </dtml-unless>
+
+  <form action="manage_changeSDM" method="post">
+
+    <div class="form-group row">
+      <label for="title" class="col-sm-4 col-md-3">Title</label>
+      <div class="col-sm-8 col-md-9">
+        <input id="title" class="form-control" type="text" name="title"
+               value="<dtml-if title>&dtml-title;</dtml-if>">
       </div>
-    </dtml-unless>
+    </div>
 
-	<form action="manage_changeSDM" method="post">
+    <div class="form-group row">
+      <label for="getContainerPath" class="col-sm-4 col-md-3">
+        Session data container path
+      </label>
+      <div class="col-sm-8 col-md-9">
+        <input id="getContainerPath" class="form-control" type="text" name="path" 
+               value="<dtml-if getContainerPath>&dtml-getContainerPath;</dtml-if>">
+        <small>e.g. <code>/temp_folder/session_data</code></small>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label for="title" class="col-sm-4 col-md-3">Title</label>
-			<div class="col-sm-8 col-md-9">
-				<input id="title" class="form-control" type="text" name="title" value="<dtml-if title>&dtml-title;</dtml-if>">
-			</div>
-		</div>
+    <div class="form-group row">
+      <label for="requestName" class="col-sm-4 col-md-3">
+        Place session data in REQUEST object as
+      </label>
+      <div class="col-sm-8 col-md-9">
+        <input id="requestName" class="form-control" type="text" name="requestName"
+               value="<dtml-if getRequestName>&dtml-getRequestName;</dtml-if>">
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label for="getContainerPath" class="col-sm-4 col-md-3">Session data container path</label>
-			<div class="col-sm-8 col-md-9">
-				<input id="getContainerPath" class="form-control" type="text" name="path" value="<dtml-if getContainerPath>&dtml-getContainerPath;</dtml-if>">
-				<small>e.g. <code>/temp_folder/session_data</code></small>
-			</div>
-		</div>
+    <div class="zmi-controls">
+      <input class="btn btn-primary" type="submit" name="submit"
+             value="Save Changes" />
+    </div>
 
-		<div class="form-group row">
-			<label for="requestName" class="col-sm-4 col-md-3">Place SESSION in REQUEST object as</label>
-			<div class="col-sm-8 col-md-9">
-				<input id="requestName" class="form-control" type="text" name="requestName" value="<dtml-if getRequestName>&dtml-getRequestName;</dtml-if>">
-			</div>
-		</div>
-
-		<div class="zmi-controls">
-			<input class="btn btn-primary" type="submit" name="submit" value="Save Changes" />
-		</div>
-
-	</form>
+  </form>
 
 </main>
 
 <dtml-var manage_page_footer>
-
-

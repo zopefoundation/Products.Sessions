@@ -2,122 +2,142 @@
 
 <main class="container-fluid">
 
-	<dtml-var "manage_form_title(this(), _, form_title='Add Browser Id Manager' )">
+  <dtml-var "manage_form_title(this(), _, form_title='Add Browser Id Manager' )">
 
-	<p class="form-help mb-4">
-		Zope Browser Id Manager objects allow Zope to differentiate between site
-		visitors by "tagging" each of their browsers with a unique identifier. This
-		is useful if you need to tell visitors apart from one another even if they do
-		not "log in" to your site.  Browser Id Managers are generally used
-		by interacting with the Zope sessioning machinery.
-	</p>
+  <p class="form-help mb-4">
+    Zope Browser Id Manager objects allow Zope to differentiate between site
+    visitors by "tagging" each of their browsers with a unique identifier. This
+    is useful if you need to tell visitors apart from one another even if they do
+    not "log in" to your site.  Browser Id Managers are generally used
+    by interacting with the Zope sessioning machinery.
+  </p>
 
-	<form  action="constructBrowserIdManager" method="post">
+  <form  action="constructBrowserIdManager" method="post">
 
-		<div class="form-group row">
-			<label for="id" class="col-sm-3 col-md-2">Id</label>
-			<div class="col-sm-9 col-md-10">
-				<span id="id" class="form-control alert-secondary">This object's Zope id must be <code>browser_id_manager</code></span>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label for="id" class="col-sm-3 col-md-2">Id</label>
+      <div class="col-sm-9 col-md-10">
+        <span id="id" class="form-control alert-secondary">
+          This object's Zope id must be <code>browser_id_manager</code>
+        </span>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label for="title" class="col-sm-3 col-md-2">Title</label>
-			<div class="col-sm-9 col-md-10">
-				<input id="title" class="form-control" type="text" name="title" value="" />
-			</div>
-		</div>
+    <div class="form-group row">
+      <label for="title" class="col-sm-3 col-md-2">Title</label>
+      <div class="col-sm-9 col-md-10">
+        <input id="title" class="form-control" type="text" name="title"
+               value="" />
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label for="idname" class="col-sm-3 col-md-2">Browser Id Name</label>
-			<div class="col-sm-9 col-md-10">
-				<input id="idname" class="form-control" type="text" name="idname" value="_ZopeId" />
-			</div>
-		</div>
+    <div class="form-group row">
+      <label for="idname" class="col-sm-3 col-md-2">Browser Id Name</label>
+      <div class="col-sm-9 col-md-10">
+        <input id="idname" class="form-control" type="text" name="idname"
+               value="_ZopeId" />
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label class="col-sm-3 col-md-2">Look for Browser Id in</label>
-			<div class="col-sm-9 col-md-10">
-				<div class="form-check">
-					<input id="cookies" class="form-check-input" type="checkbox" 
-						name="location:list" value="cookies" checked="checked" />
-					<label for="cookies" class="form-check-label">Cookies</label>
-				</div>
-				<div class="form-check">
-					<input id="form" class="form-check-input" type="checkbox" 
-						name="location:list" value="form" checked="checked" />
-					<label for="form" class="form-check-label">Forms and Query Strings</label>
-				</div>
-				<div class="form-check">
-					<input id="url" class="form-check-input" type="checkbox" 
-						name="location:list" value="url" checked="checked" />
-					<label for="url" class="form-check-label">URLs</label>
-				</div>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-md-2">Look for Browser Id in</label>
+      <div class="col-sm-9 col-md-10">
+        <div class="form-check">
+          <input id="cookies" class="form-check-input" type="checkbox" 
+            name="location:list" value="cookies" checked="checked" />
+          <label for="cookies" class="form-check-label">Cookies</label>
+        </div>
+        <div class="form-check">
+          <input id="form" class="form-check-input" type="checkbox" 
+            name="location:list" value="form" checked="checked" />
+          <label for="form" class="form-check-label">
+            Forms and Query Strings
+          </label>
+        </div>
+        <div class="form-check">
+          <input id="url" class="form-check-input" type="checkbox" 
+            name="location:list" value="url" checked="checked" />
+          <label for="url" class="form-check-label">URLs</label>
+        </div>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label class="col-sm-3 col-md-2">URL Encoding</label>
-			<div class="col-sm-9 col-md-10">
-				<div class="form-check">
-					<input id="auto_url_encoding" class="form-check-input" type="checkbox" name="auto_url_encoding" />
-					<label for="auto_url_encoding" class="form-check-label">Automatically encode Zope-generated URLs with a browser id</label>
-				</div>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-md-2">URL Encoding</label>
+      <div class="col-sm-9 col-md-10">
+        <div class="form-check">
+          <input id="auto_url_encoding" class="form-check-input"
+                 type="checkbox" name="auto_url_encoding" />
+          <label for="auto_url_encoding" class="form-check-label">
+            Automatically encode Zope-generated URLs with a browser id
+          </label>
+        </div>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label for="cookiepath" class="col-sm-3 col-md-2">Cookie Path</label>
-			<div class="col-sm-9 col-md-10">
-				<input id="cookiepath" class="form-control" type="text" name="cookiepath" value="" />
-				<small>Leave blank to provide no path info in the browser cookie</small>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label for="cookiepath" class="col-sm-3 col-md-2">Cookie Path</label>
+      <div class="col-sm-9 col-md-10">
+        <input id="cookiepath" class="form-control" type="text"
+               name="cookiepath" value="" />
+        <small>Leave blank to provide no path info in the browser cookie</small>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label for="cookiedomain" class="col-sm-3 col-md-2">Cookie Domain</label>
-			<div class="col-sm-9 col-md-10">
-				<input id="cookiedomain" class="form-control" type="text" name="cookiedomain" value="" />
-				<small>Leave blank to send cookies without domain info -- however, if cookie domain is not blank, it must contain at least two dots</small>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label for="cookiedomain" class="col-sm-3 col-md-2">Cookie Domain</label>
+      <div class="col-sm-9 col-md-10">
+        <input id="cookiedomain" class="form-control" type="text"
+               name="cookiedomain" value="" />
+        <small>
+          Leave blank to send cookies without domain info -- however, if
+          cookie domain is not blank, it must contain at least two dots
+        </small>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label for="cookielifedays" class="col-sm-3 col-md-2">Cookie Lifetime</label>
-			<div class="col-sm-9 col-md-10">
-				<input id="cookielifedays" class="form-control" type="text" name="cookielifedays:int" value="" />
-				<small>Cookie lifetime in days; 0 means send cookies which last only for the lifetime of the browser</small>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label for="cookielifedays" class="col-sm-3 col-md-2">Cookie Lifetime</label>
+      <div class="col-sm-9 col-md-10">
+        <input id="cookielifedays" class="form-control" type="text"
+               name="cookielifedays:int" value="" />
+        <small>
+          Cookie lifetime in days; 0 means cookies last only for
+          the current browser session
+        </small>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label class="col-sm-3 col-md-2">HTTPS</label>
-			<div class="col-sm-9 col-md-10">
-				<div class="form-check">
-					<input type="checkbox" class="form-check-input" id="cookiesecure" name="cookiesecure" />
-					<label for="cookiesecure">Only Send Cookie Over HTTPS</label>
-				</div>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-md-2">HTTPS</label>
+      <div class="col-sm-9 col-md-10">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input"
+                 id="cookiesecure" name="cookiesecure" />
+          <label for="cookiesecure">Only Send Cookie Over HTTPS</label>
+        </div>
+      </div>
+    </div>
 
-		<div class="form-group row">
-			<label class="col-sm-3 col-md-2">Availability</label>
-			<div class="col-sm-9 col-md-10">
-				<div class="form-check">
-					<input type="checkbox" class="form-check-input" id="cookiehttponly" name="cookiehttponly" />
-					<label for="cookiehttponly">Make cookie not aviable from JavaScript</label>
-				</div>
-			</div>
-		</div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-md-2">Availability</label>
+      <div class="col-sm-9 col-md-10">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input"
+                 id="cookiehttponly" name="cookiehttponly" />
+          <label for="cookiehttponly">
+            Make cookie not available from JavaScript
+          </label>
+        </div>
+      </div>
+    </div>
 
-		<div class="zmi-controls">
-			<input class="btn btn-primary" type="submit" name="submit" value="Add" />
-		</div>
+    <div class="zmi-controls">
+      <input class="btn btn-primary" type="submit" name="submit" value="Add" />
+    </div>
 
-	</form>
+  </form>
 
 </main>
 
 <dtml-var manage_page_footer>
-
-

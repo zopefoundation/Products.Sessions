@@ -2,57 +2,58 @@
 
 <main class="container-fluid">
 
-	<dtml-var "manage_form_title(this(), _, form_title='Add Session Data Manager')">
-	
-	<p class="form-help">
-		Zope Session Data Managers objects keep track of your users' session data
-		objects.  Developers interact with a Session Data Manager in order to store
-		and retrieve information during a user session.  A Session Data Manager
-		communicates with a Browser Id Manager to determine the session information
-		for the current user, and hands out Session Data Objects related to that
-		user.
-	</p>
-	
-	<form action="constructSessionDataManager" method="post" class="zmi-addDataManager">
-	
-		<div class="form-group row">
-			<label for="id" class="form-label col-sm-3 col-md-2">Id</label>
-			<div class="col-sm-9 col-md-10">
-				<input id="id" name="id" class="form-control" type="text" />
-			</div>
-		</div>
-	
-		<div class="form-group row">
-			<label for="title" class="form-label col-sm-3 col-md-2">Title</label>
-			<div class=" col-sm-9 col-md-10">
-				<input id="type" class="form-control" type="text" name="title" />
-			</div>
-		</div>
-	
-		<div class="form-group row">
-			<label for="path" class="form-label col-sm-3 col-md-2">Path</label>
-			<div class=" col-sm-9 col-md-10">
-				<input id="path" class="form-control" type="text" name="path" />
-				<small class="text-muted">Session data container path e.g. <code>/temp_folder/session_data</code></small>
-			</div>
-		</div>
-	
-		<div class="form-group row">
-			<label for="requestName" class="form-label col-sm-3 col-md-2">Name</label>
-			<div class=" col-sm-9 col-md-10">
-				<input id="requestName" class="form-control" type="text" name="requestName" 
-					value="SESSION" placeholder="SESSION"/>
-				<small class="text-muted">Name of SESSION in REQUEST object</small>
-			</div>
-		</div>
-	
-		<div class="zmi-controls">
-			<input class="btn btn-primary" type="submit" name="submit" value="Add" />
-		</div>
-		
-	</form>
+  <dtml-var "manage_form_title(this(), _, form_title='Add Session Data Manager')">
+  
+  <p class="form-help">
+    Zope Session Data Managers objects keep track of your users' session data
+    objects.  Developers interact with a Session Data Manager in order to store
+    and retrieve information during a user session.  A Session Data Manager
+    communicates with a Browser Id Manager to determine the session information
+    for the current user, and hands out Session Data Objects related to that
+    user.
+  </p>
+  
+  <form action="constructSessionDataManager" method="post"
+        class="zmi-addDataManager">
+  
+    <div class="form-group row">
+      <label for="id" class="form-label col-sm-3 col-md-2">Id</label>
+      <div class="col-sm-9 col-md-10">
+        <input id="id" name="id" class="form-control" type="text" />
+      </div>
+    </div>
+  
+    <div class="form-group row">
+      <label for="title" class="form-label col-sm-3 col-md-2">Title</label>
+      <div class=" col-sm-9 col-md-10">
+        <input id="type" class="form-control" type="text" name="title" />
+      </div>
+    </div>
+  
+    <div class="form-group row">
+      <label for="path" class="form-label col-sm-3 col-md-2">Path</label>
+      <div class=" col-sm-9 col-md-10">
+        <input id="path" class="form-control" type="text" name="path" />
+        <small class="text-muted">Session data container path e.g.
+          <code>/temp_folder/session_data</code></small>
+      </div>
+    </div>
+  
+    <div class="form-group row">
+      <label for="requestName" class="form-label col-sm-3 col-md-2">Name</label>
+      <div class=" col-sm-9 col-md-10">
+        <input id="requestName" class="form-control" type="text"
+               name="requestName" value="SESSION" placeholder="SESSION"/>
+        <small class="text-muted">Name of SESSION in REQUEST object</small>
+      </div>
+    </div>
+  
+    <div class="zmi-controls">
+      <input class="btn btn-primary" type="submit" name="submit" value="Add" />
+    </div>
+    
+  </form>
 
 </main>
 
 <dtml-var manage_page_footer>
-
