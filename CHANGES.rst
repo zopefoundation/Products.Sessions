@@ -4,6 +4,8 @@ Changelog
 4.9 (unreleased)
 ----------------
 
+- Pin Zope <5 to retain Python 2 compatibility
+
 
 4.8 (2020-08-21)
 ----------------
