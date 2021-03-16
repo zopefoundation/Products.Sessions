@@ -53,8 +53,8 @@ def _populate(app):
 
     from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 
-    from Products.Sessions.BrowserIdManager import BrowserIdManager
-    from Products.Sessions.SessionDataManager import SessionDataManager
+    from ..BrowserIdManager import BrowserIdManager
+    from ..SessionDataManager import SessionDataManager
     from Products.Transience.Transience import TransientObjectContainer
     bidmgr = BrowserIdManager(idmgr_name)
     tf = MountedTemporaryFolder(tf_name, title="Temporary Folder")

@@ -31,15 +31,15 @@ from zope.interface import implementer
 from ZPublisher.BeforeTraverse import registerBeforeTraverse
 from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 
-from Products.Sessions.BrowserIdManager import BROWSERID_MANAGER_NAME
-from Products.Sessions.common import DEBUG
-from Products.Sessions.interfaces import ISessionDataManager
-from Products.Sessions.interfaces import SessionDataManagerErr
-from Products.Sessions.SessionPermissions import ACCESS_CONTENTS_PERM
-from Products.Sessions.SessionPermissions import ACCESS_SESSIONDATA_PERM
-from Products.Sessions.SessionPermissions import ARBITRARY_SESSIONDATA_PERM
-from Products.Sessions.SessionPermissions import CHANGE_DATAMGR_PERM
-from Products.Sessions.SessionPermissions import MGMT_SCREEN_PERM
+from .BrowserIdManager import BROWSERID_MANAGER_NAME
+from .common import DEBUG
+from .interfaces import ISessionDataManager
+from .interfaces import SessionDataManagerErr
+from .SessionPermissions import ACCESS_CONTENTS_PERM
+from .SessionPermissions import ACCESS_SESSIONDATA_PERM
+from .SessionPermissions import ARBITRARY_SESSIONDATA_PERM
+from .SessionPermissions import CHANGE_DATAMGR_PERM
+from .SessionPermissions import MGMT_SCREEN_PERM
 
 
 bad_path_chars_in = re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search

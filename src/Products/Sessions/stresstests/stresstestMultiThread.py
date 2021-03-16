@@ -35,9 +35,9 @@ from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
-from Products.Sessions.BrowserIdManager import BrowserIdManager
-from Products.Sessions.BrowserIdManager import getNewBrowserId
-from Products.Sessions.SessionDataManager import SessionDataManager
+from ...BrowserIdManager import BrowserIdManager
+from ...BrowserIdManager import getNewBrowserId
+from ...SessionDataManager import SessionDataManager
 from Products.Transience.tests import fauxtime
 from Products.Transience.Transience import TransientObjectContainer
 

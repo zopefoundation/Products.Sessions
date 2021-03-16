@@ -84,25 +84,21 @@ class TestInitialization(unittest.TestCase):
         return AppInitializer(app)
 
     def test_install_browser_id_manager(self):
-        import Products.Sessions.BrowserIdManager
+        from Products.Sessions.BrowserIdManager import BrowserIdManager
         self.configure(test_cfg)
         initializer = self.getInitializer()
         app = initializer.getApp()
         initializer.install_products()
-        self.assertIsInstance(
-            app.browser_id_manager,
-            Products.Sessions.BrowserIdManager.BrowserIdManager)
+        self.assertIsInstance(app.browser_id_manager, BrowserIdManager)
         self.assertEqual(app.browser_id_manager.meta_type,
                          'Browser Id Manager')
 
     def test_install_session_data_manager(self):
-        import Products.Sessions.SessionDataManager
+        from Products.Sessions.SessionDataManager import SessionDataManager
         self.configure(test_cfg)
         initializer = self.getInitializer()
         initializer.install_products()
         app = initializer.getApp()
-        self.assertIsInstance(
-            app.session_data_manager,
-            Products.Sessions.SessionDataManager.SessionDataManager)
+        self.assertIsInstance(app.session_data_manager, SessionDataManager)
         self.assertEqual(app.session_data_manager.meta_type,
                          'Session Data Manager')
