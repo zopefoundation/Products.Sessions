@@ -1,8 +1,10 @@
 Changelog
 =========
 
-4.9 (unreleased)
+4.9 (2021-03-16)
 ----------------
+
+- Add support for Python 3.9
 
 
 4.8 (2020-08-21)
