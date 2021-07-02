@@ -41,7 +41,7 @@ instancehome {instancehome}
       name temporary storage for sessioning
     </temporarystorage>
     mount-point /temp_folder
-   container-class Products.TemporaryFolder.TemporaryContainer
+    container-class OFS.Folder.Folder
 </zodb_db>
 """
 

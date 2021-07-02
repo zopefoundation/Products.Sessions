@@ -25,13 +25,12 @@ import Acquisition
 import transaction
 import ZODB  # in order to get Persistence.Persistent working
 from OFS.Application import Application
+from OFS.Folder import Folder
 from Testing import makerequest
 from ZODB.DemoStorage import DemoStorage
 from ZODB.POSException import BTreesConflictError
 from ZODB.POSException import ConflictError
 from ZODB.POSException import ReadConflictError
-
-from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
@@ -86,7 +85,7 @@ class Foo(Acquisition.Implicit):
 
 def _populate(app):
     bidmgr = BrowserIdManager(idmgr_name)
-    tf = MountedTemporaryFolder(tf_name, 'Temporary Folder')
+    tf = Folder(tf_name)
     toc = TransientObjectContainer(
         toc_name,
         title='Temporary '
