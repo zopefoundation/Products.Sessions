@@ -4,6 +4,9 @@ Changelog
 4.10 (unreleased)
 -----------------
 
+- Reduce usage of deprecated ``tempstorage`` for testing and remove warnings
+  (`#41 <https://github.com/zopefoundation/Products.Sessions/issues/41>`_)
+
 
 4.9 (2021-03-16)
 ----------------

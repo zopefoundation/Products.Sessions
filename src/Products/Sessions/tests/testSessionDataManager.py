@@ -11,6 +11,7 @@
 #
 ##############################################################################
 import unittest
+import warnings
 
 
 tf_name = 'temp_folder'
@@ -21,7 +22,7 @@ sdm_name = 'session_data_manager'
 stuff = {}
 
 
-def _getDB():
+def _getDB(use_temporary_folder=False):
     import transaction
     from OFS.Application import Application
     db = stuff.get('db')
@@ -35,7 +36,7 @@ def _getDB():
         app = Application()
         root['Application'] = app
         transaction.savepoint(optimistic=True)
-        _populate(app)
+        _populate(app, use_temporary_folder)
         stuff['db'] = db
         conn.close()
     return db
@@ -47,9 +48,10 @@ def _delDB():
     del stuff['db']
 
 
-def _populate(app):
+def _populate(app, use_temporary_folder=False):
     import transaction
     from OFS.DTMLMethod import DTMLMethod
+    from OFS.Folder import Folder
 
     from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder
 
@@ -57,7 +59,10 @@ def _populate(app):
     from ..SessionDataManager import SessionDataManager
     from Products.Transience.Transience import TransientObjectContainer
     bidmgr = BrowserIdManager(idmgr_name)
-    tf = MountedTemporaryFolder(tf_name, title="Temporary Folder")
+    if use_temporary_folder:
+        tf = MountedTemporaryFolder(tf_name, title="Temporary Folder")
+    else:
+        tf = Folder(tf_name)
     toc = TransientObjectContainer(
         toc_name,
         title='Temporary '
@@ -95,7 +100,9 @@ def _populate(app):
 
     app._setObject(sdm_name, session_data_manager)
 
-    app._setObject(tf_name, tf)
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        app._setObject(tf_name, tf)
     transaction.commit()
 
     app.temp_folder._setObject(toc_name, toc)
@@ -219,22 +226,6 @@ class TestSessionManager(unittest.TestCase):
         transaction.savepoint(optimistic=True)
         self.assertFalse(sd['dp']._p_jar is None)
 
-    def testForeignObject(self):
-        from ZODB.POSException import InvalidObjectReference
-        self.assertRaises(InvalidObjectReference, self._foreignAdd)
-
-    def _foreignAdd(self):
-        import transaction
-        ob = self.app.session_data_manager
-
-        # we don't want to fail due to an acquisition wrapper
-        ob = ob.aq_base
-
-        # we want to fail for some other reason:
-        sd = self.app.session_data_manager.getSessionData()
-        sd.set('foo', ob)
-        transaction.commit()
-
     def testAqWrappedObjectsFail(self):
         import transaction
         from Acquisition import Implicit
@@ -267,7 +258,33 @@ class TestSessionManager(unittest.TestCase):
         self.assertTrue(type(aq_base(sess)) is sdType)
 
 
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(TestSessionManager),
-    ))
+class TestSessionManagerWithTemporaryFolder(unittest.TestCase):
+
+    def setUp(self):
+        from Testing import makerequest
+        db = _getDB(use_temporary_folder=True)
+        conn = db.open()
+        root = conn.root()
+        self.app = makerequest.makerequest(root['Application'])
+        self.timeout = 1
+
+    def tearDown(self):
+        _delDB()
+        self.app._p_jar.close()
+        del self.app
+
+    def testForeignObject(self):
+        from ZODB.POSException import InvalidObjectReference
+        self.assertRaises(InvalidObjectReference, self._foreignAdd)
+
+    def _foreignAdd(self):
+        import transaction
+        ob = self.app.session_data_manager
+
+        # we don't want to fail due to an acquisition wrapper
+        ob = ob.aq_base
+
+        # we want to fail for some other reason:
+        sd = self.app.session_data_manager.getSessionData()
+        sd.set('foo', ob)
+        transaction.commit()
