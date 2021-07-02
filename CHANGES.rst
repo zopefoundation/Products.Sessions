@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.10 (unreleased)
+4.10 (2021-07-02)
 -----------------
 
 - Reduce usage of deprecated ``tempstorage`` for testing and remove warnings
