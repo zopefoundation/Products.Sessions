@@ -148,6 +148,12 @@ class TransientObjectContainer(SimpleItem):
 
     meta_type = "Transient Object Container"
     zmi_icon = 'far fa-clock'
+    security.declareProtected(access_contents_information,  # noqa: D001
+                              'meta_type')
+    security.declareProtected(access_contents_information,  # noqa: D001
+                              'zmi_icon')
+    security.declareProtected(access_contents_information,  # noqa: D001
+                              'title')
 
     manage_options = (
         {'label': 'Manage', 'action': 'manage_container'},
