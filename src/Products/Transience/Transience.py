@@ -148,10 +148,6 @@ class TransientObjectContainer(SimpleItem):
 
     meta_type = "Transient Object Container"
     zmi_icon = 'far fa-clock'
-    security.declareProtected(access_contents_information,  # noqa: D001
-                              'meta_type')
-    security.declareProtected(access_contents_information,  # noqa: D001
-                              'zmi_icon')
 
     manage_options = (
         {'label': 'Manage', 'action': 'manage_container'},
@@ -427,9 +423,11 @@ class TransientObjectContainer(SimpleItem):
 
         return d
 
+    @security.protected(access_transient_objects)
     def keys(self):
         return list(self._all().keys())
 
+    @security.protected(access_transient_objects)
     def raw(self, current_ts):
         # for debugging and unit testing
         current = self._getCurrentSlices(current_ts)
@@ -446,9 +444,11 @@ class TransientObjectContainer(SimpleItem):
 
         return d
 
+    @security.protected(access_transient_objects)
     def items(self):
         return list(self._all().items())
 
+    @security.protected(access_transient_objects)
     def values(self):
         return list(self._all().values())
 
@@ -458,6 +458,7 @@ class TransientObjectContainer(SimpleItem):
             item = item.__of__(self)
         return item
 
+    @security.protected(access_transient_objects)
     def __getitem__(self, k):
         if self._timeout_slices:
             current_ts = getCurrentTimeslice(self._period)
@@ -471,6 +472,7 @@ class TransientObjectContainer(SimpleItem):
 
         return self._wrap(item)
 
+    @security.protected(access_transient_objects)
     def __setitem__(self, k, v):
         DEBUG and TLOG('__setitem__: called with key %s, value %s' % (k, v))
         if self._timeout_slices:
@@ -508,6 +510,7 @@ class TransientObjectContainer(SimpleItem):
         if getattr(v, 'setLastAccessed', None):
             v.setLastAccessed()
 
+    @security.protected(access_transient_objects)
     def __delitem__(self, k):
         DEBUG and TLOG('__delitem__ called with key %s' % k)
         if self._timeout_slices:
@@ -528,6 +531,7 @@ class TransientObjectContainer(SimpleItem):
         self._length.increment(-1)
         return current_ts, item
 
+    @security.protected(access_transient_objects)
     def __len__(self):
         return self._length()
 
@@ -830,6 +834,7 @@ class TransientObjectContainer(SimpleItem):
         DEBUG and TLOG('_do_gc_work: setting last_gc_timeslice to %s' % now)
         self._last_gc_timeslice.set(now)
 
+    @security.private
     def notifyAdd(self, item):
         DEBUG and TLOG('notifyAdd with %s' % item)
         callback = self._getCallback(self._addCallback)
@@ -837,6 +842,7 @@ class TransientObjectContainer(SimpleItem):
             return
         self._notify(item, callback, 'notifyAdd')
 
+    @security.private
     def notifyDel(self, item):
         DEBUG and TLOG('notifyDel with %s' % item)
         callback = self._getCallback(self._delCallback)
@@ -886,6 +892,7 @@ class TransientObjectContainer(SimpleItem):
                         name, '/'.join(path), callback,
                         exc_info=sys.exc_info())
 
+    @security.protected(access_contents_information)
     def getId(self):
         return self.id
 
@@ -925,10 +932,12 @@ class TransientObjectContainer(SimpleItem):
             self._setTimeout(timeout_mins, period_secs)
             self._reset()
 
+    @security.protected(view_management_screens)
     def getTimeoutMinutes(self):
         """ """
         return self._timeout_secs // 60
 
+    @security.protected(view_management_screens)
     def getPeriodSeconds(self):
         """ """
         return self._period
