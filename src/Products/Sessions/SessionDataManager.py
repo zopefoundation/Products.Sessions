@@ -16,6 +16,8 @@ import sys
 from logging import getLogger
 
 from AccessControl.class_init import InitializeClass
+from AccessControl.Permissions import access_contents_information
+from AccessControl.Permissions import view_management_screens
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import Implicit
 from Acquisition import aq_inner
@@ -35,11 +37,10 @@ from .BrowserIdManager import BROWSERID_MANAGER_NAME
 from .common import DEBUG
 from .interfaces import ISessionDataManager
 from .interfaces import SessionDataManagerErr
-from .SessionPermissions import ACCESS_CONTENTS_PERM
-from .SessionPermissions import ACCESS_SESSIONDATA_PERM
-from .SessionPermissions import ARBITRARY_SESSIONDATA_PERM
-from .SessionPermissions import CHANGE_DATAMGR_PERM
-from .SessionPermissions import MGMT_SCREEN_PERM
+from .permissions import access_session_data
+from .permissions import access_user_session_data
+from .permissions import change_session_data_managers
+from Products.Transience.Transience import TransientObjectContainer
 
 
 bad_path_chars_in = re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search
@@ -49,8 +50,6 @@ constructSessionDataManagerForm = DTMLFile(
     'dtml/addDataManager',
     globals()
 )
-
-ADD_SESSION_DATAMANAGER_PERM = "Add Session Data Manager"
 
 
 def constructSessionDataManager(
@@ -105,15 +104,15 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         'title_or_id': 1,
     }
     security.setDefaultAccess(ok)
-    security.setPermissionDefault(CHANGE_DATAMGR_PERM, ['Manager'])
-    security.setPermissionDefault(MGMT_SCREEN_PERM, ['Manager'])
+    security.setPermissionDefault(change_session_data_managers, ['Manager'])
+    security.setPermissionDefault(view_management_screens, ['Manager'])
     security.setPermissionDefault(
-        ACCESS_CONTENTS_PERM,
+        access_contents_information,
         ['Manager', 'Anonymous'],
     )
-    security.setPermissionDefault(ARBITRARY_SESSIONDATA_PERM, ['Manager'])
+    security.setPermissionDefault(access_user_session_data, ['Manager'])
     security.setPermissionDefault(
-        ACCESS_SESSIONDATA_PERM,
+        access_session_data,
         ['Manager', 'Anonymous', ],
     )
 
@@ -124,14 +123,14 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
 
     # INTERFACE METHODS FOLLOW
 
-    @security.protected(ACCESS_SESSIONDATA_PERM)
+    @security.protected(access_session_data)
     def getSessionData(self, create=1):
         """ """
         key = self.getBrowserIdManager().getBrowserId(create=create)
         if key is not None:
             return self._getSessionDataObject(key)
 
-    @security.protected(ACCESS_SESSIONDATA_PERM)
+    @security.protected(access_session_data)
     def hasSessionData(self):
         """ """
         key = self.getBrowserIdManager().getBrowserId(create=0)
@@ -139,11 +138,11 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             return 0
         return self._hasSessionDataObject(key)
 
-    @security.protected(ARBITRARY_SESSIONDATA_PERM)
+    @security.protected(access_user_session_data)
     def getSessionDataByKey(self, key):
         return self._getSessionDataObjectByKey(key)
 
-    @security.protected(ACCESS_CONTENTS_PERM)
+    @security.protected(access_contents_information)
     def getBrowserIdManager(self):
         """ """
         mgr = getattr(self, BROWSERID_MANAGER_NAME, None)
@@ -162,7 +161,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         self.setTitle(title)
         self._requestSessionName = requestName
 
-    @security.protected(CHANGE_DATAMGR_PERM)
+    @security.protected(change_session_data_managers)
     def manage_changeSDM(
         self,
         title,
@@ -185,7 +184,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
                 manage_tabs_message='Changes saved.'
             )
 
-    @security.protected(CHANGE_DATAMGR_PERM)
+    @security.protected(change_session_data_managers)
     def setTitle(self, title):
         """ """
         if not title:
@@ -193,7 +192,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         else:
             self.title = str(title)
 
-    @security.protected(CHANGE_DATAMGR_PERM)
+    @security.protected(change_session_data_managers)
     def setContainerPath(self, path=None):
         """ """
         if not path:
@@ -210,14 +209,14 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         else:
             raise SessionDataManagerErr('Bad path value %s' % path)
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def getContainerPath(self):
         """ """
         if self.obpath is not None:
             return '/'.join(self.obpath)
         return ''  # blank string represents undefined state
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def hasSessionDataContainer(self):
         """ ZMI helper: do we have a valid session data container? """
         container = self._getSessionDataContainer()

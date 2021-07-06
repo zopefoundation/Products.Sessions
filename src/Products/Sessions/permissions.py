@@ -11,10 +11,9 @@
 #
 ############################################################################
 
-CHANGE_DATAMGR_PERM = 'Change Session Data Manager'
-MGMT_SCREEN_PERM = 'View management screens'
-ACCESS_CONTENTS_PERM = 'Access contents information'
-ACCESS_SESSIONDATA_PERM = 'Access session data'
-ARBITRARY_SESSIONDATA_PERM = 'Access arbitrary user session data'
-CHANGE_IDMGR_PERM = 'Change Browser Id Manager'
-MANAGE_CONTAINER_PERM = 'Manage Session Data Container'
+access_session_data = 'Access session data'
+access_user_session_data = 'Access arbitrary user session data'
+add_browser_id_managers = 'Add Browser Id Manager'
+add_session_data_managers = 'Add Session Data Manager'
+change_browser_id_managers = 'Change Browser Id Manager'
+change_session_data_managers = 'Change Session Data Manager'

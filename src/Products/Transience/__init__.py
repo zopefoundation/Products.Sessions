@@ -23,6 +23,7 @@ Transience initialization routines
 import ZODB  # this is to help out testrunner, don't remove.
 
 from . import Transience
+from .permissions import add_transient_containers
 # import of MaxTransientObjectsExceeded for easy import from scripts,
 # this is protected by a module security info declaration in the
 # Sessions package.
@@ -32,7 +33,7 @@ from .Transience import MaxTransientObjectsExceeded
 def initialize(context):
     context.registerClass(
         Transience.TransientObjectContainer,
-        permission=Transience.ADD_CONTAINER_PERM,
+        permission=add_transient_containers,
         constructors=(Transience.constructTransientObjectContainerForm,
                       Transience.constructTransientObjectContainer)
         )

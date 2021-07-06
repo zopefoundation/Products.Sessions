@@ -13,10 +13,10 @@
 """ Session managemnt product initialization
 """
 
-# This is a file to define public API in the base namespace of the package.
-
 from .interfaces import BrowserIdManagerErr  # noqa: F401
-from .interfaces import SessionDataManagerErr  # noqa: F40
+from .interfaces import SessionDataManagerErr  # noqa: F401
+from .permissions import add_browser_id_managers
+from .permissions import add_session_data_managers
 
 
 def commit(note):
@@ -61,13 +61,13 @@ def initialize(context):
 
     context.registerClass(
         BrowserIdManager.BrowserIdManager,
-        permission=BrowserIdManager.ADD_BROWSER_ID_MANAGER_PERM,
+        permission=add_browser_id_managers,
         constructors=(BrowserIdManager.constructBrowserIdManagerForm,
                       BrowserIdManager.constructBrowserIdManager))
 
     context.registerClass(
         SessionDataManager.SessionDataManager,
-        permission=SessionDataManager.ADD_SESSION_DATAMANAGER_PERM,
+        permission=add_session_data_managers,
         constructors=(SessionDataManager.constructSessionDataManagerForm,
                       SessionDataManager.constructSessionDataManager))
 

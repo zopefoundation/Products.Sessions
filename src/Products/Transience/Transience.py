@@ -24,6 +24,9 @@ from logging import getLogger
 from six.moves import _thread as thread
 
 from AccessControl.class_init import InitializeClass
+from AccessControl.Permissions import access_contents_information
+from AccessControl.Permissions import view
+from AccessControl.Permissions import view_management_screens
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
@@ -37,6 +40,9 @@ from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
 from zope.interface import implementer
 
+from .permissions import access_transient_objects
+from .permissions import create_transient_objects
+from .permissions import manage_transient_containers
 from .TransienceInterfaces import ItemWithId
 from .TransienceInterfaces import StringKeyedHomogeneousItemContainer
 from .TransienceInterfaces import TransientItemContainer
@@ -48,12 +54,6 @@ try:
 except ImportError:
     from cgi import escape as html_escape
 
-ADD_CONTAINER_PERM = 'Add Transient Object Container'
-MGMT_SCREEN_PERM = 'View management screens'
-ACCESS_CONTENTS_PERM = 'Access contents information'
-CREATE_TRANSIENTS_PERM = 'Create Transient Objects'
-ACCESS_TRANSIENTS_PERM = 'Access Transient Objects'
-MANAGE_CONTAINER_PERM = 'Manage Transient Object Container'
 
 SPARE_BUCKETS = 15  # minimum number of buckets to keep "spare"
 BUCKET_CLASS = OOBTree  # constructor for buckets
@@ -126,31 +126,31 @@ class TransientObjectContainer(SimpleItem):
 
     security = ClassSecurityInfo()
     security.setPermissionDefault(
-        MANAGE_CONTAINER_PERM,
+        manage_transient_containers,
         ['Manager', ],
     )
     security.setPermissionDefault(
-        MGMT_SCREEN_PERM,
+        view_management_screens,
         ['Manager', ],
     )
     security.setPermissionDefault(
-        ACCESS_CONTENTS_PERM,
+        access_contents_information,
         ['Manager', 'Anonymous', ],
     )
     security.setPermissionDefault(
-        ACCESS_TRANSIENTS_PERM,
+        access_transient_objects,
         ['Manager', 'Anonymous', 'Sessions', ],
     )
     security.setPermissionDefault(
-        CREATE_TRANSIENTS_PERM,
+        create_transient_objects,
         ['Manager', ],
     )
 
     meta_type = "Transient Object Container"
     zmi_icon = 'far fa-clock'
-    security.declareProtected(ACCESS_CONTENTS_PERM,  # noqa: D001
+    security.declareProtected(access_contents_information,  # noqa: D001
                               'meta_type')
-    security.declareProtected(ACCESS_CONTENTS_PERM,  # noqa: D001
+    security.declareProtected(access_contents_information,  # noqa: D001
                               'zmi_icon')
 
     manage_options = (
@@ -158,7 +158,7 @@ class TransientObjectContainer(SimpleItem):
         {'label': 'Security', 'action': 'manage_access'},
     )
 
-    security.declareProtected(MGMT_SCREEN_PERM,  # noqa: D001
+    security.declareProtected(view_management_screens,  # noqa: D001
                               'manage_container')
     manage_container = HTMLFile(
         'dtml/manageTransientObjectContainer',
@@ -531,7 +531,7 @@ class TransientObjectContainer(SimpleItem):
     def __len__(self):
         return self._length()
 
-    @security.protected(ACCESS_TRANSIENTS_PERM)
+    @security.protected(access_transient_objects)
     def get(self, k, default=None):
         DEBUG and TLOG('get: called with key %s, default %s' % (k, default))
         if self._timeout_slices:
@@ -545,7 +545,7 @@ class TransientObjectContainer(SimpleItem):
             return default
         return self._wrap(item)
 
-    @security.protected(ACCESS_TRANSIENTS_PERM)
+    @security.protected(access_transient_objects)
     def __contains__(self, k):
         if self._timeout_slices:
             current_ts = getCurrentTimeslice(self._period)
@@ -889,7 +889,7 @@ class TransientObjectContainer(SimpleItem):
     def getId(self):
         return self.id
 
-    @security.protected(CREATE_TRANSIENTS_PERM)
+    @security.protected(create_transient_objects)
     def new_or_existing(self, key):
         DEBUG and TLOG('new_or_existing called with %s' % key)
         item = self.get(key, _marker)
@@ -899,7 +899,7 @@ class TransientObjectContainer(SimpleItem):
             item = self._wrap(item)
         return item
 
-    @security.protected(CREATE_TRANSIENTS_PERM)
+    @security.protected(create_transient_objects)
     def new(self, key):
         DEBUG and TLOG('new called with %s' % key)
         if not isinstance(key, str):
@@ -912,7 +912,7 @@ class TransientObjectContainer(SimpleItem):
 
     # TransientItemContainer methods
 
-    @security.protected(MANAGE_CONTAINER_PERM)
+    @security.protected(manage_transient_containers)
     def setTimeoutMinutes(self, timeout_mins, period_secs=20):
         """ The period_secs parameter is defaulted to preserve backwards API
         compatibility.  In older versions of this code, period was
@@ -933,49 +933,49 @@ class TransientObjectContainer(SimpleItem):
         """ """
         return self._period
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def getSubobjectLimit(self):
         """ """
         return self._limit
 
-    @security.protected(MANAGE_CONTAINER_PERM)
+    @security.protected(manage_transient_containers)
     def setSubobjectLimit(self, limit):
         """ """
         if limit != self.getSubobjectLimit():
             self._setLimit(limit)
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def getAddNotificationTarget(self):
         return self._addCallback or ''
 
-    @security.protected(MANAGE_CONTAINER_PERM)
+    @security.protected(manage_transient_containers)
     def setAddNotificationTarget(self, f):
         self._addCallback = f
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def getDelNotificationTarget(self):
         return self._delCallback or ''
 
-    @security.protected(MANAGE_CONTAINER_PERM)
+    @security.protected(manage_transient_containers)
     def setDelNotificationTarget(self, f):
         self._delCallback = f
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def disableInbandHousekeeping(self):
         """ No longer perform inband housekeeping """
         self._inband_housekeeping = False
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def enableInbandHousekeeping(self):
         """ (Re)enable inband housekeeping """
         self._inband_housekeeping = True
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def isInbandHousekeepingEnabled(self):
         """ Report if inband housekeeping is enabled """
         return self._inband_housekeeping
 
-    @security.protected('View')
+    @security.protected(view)
     def housekeep(self):
         """ Call this from a scheduler at least every
         self._period * (SPARE_BUCKETS - 1) seconds to perform out of band
@@ -991,7 +991,7 @@ class TransientObjectContainer(SimpleItem):
         self._replentish(now)
         self._gc(now)
 
-    @security.protected(MANAGE_CONTAINER_PERM)
+    @security.protected(manage_transient_containers)
     def manage_changeTransientObjectContainer(
         self,
         title='',
