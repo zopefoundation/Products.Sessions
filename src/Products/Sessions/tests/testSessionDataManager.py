@@ -128,6 +128,72 @@ class TestSessionManager(unittest.TestCase):
         self.app._p_jar.close()
         del self.app
 
+    def test_initialization(self):
+        from ..SessionDataManager import SessionDataManager
+        sdm = SessionDataManager('testing')
+
+        self.assertEqual(sdm.getId(), 'testing')
+        self.assertEqual(sdm.title, '')
+        self.assertFalse(sdm.getContainerPath())
+        self.assertFalse(sdm.getRequestName())
+
+        sdm2 = SessionDataManager('testing',
+                                  title='Test Title',
+                                  path='/foo/bar',
+                                  requestName='SESS')
+        self.assertEqual(sdm2.getId(), 'testing')
+        self.assertEqual(sdm2.title, 'Test Title')
+        self.assertEqual(sdm2.getContainerPath(), '/foo/bar')
+        self.assertEqual(sdm2.getRequestName(), 'SESS')
+
+    def test_manage_changeSDM(self):
+        sdm = self.app.session_data_manager
+
+        sdm.manage_changeSDM(title='Test Title',
+                             path='/foo/bar',
+                             requestName='SESS')
+        self.assertEqual(sdm.title, 'Test Title')
+        self.assertEqual(sdm.getContainerPath(), '/foo/bar')
+        self.assertEqual(sdm.getRequestName(), 'SESS')
+
+    def test_setTitle(self):
+        sdm = self.app.session_data_manager
+
+        sdm.setTitle(None)
+        self.assertEqual(sdm.title, '')
+
+        sdm.setTitle('')
+        self.assertEqual(sdm.title, '')
+
+        sdm.setTitle('foo')
+        self.assertEqual(sdm.title, 'foo')
+
+    def test_setContainerPath(self):
+        from ..interfaces import SessionDataManagerErr
+
+        sdm = self.app.session_data_manager
+
+        sdm.setContainerPath()
+        self.assertFalse(sdm.getContainerPath())
+
+        sdm.setContainerPath('')
+        self.assertFalse(sdm.getContainerPath())
+
+        with self.assertRaises(SessionDataManagerErr):
+            sdm.setContainerPath('\\_I_am_not_allowed')
+
+        with self.assertRaises(SessionDataManagerErr):
+            sdm.setContainerPath(99)
+
+        sdm.setContainerPath('/foo/bar/baz')
+        self.assertEqual(sdm.getContainerPath(), '/foo/bar/baz')
+
+        sdm.setContainerPath(('', 'foo', 'bar', 'baz'))
+        self.assertEqual(sdm.getContainerPath(), '/foo/bar/baz')
+
+        sdm.setContainerPath(['', 'foo', 'bar', 'baz'])
+        self.assertEqual(sdm.getContainerPath(), '/foo/bar/baz')
+
     def testHasId(self):
         self.assertTrue(
             self.app.session_data_manager.id == sdm_name
@@ -256,6 +322,61 @@ class TestSessionManager(unittest.TestCase):
         sess = self.app.REQUEST['TESTOFSESSION']
         sdType = type(TransientObject(1))
         self.assertTrue(type(aq_base(sess)) is sdType)
+
+    def testUsesDefaultSessionDataContainer(self):
+        sdm = self.app.session_data_manager
+
+        sdm.setContainerPath('/foo/bar')
+        self.assertFalse(sdm.usesDefaultSessionDataContainer())
+
+        sdm.setContainerPath('/temp_folder/session_data')
+        self.assertTrue(sdm.usesDefaultSessionDataContainer())
+
+    def testDefaultSessionDataContainerCreation(self):
+        sdm = self.app.session_data_manager
+        default_path = '/temp_folder/session_data'
+
+        # At first the configuration does not use the defaults
+        self.assertNotEqual(sdm.getContainerPath(), default_path)
+        sdc = sdm._getSessionDataContainer()
+        self.assertNotEqual(sdc.absolute_url_path(), default_path)
+        with self.assertRaises(KeyError):
+            self.app.unrestrictedTraverse(default_path)
+
+        # Set the default, now a session data container will get created
+        sdm.setContainerPath('/temp_folder/session_data')
+        sdc = sdm._getSessionDataContainer()
+        self.assertEqual(sdc.absolute_url_path(), default_path)
+        self.app.unrestrictedTraverse(default_path)
+
+    def testDefaultSessionDataContainerSettings(self):
+        from ..SessionDataManager import default_sdc_settings
+
+        sdm = self.app.session_data_manager
+
+        self.assertEqual(sdm.getDefaultSessionDataContainerSettings(),
+                         default_sdc_settings)
+
+        new_settings = {
+            'title': 'Foo title',
+            'timeout_mins': 30,
+            'addNotification': '/call/me',
+            'delNotification': '/call/me/again',
+            'limit': 500,
+            'period_secs': 10,
+        }
+        sdm.manage_changeSDCDefaults(**new_settings)
+        self.assertDictEqual(sdm.getDefaultSessionDataContainerSettings(),
+                             new_settings)
+
+        # Make sure the settings are applied
+        sdm.setContainerPath('/temp_folder/session_data')
+        sdc = sdm._getSessionDataContainer()
+        self.assertEqual(sdc.getTimeoutMinutes(), 30)
+        self.assertEqual(sdc.getPeriodSeconds(), 10)
+        self.assertEqual(sdc.getSubobjectLimit(), 500)
+        self.assertEqual(sdc.getAddNotificationTarget(), '/call/me')
+        self.assertEqual(sdc.getDelNotificationTarget(), '/call/me/again')
 
 
 class TestSessionManagerWithTemporaryFolder(unittest.TestCase):

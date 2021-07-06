@@ -19,34 +19,19 @@ Zope server side session management.
 
 This package contains ``Products.Sessions`` and ``Products.Transience``.
 
+Please note
+-----------
+Before release 5.2 of the ``tempstorage`` package sessioning configurations
+using the simple temporary folder implementation shown below were discouraged
+because the temporary storage backend could lose data. This is no longer the
+case.
 
-Using sessions under Zope 4
----------------------------
-The default session support under Zope 2 relied on ``Products.TemporaryFolder``
-for storing session data, which in turn used the ``tempstorage`` package.
-``tempstorage`` is no longer recommended because it has unfixed and possibly
-unfixable issues under Zope 4 that lead to corrupted temporary storages.
-
-If you use sessions sparingly and don't write to them often, a quick workaround
-is to remove the existing ``/temp_folder`` instance in the ZODB if it still is
-a `Temporary Folder` and create a normal `Folder` object named ``temp_folder``
-in its stead. Inside that new ``/temp_folder``, create a
-`Transient Object Container` with the ID ``session_data``. Now session data
-will be stored in the main ZODB.
-
-If you use sessions heavily, or if the workaround above leads to an
-unacceptable number of ZODB conflict errors, you should either try using
-cookies or local browser storage via Javascript for storing session data, or 
-switch to a different session implementation that does not store session data
-in the ZODB at all. See `the Zope book on Sessions for details 
-<https://zope.readthedocs.io/en/latest/zopebook/Sessions.html#alternative-server-side-session-backends-for-zope-4>`_.
-
-
-Using sessions under Zope 2
----------------------------
-If you use the standard Zope session implementation, don't forget to add
-or uncomment the temporary storage database definition in your Zope
-configuration::
+Using sessions with Zope
+------------------------
+For simple RAM memory-based sessioning support, suitable for smaller
+deployments with a single Zope application server instance, add or uncomment
+the following temporary storage database definition in your Zope configuration
+file::
 
   <zodb_db temporary>
       <temporarystorage>
@@ -55,3 +40,13 @@ configuration::
       mount-point /temp_folder
       container-class Products.TemporaryFolder.TemporaryContainer
   </zodb_db>
+
+After a Zope restart, visit the Zope Management Interface and select
+ZODB Mount Point from the list of addable items to instantiate the temporary
+folder mount point. This only needs to be done once. After that point the
+``temp_folder`` object will be recreated on each Zope restart and the session
+support will automatically put a session data container into the temporary
+folder.
+
+For more advanced scenarios see the `Zope book chapter on Session management
+<https://zope.readthedocs.io/en/latest/zopebook/Sessions.html#alternative-server-side-session-backends-for-zope-4>`_.
