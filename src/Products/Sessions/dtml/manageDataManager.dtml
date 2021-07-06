@@ -10,7 +10,7 @@
     It is part of the Zope sessioning machinery.  Programmers may
     interact with a session data manager in order to obtain
     information about session data, but will more often use the
-    REQUEST.SESSION object to do sessioning-related tasks.
+    <code>REQUEST.SESSION</code> object to do sessioning-related tasks.
   </p>
 
   <dtml-unless hasSessionDataContainer>
