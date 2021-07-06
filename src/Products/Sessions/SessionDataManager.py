@@ -40,7 +40,6 @@ from .interfaces import SessionDataManagerErr
 from .permissions import access_session_data
 from .permissions import access_user_session_data
 from .permissions import change_session_data_managers
-from Products.Transience.Transience import TransientObjectContainer
 
 
 bad_path_chars_in = re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search
@@ -287,7 +286,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             LOG.warning(err % '/'.join(self.obpath))
             return None
 
-    @security.protected(MGMT_SCREEN_PERM)
+    @security.protected(view_management_screens)
     def getRequestName(self):
         """ """
         return self._requestSessionName or ''
