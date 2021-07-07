@@ -72,7 +72,7 @@ setup(
         'zope.interface',
     ],
     extras_require={
-        'tests': ['Products.TemporaryFolder >= 5'],
+        'tests': ['Products.TemporaryFolder >= 6.2'],
     },
     include_package_data=True,
     zip_safe=False,

@@ -59,6 +59,119 @@
 
   </form>
 
+  <dtml-if usesDefaultSessionDataContainer>
+
+    <dtml-with getDefaultSessionDataContainerSettings mapping>
+
+      <hr/>
+
+      <h4>Session data container settings</h4>
+
+      <p class="form-help mb-4">
+        When you use the default session data container at
+        <code>/temp_folder/session_data</code> it will be recreated every time
+        Zope starts. Settings done on the session data container itself will
+        then be set to the values you provide here.
+      </p>
+
+      <form action="manage_changeSDCDefaults" method="post">
+
+        <div class="form-group row">
+          <label for="title" class="col-sm-3 col-md-2">Title</label>
+          <div class="col-sm-9 col-md-10">
+            <input id="title" class="form-control" type="text" name="title"
+                   value="<dtml-var name="title" html_quote>" />
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="timeout_mins" class="col-sm-3 col-md-2">
+            Data object timeout
+          </label>
+          <div class="col-sm-9 col-md-10">
+            <input id="timeout_mins" class="form-control"
+                   type="text" name="timeout_mins:int"
+                   value="<dtml-var name="timeout_mins" html_quote>" />
+            <small class="text-muted">
+              Data object timeout in minutes, <em>0</em> means
+              <em>no expiration</em>
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="period_secs" class="col-sm-3 col-md-2">Resolution</label>
+          <div class="col-sm-9 col-md-10">
+            <input id="period_secs" class="form-control" type="text"
+                   name="period_secs:int"
+                   value="<dtml-var name="period_secs" html_quote>" />
+            <small class="text-muted">
+              Timeout resolution in seconds:
+              The value defines the <em>resolution</em> of the item timeout.
+              Setting this higher allows the transience machinery to do
+              fewer <em>writes</em> at the expense of causing items to
+              time out later than the <em>Data object timeout value</em>
+              by a factor of (at most) this many seconds. This number
+              must divide evenly into the number of timeout seconds
+              (<em>Data object timeout value</em> * 60) and  cannot be
+              set higher than the timeout value in seconds. If you are unsure
+              use the default value of <em>20</em>.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="limit" class="col-sm-3 col-md-2">Limit</label>
+          <div class="col-sm-9 col-md-10">
+            <input id="limit" class="form-control" type="text" name="limit:int"
+                   value="<dtml-var name="limit" html_quote>" />
+            <small class="text-muted">
+              Maximum number of subobjects; <em>0</em> means <em>infinite</em>
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="addNotification" class="col-sm-3 col-md-2">
+            Add-Notice
+          </label>
+          <div class="col-sm-9 col-md-10">
+            <input id="addNotification" class="form-control" type="text"
+                   name="addNotification"
+                   value="<dtml-var expr="addNotification" html_quote>" />
+            <small class="text-muted">
+              Script to call upon object add (optional), e.g.
+              <em>/somefolder/addScript</em>
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="delNotification" class="col-sm-3 col-md-2">
+            Delete-Notice
+          </label>
+          <div class="col-sm-9 col-md-10">
+            <input id="delNotification" class="form-control" type="text"
+                   name="delNotification"
+                   value="<dtml-var expr="delNotification" html_quote>" />
+            <small class="text-muted">
+              Script to call upon object delete (optional), e.g.
+              <em>/somefolder/delScript</em>
+            </small>
+          </div>
+        </div>
+
+        <div class="zmi-controls">
+          <input class="btn btn-primary" type="submit" name="submit"
+                 value="Change" />
+        </div>
+
+      </form>
+
+    </dtml-with>
+
+  </dtml-if>
+
 </main>
 
 <dtml-var manage_page_footer>

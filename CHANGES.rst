@@ -4,6 +4,13 @@ Changelog
 4.11 (unreleased)
 -----------------
 
+- Improve out-of-the-box experience by instantiating a session data container
+  if the session data manager uses the default configuration that points
+  to a temporary folder
+
+- Reinstate simple sessioning with ``Products.TemporaryFolder``
+  (`#43 <https://github.com/zopefoundation/Products.Sessions/issues/43>`_)
+
 
 4.10 (2021-07-02)
 -----------------

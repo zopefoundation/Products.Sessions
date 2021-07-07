@@ -40,10 +40,21 @@ from .interfaces import SessionDataManagerErr
 from .permissions import access_session_data
 from .permissions import access_user_session_data
 from .permissions import change_session_data_managers
+from Products.Transience.Transience import TransientObjectContainer
 
 
 bad_path_chars_in = re.compile(r'[^a-zA-Z0-9-_~\,\. \/]').search
 LOG = getLogger('SessionDataManager')
+# Default settings for the standard temporary session data container
+default_sdc_settings = {
+    'title': '',
+    'timeout_mins': 20,
+    'addNotification': '',
+    'delNotification': '',
+    'limit': 0,
+    'period_secs': 20,
+}
+
 
 constructSessionDataManagerForm = DTMLFile(
     'dtml/addDataManager',
@@ -223,6 +234,12 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
            getattr(container, 'new_or_existing', None) is not None:
             return True
 
+    @security.protected(view_management_screens)
+    def usesDefaultSessionDataContainer(self):
+        """ ZMI helper: is the default temporary folder session container used?
+        """
+        return self.obpath == ['', 'temp_folder', 'session_data']
+
     def _hasSessionDataObject(self, key):
         """ """
         c = self._getSessionDataContainer()
@@ -282,9 +299,62 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         except ConflictError:
             raise
         except Exception:
+            # If this is a default configuration then the session data
+            # container is inside a memory-based temporary folder, which
+            # is wiped after each restart. Try to create it.
+            if self.usesDefaultSessionDataContainer():
+                try:
+                    return self._setDefaultSessionDataContainer()
+                except (AttributeError, KeyError):
+                    # Temporary folder doesn't exist, give up
+                    pass
+
             err = "External session data container '%s' not found."
             LOG.warning(err % '/'.join(self.obpath))
             return None
+
+    def _setDefaultSessionDataContainer(self):
+        tf = self.unrestrictedTraverse('/temp_folder')
+        settings = self.getDefaultSessionDataContainerSettings()
+        sdc = TransientObjectContainer('session_data', **settings)
+        tf._setObject('session_data', sdc)
+        LOG.info(u'Added session data container at /temp_folder/session_data')
+
+        # Prevent accidental deletion by adding it to the reserved names
+        tf_reserved = getattr(tf, '_reserved_names', ())
+        if 'session_data' not in tf_reserved:
+            tf._reserved_names = tf_reserved + ('session_data',)
+
+        return self.unrestrictedTraverse(self.obpath)
+
+    @security.protected(view_management_screens)
+    def getDefaultSessionDataContainerSettings(self):
+        """ ZMI helper: Return the session data container default settings """
+        return getattr(self, '_sdc_settings', default_sdc_settings)
+
+    @security.protected(change_session_data_managers)
+    def manage_changeSDCDefaults(self,
+                                 title='',
+                                 timeout_mins=20,
+                                 addNotification='',
+                                 delNotification='',
+                                 limit=0,
+                                 period_secs=20,
+                                 REQUEST=None):
+        """ Collect settings for the default session data container """
+        self._sdc_settings = {
+            'title': title,
+            'timeout_mins': timeout_mins,
+            'addNotification': addNotification,
+            'delNotification': delNotification,
+            'limit': limit,
+            'period_secs': period_secs,
+        }
+
+        if REQUEST is not None:
+            msg = ('Session data container changes saved. They will be applied'
+                   ' when you restart the Zope process.')
+            return self.manage_sessiondatamgr(manage_tabs_message=msg)
 
     @security.protected(view_management_screens)
     def getRequestName(self):
