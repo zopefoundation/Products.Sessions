@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.11 (unreleased)
+4.11 (2021-07-07)
 -----------------
 
 - Improve out-of-the-box experience by instantiating a session data container
