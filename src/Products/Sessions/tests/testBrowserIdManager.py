@@ -652,6 +652,7 @@ class TestBrowserIdManager(unittest.TestCase):
 
     def test_new_browser_id(self):
         from time import time
+
         from .. BrowserIdManager import getB64TStampToInt
         from .. BrowserIdManager import getBrowserIdPieces
         from .. BrowserIdManager import getNewBrowserId
