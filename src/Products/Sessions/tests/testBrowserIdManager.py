@@ -650,6 +650,22 @@ class TestBrowserIdManager(unittest.TestCase):
         parent.browser_id_manager.unregisterTraversalHook()  # needs wrapper
         self.assertFalse(queryBeforeTraverse(mgr, 'BrowserIdManager'))
 
+    def test_new_browser_id(self):
+        from time import time
+        from .. BrowserIdManager import getB64TStampToInt
+        from .. BrowserIdManager import getBrowserIdPieces
+        from .. BrowserIdManager import getNewBrowserId
+        from .. BrowserIdManager import isAWellFormedBrowserId
+        start = time()
+        bid = getNewBrowserId()
+        self.assertEqual(len(bid), 19)
+        self.assertTrue(isAWellFormedBrowserId(bid))
+        ri, ts = getBrowserIdPieces(bid)
+        # we cannot expect to reconstruct ``start`` precisely
+        # but usually, it should be reconstructable with a 1 s precision.
+        # Under exceptional conditions, the check below may fail
+        self.assertTrue(0 <= getB64TStampToInt(ts) - start <= 1)
+
 
 class TestBrowserIdManagerTraverser(unittest.TestCase):
 
