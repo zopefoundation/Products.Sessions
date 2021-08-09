@@ -642,11 +642,8 @@ if six.PY2:
     ):
         t = time()
         ts = split(
-            b2a(
-                repr(
-                    TimeStamp(*gmtime(t)[:5] + (t % 60, ))
-                )
-            )[:-1], '=')[0]
+            b2a(TimeStamp(*gmtime(t)[:5] + (t % 60, )).raw())[:-1],
+            '=')[0]
         return translate(ts, b64_trans)
 
     def getB64TStampToInt(

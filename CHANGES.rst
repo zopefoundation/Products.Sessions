@@ -4,6 +4,9 @@ Changelog
 4.12 (unreleased)
 -----------------
 
+- Fix PY2 bug in ``BrowserIdManager.getNewBrowserId``
+  (`#45 <https://github.com/zopefoundation/Products.Sessions/issues/45>`_)
+
 
 4.11 (2021-07-07)
 -----------------
