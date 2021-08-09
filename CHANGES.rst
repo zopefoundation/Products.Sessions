@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.12 (unreleased)
+4.12 (2021-08-09)
 -----------------
 
 - Fix PY2 bug in ``BrowserIdManager.getNewBrowserId``
