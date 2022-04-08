@@ -4,6 +4,7 @@ Changelog
 4.13 (unreleased)
 -----------------
 
+- Add support for Python 3.10.
 
 4.12 (2021-08-09)
 -----------------
@@ -62,7 +63,7 @@ Changelog
 - Fix access permissions for ``meta_type`` and ``zmi_icon`` properties so
   they don't raise when accessed in the admin interface.
   (`#24 <https://github.com/zopefoundation/Products.Sessions/pull/24>`_)
-  
+
 - Fix Python 3 compatibility of ``_p_resolveConflict``.
   (`#25 <https://github.com/zopefoundation/Products.Sessions/pull/25>`_)
 
