@@ -18,6 +18,8 @@ import unittest
 
 import Testing.ZopeTestCase
 
+from ..interfaces import BrowserIdManagerErr
+
 
 class TestBrowserIdManager(unittest.TestCase):
 
@@ -378,6 +380,38 @@ class TestBrowserIdManager(unittest.TestCase):
         self.assertTrue(mgr.getCookieHTTPOnly())
         mgr.setCookieHTTPOnly(False)
         self.assertFalse(mgr.getCookieHTTPOnly())
+
+    def test_setCookieSameSite(self):
+        mgr = self._makeOne()
+
+        # Test the default first
+        self.assertEqual(mgr.getCookieSameSite(), None)
+
+        mgr.setCookieSameSite('Strict')
+        self.assertEqual(mgr.getCookieSameSite(), 'Strict')
+
+        # Empty value set the flag to None
+        mgr.setCookieSameSite(None)
+        self.assertEqual(mgr.getCookieSameSite(), None)
+        mgr.setCookieSameSite('')
+        self.assertEqual(mgr.getCookieSameSite(), None)
+
+        # Reset to a known value for the following tests
+        mgr.setCookieSameSite('Strict')
+
+        # Invalid values raise an error
+        with self.assertRaises(BrowserIdManagerErr):
+            mgr.setCookieSameSite('foobar')
+        self.assertEqual(mgr.getCookieSameSite(), 'Strict')
+
+        # When specifying None the Secure flag must be set as well
+        mgr.setCookieSecure(False)
+        with self.assertRaises(BrowserIdManagerErr):
+            mgr.setCookieSameSite('None')
+        self.assertEqual(mgr.getCookieSameSite(), 'Strict')
+        mgr.setCookieSecure(True)
+        mgr.setCookieSameSite('None')
+        self.assertEqual(mgr.getCookieSameSite(), 'None')
 
     def test_setAutoUrlEncoding_bool(self):
         mgr = self._makeOne()
