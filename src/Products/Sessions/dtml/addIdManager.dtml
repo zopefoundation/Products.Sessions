@@ -100,7 +100,7 @@
       <label for="cookielifedays" class="col-sm-3 col-md-2">Cookie Lifetime</label>
       <div class="col-sm-9 col-md-10">
         <input id="cookielifedays" class="form-control" type="text"
-               name="cookielifedays:int" value="" />
+               name="cookielifedays:int" value="0" />
         <small>
           Cookie lifetime in days; 0 means cookies last only for
           the current browser session
@@ -128,6 +128,29 @@
           <label for="cookiehttponly">
             Make cookie not available from JavaScript
           </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-3 col-md-2">SameSite flag</label>
+      <div class="col-sm-9 col-md-10">
+        <div class="col-sm-9 col-md-10">
+          <select id="cookiesamesite" name="cookiesamesite">
+            <option value="">Not set</option>
+            <option value="None">None</option>
+            <option value="Lax" selected="selected">Lax</option>
+            <option value="Strict">Strict</option>
+          </select>
+          <br/>
+          <small>
+            The SameSite flag tells the browser where it may send the cookie.
+            "Not set" uses the browser default, "None" allows sending to third
+            parties (and **requires** the HTTPS flag to be set), "Lax" sends to
+            third parties if the user explicitly navigates to that other site,
+            and "Strict" will only ever send the cookie to the site that set it
+            in the first place. Browsers are moving to requiring at least "Lax".
+          </small>
         </div>
       </div>
     </div>

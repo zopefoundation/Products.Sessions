@@ -105,12 +105,13 @@ def constructBrowserIdManager(
     cookiesecure=0,
     cookiehttponly=0,
     auto_url_encoding=0,
+    cookiesamesite='Lax',
     REQUEST=None
 ):
     """ """
     ob = BrowserIdManager(id, title, idname, location, cookiepath,
                           cookiedomain, cookielifedays, cookiesecure,
-                          cookiehttponly, auto_url_encoding)
+                          cookiehttponly, auto_url_encoding, cookiesamesite)
     self._setObject(id, ob)
     ob = self._getOb(id)
     if REQUEST is not None:
