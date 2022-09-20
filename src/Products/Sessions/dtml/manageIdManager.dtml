@@ -135,6 +135,37 @@
       </div>
     </div>
 
+    <div class="form-group row">
+      <label class="col-sm-3 col-md-2">SameSite flag</label>
+      <div class="col-sm-9 col-md-10">
+        <div class="col-sm-9 col-md-10">
+          <select id="cookiesamesite" name="cookiesamesite">
+            <option value=""
+                    <dtml-if "not getCookieSameSite()">selected</dtml-if>>
+              Not set
+            </option>
+            <dtml-in "['None', 'Lax', 'Strict']">
+              <option value="&dtml-sequence-item;"
+                      <dtml-if "_['sequence-item'] == getCookieSameSite()">
+                        selected
+                      </dtml-if>>
+                &dtml-sequence-item;
+              </option>
+            </dtml-in>
+          </select>
+          <br/>
+          <small>
+            The SameSite flag tells the browser where it may send the cookie.
+            "Not set" uses the browser default, "None" allows sending to third
+            parties (and **requires** the HTTPS flag to be set), "Lax" sends to
+            third parties if the user explicitly navigates to that other site,
+            and "Strict" will only ever send the cookie to the site that set it
+            in the first place. Browsers are moving to requiring at least "Lax".
+          </small>
+        </div>
+      </div>
+    </div>
+
     <div class="zmi-controls mb-5">
       <input class="btn btn-primary" type="submit" name="submit" value="Change" />
     </div>

@@ -105,12 +105,13 @@ def constructBrowserIdManager(
     cookiesecure=0,
     cookiehttponly=0,
     auto_url_encoding=0,
+    cookiesamesite='Lax',
     REQUEST=None
 ):
     """ """
     ob = BrowserIdManager(id, title, idname, location, cookiepath,
                           cookiedomain, cookielifedays, cookiesecure,
-                          cookiehttponly, auto_url_encoding)
+                          cookiehttponly, auto_url_encoding, cookiesamesite)
     self._setObject(id, ob)
     ob = self._getOb(id)
     if REQUEST is not None:
@@ -144,6 +145,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     # BBB
     auto_url_encoding = 0
     cookie_http_only = 0
+    cookie_same_site = None
 
     def __init__(
         self,
@@ -156,7 +158,8 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         cookielifedays=0,
         cookiesecure=0,
         cookiehttponly=0,
-        auto_url_encoding=0
+        auto_url_encoding=0,
+        cookiesamesite='Lax',
     ):
         self.id = str(id)
         self.title = str(title)
@@ -168,6 +171,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         self.setCookieSecure(cookiesecure)
         self.setCookieHTTPOnly(cookiehttponly)
         self.setAutoUrlEncoding(auto_url_encoding)
+        self.setCookieSameSite(cookiesamesite)
 
     # IBrowserIdManager
     @security.protected(access_contents_information)
@@ -422,6 +426,34 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         return self.cookie_secure
 
     @security.protected(change_browser_id_managers)
+    def setCookieSameSite(self, same_site='Lax'):
+        """ sets cookie 'SameSite' flag """
+
+        # Retain a way to not set the cookie at all if the admin says so
+        if not same_site:
+            self.cookie_same_site = None
+            return
+
+        if same_site.lower() not in ('none', 'lax', 'strict'):
+            raise BrowserIdManagerErr(
+                'Invalid value for SameSite flag, must be one of '
+                'None, Lax or Strict.')
+
+        # Browsers reject cookies that use SameSite=None without "Secure" flag
+        # Make sure users don't shoot themselves in the foot.
+        if same_site.lower() == 'none' and not self.getCookieSecure():
+            raise BrowserIdManagerErr(
+                'Browsers require the "Secure" flag when setting '
+                'SameSite to "None".')
+
+        self.cookie_same_site = same_site
+
+    @security.protected(access_contents_information)
+    def getCookieSameSite(self):
+        """ retrieve the cookie 'SameSite' flag value """
+        return self.cookie_same_site
+
+    @security.protected(change_browser_id_managers)
     def setAutoUrlEncoding(self, auto_url_encoding):
         """ sets 'auto url encoding' on or off """
         self.auto_url_encoding = not not auto_url_encoding
@@ -462,6 +494,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             'secure': self.cookie_secure,
             'http_only': self.cookie_http_only,
             'expires': expires,
+            'SameSite': self.cookie_same_site,
         }
 
         if self.cookie_secure:
@@ -551,6 +584,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         cookiesecure=0,
         cookiehttponly=0,
         auto_url_encoding=0,
+        cookiesamesite=None,
         REQUEST=None
     ):
         """ """
@@ -563,6 +597,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         self.setCookieHTTPOnly(cookiehttponly)
         self.setBrowserIdNamespaces(location)
         self.setAutoUrlEncoding(auto_url_encoding)
+        self.setCookieSameSite(cookiesamesite)
         self.updateTraversalData()
         if REQUEST is not None:
             msg = '/manage_browseridmgr?manage_tabs_message=Changes saved'

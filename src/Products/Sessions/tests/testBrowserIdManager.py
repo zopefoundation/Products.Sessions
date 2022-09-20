@@ -18,6 +18,8 @@ import unittest
 
 import Testing.ZopeTestCase
 
+from ..interfaces import BrowserIdManagerErr
+
 
 class TestBrowserIdManager(unittest.TestCase):
 
@@ -108,7 +110,8 @@ class TestBrowserIdManager(unittest.TestCase):
         self.assertTrue(isAWellFormedBrowserId(bid))
         self.assertEqual(request.browser_id_, bid)
         self.assertEqual(request.browser_id_ns_, None)
-        self.assertEqual(response.cookies['bid'], {'path': '/', 'value': bid})
+        self.assertEqual(response.cookies['bid'],
+                         {'path': '/', 'value': bid, 'SameSite': 'Lax'})
 
     def test_getBrowserId_considers_replaced_characters_well_formed(self):
         bid = '92778276A8eYSMj-.iI'
@@ -210,7 +213,8 @@ class TestBrowserIdManager(unittest.TestCase):
             {
                 'path': '/',
                 'expires': 'Sun, 10-May-1971 11:59:00 GMT',
-                'value': 'deleted'
+                'value': 'deleted',
+                'SameSite': 'Lax',
             }
         )
 
@@ -230,7 +234,8 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setBrowserIdName('bid')
         mgr.setBrowserIdNamespaces(('cookies',))
         mgr.setBrowserIdCookieByForce(bid)
-        self.assertEqual(response.cookies['bid'], {'path': '/', 'value': bid})
+        self.assertEqual(response.cookies['bid'],
+                         {'path': '/', 'value': bid, 'SameSite': 'Lax'})
 
     def test_getHiddenFormField(self):
         from ..BrowserIdManager import getNewBrowserId
@@ -379,6 +384,38 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setCookieHTTPOnly(False)
         self.assertFalse(mgr.getCookieHTTPOnly())
 
+    def test_setCookieSameSite(self):
+        mgr = self._makeOne()
+
+        # Test the default first
+        self.assertEqual(mgr.getCookieSameSite(), 'Lax')
+
+        mgr.setCookieSameSite('Strict')
+        self.assertEqual(mgr.getCookieSameSite(), 'Strict')
+
+        # Empty value set the flag to None
+        mgr.setCookieSameSite(None)
+        self.assertEqual(mgr.getCookieSameSite(), None)
+        mgr.setCookieSameSite('')
+        self.assertEqual(mgr.getCookieSameSite(), None)
+
+        # Reset to a known value for the following tests
+        mgr.setCookieSameSite('Strict')
+
+        # Invalid values raise an error
+        with self.assertRaises(BrowserIdManagerErr):
+            mgr.setCookieSameSite('foobar')
+        self.assertEqual(mgr.getCookieSameSite(), 'Strict')
+
+        # When specifying None the Secure flag must be set as well
+        mgr.setCookieSecure(False)
+        with self.assertRaises(BrowserIdManagerErr):
+            mgr.setCookieSameSite('None')
+        self.assertEqual(mgr.getCookieSameSite(), 'Strict')
+        mgr.setCookieSecure(True)
+        mgr.setCookieSameSite('None')
+        self.assertEqual(mgr.getCookieSameSite(), 'None')
+
     def test_setAutoUrlEncoding_bool(self):
         mgr = self._makeOne()
         mgr.setAutoUrlEncoding(True)
@@ -405,6 +442,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'expires': 'Sun, 10-May-1971 11:59:00 GMT',
+                'SameSite': 'Lax',
             }
         )
 
@@ -426,6 +464,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'expires': 'Seconds: 86401',
+                'SameSite': 'Lax',
             }
         )
 
@@ -456,6 +495,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'secure': True,
+                'SameSite': 'Lax',
             }
         )
 
@@ -472,6 +512,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'domain': '.zope.org',
+                'SameSite': 'Lax',
             }
         )
 
@@ -487,6 +528,7 @@ class TestBrowserIdManager(unittest.TestCase):
             {
                 'path': '/path/',
                 'value': 'xxx',
+                'SameSite': 'Lax',
             }
         )
 
@@ -503,6 +545,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'http_only': True,
+                'SameSite': 'Lax',
             }
         )
 
@@ -519,6 +562,7 @@ class TestBrowserIdManager(unittest.TestCase):
             {
                 'path': '/',
                 'value': 'xxx',
+                'SameSite': 'Lax',
             }
         )
 
