@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.14 (unreleased)
+4.14 (2022-09-20)
 -----------------
 
 - Add ability to set the session cookie's ``SameSite`` flag.
