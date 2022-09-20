@@ -110,7 +110,8 @@ class TestBrowserIdManager(unittest.TestCase):
         self.assertTrue(isAWellFormedBrowserId(bid))
         self.assertEqual(request.browser_id_, bid)
         self.assertEqual(request.browser_id_ns_, None)
-        self.assertEqual(response.cookies['bid'], {'path': '/', 'value': bid})
+        self.assertEqual(response.cookies['bid'],
+                         {'path': '/', 'value': bid, 'SameSite': 'Lax'})
 
     def test_getBrowserId_considers_replaced_characters_well_formed(self):
         bid = '92778276A8eYSMj-.iI'
@@ -212,7 +213,8 @@ class TestBrowserIdManager(unittest.TestCase):
             {
                 'path': '/',
                 'expires': 'Sun, 10-May-1971 11:59:00 GMT',
-                'value': 'deleted'
+                'value': 'deleted',
+                'SameSite': 'Lax',
             }
         )
 
@@ -232,7 +234,8 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr.setBrowserIdName('bid')
         mgr.setBrowserIdNamespaces(('cookies',))
         mgr.setBrowserIdCookieByForce(bid)
-        self.assertEqual(response.cookies['bid'], {'path': '/', 'value': bid})
+        self.assertEqual(response.cookies['bid'],
+                         {'path': '/', 'value': bid, 'SameSite': 'Lax'})
 
     def test_getHiddenFormField(self):
         from ..BrowserIdManager import getNewBrowserId
@@ -385,7 +388,7 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr = self._makeOne()
 
         # Test the default first
-        self.assertEqual(mgr.getCookieSameSite(), None)
+        self.assertEqual(mgr.getCookieSameSite(), 'Lax')
 
         mgr.setCookieSameSite('Strict')
         self.assertEqual(mgr.getCookieSameSite(), 'Strict')
@@ -439,6 +442,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'expires': 'Sun, 10-May-1971 11:59:00 GMT',
+                'SameSite': 'Lax',
             }
         )
 
@@ -460,6 +464,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'expires': 'Seconds: 86401',
+                'SameSite': 'Lax',
             }
         )
 
@@ -490,6 +495,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'secure': True,
+                'SameSite': 'Lax',
             }
         )
 
@@ -506,6 +512,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'domain': '.zope.org',
+                'SameSite': 'Lax',
             }
         )
 
@@ -521,6 +528,7 @@ class TestBrowserIdManager(unittest.TestCase):
             {
                 'path': '/path/',
                 'value': 'xxx',
+                'SameSite': 'Lax',
             }
         )
 
@@ -537,6 +545,7 @@ class TestBrowserIdManager(unittest.TestCase):
                 'path': '/',
                 'value': 'xxx',
                 'http_only': True,
+                'SameSite': 'Lax',
             }
         )
 
@@ -553,6 +562,7 @@ class TestBrowserIdManager(unittest.TestCase):
             {
                 'path': '/',
                 'value': 'xxx',
+                'SameSite': 'Lax',
             }
         )
 

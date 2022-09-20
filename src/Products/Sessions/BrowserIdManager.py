@@ -158,7 +158,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         cookiesecure=0,
         cookiehttponly=0,
         auto_url_encoding=0,
-        cookiesamesite=None,
+        cookiesamesite='Lax',
     ):
         self.id = str(id)
         self.title = str(title)
@@ -427,6 +427,8 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
     @security.protected(change_browser_id_managers)
     def setCookieSameSite(self, same_site='Lax'):
         """ sets cookie 'SameSite' flag """
+
+        # Retain a way to not set the cookie at all if the admin says so
         if not same_site:
             self.cookie_same_site = None
             return

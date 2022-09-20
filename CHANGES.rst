@@ -7,6 +7,9 @@ Changelog
 - Add ability to set the session cookie's ``SameSite`` flag.
   See https://hacks.mozilla.org/2020/08/changes-to-samesite-cookie-behavior/
   for some background on how browsers change handling ``SameSite``.
+  The behavior of existing sites will not change unless the site administrator
+  changes the cookie configuration explicitly. New browser id managers will use
+  ``Lax`` by default.
 
 
 4.13 (2022-07-13)
