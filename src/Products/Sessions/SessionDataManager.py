@@ -318,7 +318,7 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         settings = self.getDefaultSessionDataContainerSettings()
         sdc = TransientObjectContainer('session_data', **settings)
         tf._setObject('session_data', sdc)
-        LOG.info(u'Added session data container at /temp_folder/session_data')
+        LOG.info('Added session data container at /temp_folder/session_data')
 
         # Prevent accidental deletion by adding it to the reserved names
         tf_reserved = getattr(tf, '_reserved_names', ())

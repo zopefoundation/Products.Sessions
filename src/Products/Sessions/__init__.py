@@ -35,7 +35,7 @@ def install_browser_id_manager(app):
         'Browser Id Manager',
     )
     app._setObject('browser_id_manager', bid)
-    commit(u'Added browser_id_manager')
+    commit('Added browser_id_manager')
 
 
 def install_session_data_manager(app):
@@ -51,7 +51,7 @@ def install_session_data_manager(app):
         requestName='SESSION',
     )
     app._setObject('session_data_manager', sdm)
-    commit(u'Added session_data_manager')
+    commit('Added session_data_manager')
 
 
 def initialize(context):

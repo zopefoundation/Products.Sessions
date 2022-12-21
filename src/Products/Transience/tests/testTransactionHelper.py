@@ -12,7 +12,6 @@
 ##############################################################################
 
 from unittest import TestCase
-from unittest import makeSuite
 
 import transaction
 
@@ -31,8 +30,3 @@ class TestTransactionHelper(TestCase):
         makeTransactionUncommittable(self.t, "test")
         self.assertRaises(PreventTransactionCommit, transaction.commit)
         transaction.abort()
-
-
-def test_suite():
-    suite = makeSuite(TestTransactionHelper, 'test')
-    return suite

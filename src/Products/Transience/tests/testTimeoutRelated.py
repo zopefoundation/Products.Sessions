@@ -1,7 +1,5 @@
 import time as oldtime
 from unittest import TestCase
-from unittest import TestSuite
-from unittest import makeSuite
 
 import transaction
 import ZODB  # in order to get Persistence.Persistent working
@@ -130,10 +128,3 @@ def addNotificationTarget(item, context):
 
 def delNotificationTarget(item, context):
     item['endtime'] = fauxtime.time()
-
-
-def test_suite():
-    last_accessed = makeSuite(TestLastAccessed, 'test')
-    start_end = makeSuite(TestNotifications, 'test')
-    suite = TestSuite((start_end, last_accessed))
-    return suite

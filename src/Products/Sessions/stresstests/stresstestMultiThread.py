@@ -11,15 +11,12 @@
 #
 ##############################################################################
 
-from __future__ import print_function
 
 import random
 import threading
 import time
 import traceback
 from unittest import TestCase
-from unittest import TestSuite
-from unittest import makeSuite
 
 import Acquisition
 import transaction
@@ -274,9 +271,3 @@ class ValuesGetterThread(BaseReaderWriter):
                 transaction.commit()
             else:
                 transaction.abort()
-
-
-def test_suite():
-    test_multithread = makeSuite(TestMultiThread, 'test')
-    suite = TestSuite((test_multithread,))
-    return suite
