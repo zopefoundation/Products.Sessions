@@ -262,7 +262,7 @@ class TestBrowserIdManager(unittest.TestCase):
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
         munged = mgr.encodeUrl(URL, create=False)
-        self.assertEqual(munged, '%s?bid=%s' % (URL, bid))
+        self.assertEqual(munged, f'{URL}?bid={bid}')
 
     def test_encodeUrl_no_create_w_bid_querystring_style_existing_qs(self):
         from ..BrowserIdManager import getNewBrowserId
@@ -272,20 +272,20 @@ class TestBrowserIdManager(unittest.TestCase):
         request = DummyRequest(browser_id_=bid)
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
-        munged = mgr.encodeUrl('%s?%s' % (URL, QS), create=False)
-        self.assertEqual(munged, '%s?%s&amp;bid=%s' % (URL, QS, bid))
+        munged = mgr.encodeUrl(f'{URL}?{QS}', create=False)
+        self.assertEqual(munged, f'{URL}?{QS}&amp;bid={bid}')
 
     def test_encodeUrl_no_create_w_bid_inline_style(self):
         from ..BrowserIdManager import getNewBrowserId
         NETHOST = 'http://example.com'
         PATH_INFO = 'path/to/page'
-        URL = '%s/%s' % (NETHOST, PATH_INFO)
+        URL = f'{NETHOST}/{PATH_INFO}'
         bid = getNewBrowserId()
         request = DummyRequest(browser_id_=bid)
         mgr = self._makeOne(request)
         mgr.setBrowserIdName('bid')
         munged = mgr.encodeUrl(URL, style='inline', create=False)
-        self.assertEqual(munged, '%s/bid/%s/%s' % (NETHOST, bid, PATH_INFO))
+        self.assertEqual(munged, f'{NETHOST}/bid/{bid}/{PATH_INFO}')
 
     def test_setBrowserIdName_empty_string_raises(self):
         mgr = self._makeOne()
@@ -825,11 +825,3 @@ class DummyBrowserIdManager:
 
     def getAutoUrlEncoding(self):
         return self._auto
-
-
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(TestBrowserIdManager),
-        unittest.makeSuite(TestBrowserIdManagerTraverser),
-        unittest.makeSuite(TestBrowserIdManagerPublish),
-    ))

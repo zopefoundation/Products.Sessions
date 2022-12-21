@@ -14,14 +14,14 @@
 Transient Object Container Class ('timeslice'-based design, no index).
 """
 
+import _thread as thread
 import math
 import os
 import random
 import sys
 import time
+from html import escape as html_escape
 from logging import getLogger
-
-from six.moves import _thread as thread
 
 from AccessControl.class_init import InitializeClass
 from AccessControl.Permissions import access_contents_information
@@ -47,12 +47,6 @@ from .TransienceInterfaces import ItemWithId
 from .TransienceInterfaces import StringKeyedHomogeneousItemContainer
 from .TransienceInterfaces import TransientItemContainer
 from .TransientObject import TransientObject
-
-
-try:
-    from html import escape as html_escape
-except ImportError:
-    from cgi import escape as html_escape
 
 
 SPARE_BUCKETS = 15  # minimum number of buckets to keep "spare"
@@ -342,13 +336,13 @@ class TransientObjectContainer(SimpleItem):
             abucket = self._data.get(ts, None)  # XXX ReadConflictError hotspot
 
             if abucket is None:
-                DEBUG and TLOG('_move_item: no bucket for ts %s' % ts)
+                DEBUG and TLOG(f'_move_item: no bucket for ts {ts}')
                 continue
             DEBUG and TLOG(
-                '_move_item: bucket for ts %s is %s' % (ts, id(abucket))
+                '_move_item: bucket for ts {} is {}'.format(ts, id(abucket))
             )
             DEBUG and TLOG(
-                '_move_item: keys for ts %s (bucket %s)-- %s' % (
+                '_move_item: keys for ts {} (bucket {})-- {}'.format(
                     ts, id(abucket), str(list(abucket.keys()))
                 )
             )
@@ -360,17 +354,17 @@ class TransientObjectContainer(SimpleItem):
         DEBUG and TLOG('_move_item: found_ts is %s' % found_ts)
 
         if found_ts is None:
-            DEBUG and TLOG('_move_item: returning default of %s' % default)
+            DEBUG and TLOG(f'_move_item: returning default of {default}')
             return default
 
         if found_ts != current_ts:
 
             DEBUG and TLOG(
-                '_move_item: current_ts (%s) != found_ts (%s), '
-                'moving to current' % (current_ts, found_ts)
+                f'_move_item: current_ts ({current_ts}) != found_ts '
+                f'({found_ts}), moving to current'
             )
             DEBUG and TLOG(
-                '_move_item: keys for found_ts %s (bucket %s): %r' % (
+                '_move_item: keys for found_ts {} (bucket {}): {!r}'.format(
                     found_ts, id(self._data[found_ts]),
                     list(self._data[found_ts].keys())))
             self._data[current_ts][k] = self._data[found_ts][k]
@@ -378,7 +372,7 @@ class TransientObjectContainer(SimpleItem):
                 # tickle persistence machinery
                 self._data[current_ts] = self._data[current_ts]
             DEBUG and TLOG(
-                '_move_item: copied item %s from %s to %s (bucket %s)' % (
+                '_move_item: copied item {} from {} to {} (bucket {})'.format(
                     k, found_ts, current_ts, id(self._data[current_ts])
                 )
             )
@@ -387,7 +381,7 @@ class TransientObjectContainer(SimpleItem):
                 # tickle persistence machinery
                 self._data[found_ts] = self._data[found_ts]
             DEBUG and TLOG(
-                '_move_item: deleted item %s from ts %s (bucket %s)' % (
+                '_move_item: deleted item {} from ts {} (bucket {})'.format(
                     k, found_ts, id(self._data[found_ts])
                 )
             )
@@ -397,7 +391,7 @@ class TransientObjectContainer(SimpleItem):
         if getattr(self._data[current_ts][k], 'setLastAccessed', None):
             self._data[current_ts][k].setLastAccessed()
         DEBUG and TLOG(
-            '_move_item: returning %s from current_ts %s ' % (k, current_ts)
+            f'_move_item: returning {k} from current_ts {current_ts} '
         )
         return self._data[current_ts][k]
 
@@ -480,7 +474,7 @@ class TransientObjectContainer(SimpleItem):
 
     @security.protected(access_transient_objects)
     def __setitem__(self, k, v):
-        DEBUG and TLOG('__setitem__: called with key %s, value %s' % (k, v))
+        DEBUG and TLOG(f'__setitem__: called with key {k}, value {v}')
         if self._timeout_slices:
             current_ts = getCurrentTimeslice(self._period)
         else:
@@ -543,7 +537,7 @@ class TransientObjectContainer(SimpleItem):
 
     @security.protected(access_transient_objects)
     def get(self, k, default=None):
-        DEBUG and TLOG('get: called with key %s, default %s' % (k, default))
+        DEBUG and TLOG(f'get: called with key {k}, default {default}')
         if self._timeout_slices:
             current_ts = getCurrentTimeslice(self._period)
         else:
@@ -713,8 +707,8 @@ class TransientObjectContainer(SimpleItem):
                 DEBUG and TLOG('_replentish: attempting optional replentish '
                                '(lock acquired)')
                 max_ts = self._max_timeslice()
-                low = now / self._period
-                high = max_ts / self._period
+                low = int(now / self._period)
+                high = int(max_ts / self._period)
                 if roll(low, high, 'optional replentish'):
                     self._do_replentish_work(now, max_ts)
 
@@ -806,11 +800,7 @@ class TransientObjectContainer(SimpleItem):
                 return
             else:
                 DEBUG and TLOG(
-                    '_gc:  (%s -%s) > %s, gc invoked' % (
-                        now,
-                        last_gc,
-                        gc_every,
-                    ),
+                    f'_gc:  ({now} -{last_gc}) > {gc_every}, gc invoked'
                 )
                 self._do_gc_work(now)
 

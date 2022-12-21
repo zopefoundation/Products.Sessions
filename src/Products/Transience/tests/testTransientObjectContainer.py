@@ -13,8 +13,6 @@
 import random
 import time as oldtime
 from unittest import TestCase
-from unittest import TestSuite
-from unittest import makeSuite
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
@@ -344,7 +342,7 @@ class TestTransientObjectContainer(TestCase):
         max_ts = self.t._last_finalized_timeslice()
         keys = list(self.t._data.keys())
         for k in keys:
-            self.assertGreater(k, max_ts, "k %s < max_ts %s" % (k, max_ts))
+            self.assertGreater(k, max_ts, f'k {k} < max_ts {max_ts}')
 
     def _maxOut(self):
         for x in range(11):
@@ -433,10 +431,3 @@ def lsubtract(l1, l2):
     temp_list = [x for x in l2 if x not in l1]
     temp_list = temp_list + [x for x in l1 if x not in l2]
     return temp_list
-
-
-def test_suite():
-    suite = TestSuite()
-    suite.addTest(makeSuite(TestTransientObjectContainer))
-    suite.addTest(makeSuite(TestSlowTransientObjectContainer))
-    return suite

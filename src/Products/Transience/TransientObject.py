@@ -13,14 +13,13 @@
 """Simple ZODB-based transient object implementation.
 """
 
+import _thread as thread
 import logging
 import os
 import random
 import sys
 import time
 from functools import cmp_to_key
-
-from six.moves import _thread as thread
 
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
@@ -211,9 +210,7 @@ class TransientObject(Persistent, Implicit):
     def _p_resolveConflict(self, saved, state1, state2):
         DEBUG and TLOG('entering TO _p_rc')
         DEBUG and TLOG(
-            'states: sv: %s, s1: %s, s2: %s' % (
-                saved, state1, state2
-            )
+            f'states: sv: {saved}, s1: {state1}, s2: {state2}'
         )
         states = [saved, state1, state2]
 
@@ -234,9 +231,8 @@ class TransientObject(Persistent, Implicit):
             s1attr = state1.get(attr)
             s2attr = state2.get(attr)
             DEBUG and TLOG(
-                'TO _p_rc: attr %s: sv: %s s1: %s s2: %s' % (
-                    attr, svattr, s1attr, s2attr
-                )
+                f'TO _p_rc: attr {attr}: sv: {svattr} s1: {s1attr} '
+                f's2: {s2attr}'
             )
             if not svattr == s1attr == s2attr:
                 DEBUG and TLOG('TO _p_rc: cant resolve conflict')
@@ -272,11 +268,11 @@ class TransientObject(Persistent, Implicit):
 
     def _generateUniqueId(self):
         t = str(int(time.time()))
-        d = "%010d" % random.randint(0, sys.maxsize - 1)
-        return "%s%s" % (t, d)
+        d = '%010d' % random.randint(0, sys.maxsize - 1)
+        return f'{t}{d}'
 
     def __repr__(self):
-        return "id: %s, token: %s, content keys: %r" % (
+        return "id: {}, token: {}, content keys: {!r}".format(
             self.id, self.token, list(self.keys())
         )
 

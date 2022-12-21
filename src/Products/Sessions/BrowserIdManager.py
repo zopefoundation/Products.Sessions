@@ -21,11 +21,9 @@ import re
 import sys
 import time
 from hashlib import sha256
-
-import six
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.parse import urlunparse
+from urllib.parse import quote
+from urllib.parse import urlparse
+from urllib.parse import urlunparse
 
 from AccessControl.class_init import InitializeClass
 from AccessControl.Permissions import access_contents_information
@@ -88,7 +86,7 @@ def _randint(start, end):
         # properties of the chosen random sequence slightly, but this
         # is better than absolute predictability.
         random.seed(sha256(
-            "%s%s%s" % (random.getstate(), time.time(), os.getpid())
+            "{}{}{}".format(random.getstate(), time.time(), os.getpid())
         ).digest())
     return random.randint(start, end)
 
@@ -310,12 +308,12 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
         name = self.getBrowserIdName()
         if style == 'querystring':  # encode bid in querystring
             if '?' in url:
-                return '%s&amp;%s=%s' % (url, name, bid)
+                return f'{url}&amp;{name}={bid}'
             else:
-                return '%s?%s=%s' % (url, name, bid)
+                return f'{url}?{name}={bid}'
         else:  # encode bid as first two URL path segments
             proto, host, path, params, query, frag = urlparse(url)
-            path = '/%s/%s%s' % (name, bid, path)
+            path = f'/{name}/{bid}{path}'
             return urlunparse((proto, host, path, params, query, frag))
 
     # Non-IBrowserIdManager accessors / mutators.
@@ -660,55 +658,25 @@ class BrowserIdManagerTraverser(Persistent):
             LOG.error('indeterminate error', exc_info=sys.exc_info())
 
 
-if six.PY2:
-    import string
+def getB64TStamp(
+    b2a=binascii.b2a_base64,
+    gmtime=time.gmtime,
+    time=time.time,
+    TimeStamp=TimeStamp.TimeStamp,
+):
+    t = time()
+    stamp = TimeStamp(*gmtime(t)[:5] + (t % 60,))
+    ts = b2a(stamp.raw()).split(b'=')[:-1][0]
+    return ts.replace(b'/', b'.').replace(b'+', b'-').decode('ascii')
 
-    b64_trans = string.maketrans('+/', '-.')
-    b64_untrans = string.maketrans('-.', '+/')
 
-    def getB64TStamp(
-        b2a=binascii.b2a_base64,
-        gmtime=time.gmtime,
-        time=time.time,
-        b64_trans=b64_trans,
-        split=string.split,
-        TimeStamp=TimeStamp.TimeStamp,
-        translate=string.translate
-    ):
-        t = time()
-        ts = split(
-            b2a(TimeStamp(*gmtime(t)[:5] + (t % 60, )).raw())[:-1],
-            '=')[0]
-        return translate(ts, b64_trans)
-
-    def getB64TStampToInt(
-        ts,
-        TimeStamp=TimeStamp.TimeStamp,
-        b64_untrans=b64_untrans,
-        a2b=binascii.a2b_base64,
-        translate=string.translate
-    ):
-        return TimeStamp(a2b(translate(ts + '=', b64_untrans))).timeTime()
-
-else:
-    def getB64TStamp(
-        b2a=binascii.b2a_base64,
-        gmtime=time.gmtime,
-        time=time.time,
-        TimeStamp=TimeStamp.TimeStamp,
-    ):
-        t = time()
-        stamp = TimeStamp(*gmtime(t)[:5] + (t % 60,))
-        ts = b2a(stamp.raw()).split(b'=')[:-1][0]
-        return ts.replace(b'/', b'.').replace(b'+', b'-').decode('ascii')
-
-    def getB64TStampToInt(
-        ts,
-        TimeStamp=TimeStamp.TimeStamp,
-        a2b=binascii.a2b_base64
-    ):
-        stamp = TimeStamp(a2b(ts.replace('.', '/').replace('-', '+') + '='))
-        return stamp.timeTime()
+def getB64TStampToInt(
+    ts,
+    TimeStamp=TimeStamp.TimeStamp,
+    a2b=binascii.a2b_base64
+):
+    stamp = TimeStamp(a2b(ts.replace('.', '/').replace('-', '+') + '='))
+    return stamp.timeTime()
 
 
 def getBrowserIdPieces(bid):

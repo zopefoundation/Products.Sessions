@@ -13,10 +13,6 @@
 
 import time as oldtime
 from unittest import TestCase
-from unittest import TestSuite
-from unittest import makeSuite
-
-import six
 
 import Products.Transience.Transience
 import Products.Transience.TransientObject
@@ -97,13 +93,9 @@ class TestTransientObject(TestCase):
     def test_dictionaryLike(self):
         t = self.t.new('keytest')
         t.update(data)
-        if six.PY2:
-            assertCountEqual = self.assertItemsEqual
-        else:
-            assertCountEqual = self.assertCountEqual
-        assertCountEqual(t.keys(), data.keys())
-        assertCountEqual(t.values(), data.values())
-        assertCountEqual(t.items(), data.items())
+        self.assertCountEqual(t.keys(), data.keys())
+        self.assertCountEqual(t.values(), data.values())
+        self.assertCountEqual(t.items(), data.items())
         for k in data.keys():
             self.assertEqual(t.get(k), data.get(k))
         self.assertIsNone(t.get('foobie'))
@@ -188,12 +180,6 @@ class TestTransientObject(TestCase):
 
         # should not raise
         transient_object._p_resolveConflict(saved, state1, state2)
-
-
-def test_suite():
-    testsuite = makeSuite(TestTransientObject, 'test')
-    alltests = TestSuite((testsuite, ))
-    return alltests
 
 
 data = {
