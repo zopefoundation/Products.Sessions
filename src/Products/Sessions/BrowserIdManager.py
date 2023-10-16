@@ -490,7 +490,7 @@ class BrowserIdManager(Item, Persistent, Implicit, RoleManager, Owned, Tabs):
             'domain': self.cookie_domain,
             'path': self.cookie_path,
             'secure': self.cookie_secure,
-            'http_only': self.cookie_http_only,
+            'HttpOnly': self.cookie_http_only,
             'expires': expires,
             'SameSite': self.cookie_same_site,
         }

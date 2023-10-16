@@ -544,7 +544,7 @@ class TestBrowserIdManager(unittest.TestCase):
             {
                 'path': '/',
                 'value': 'xxx',
-                'http_only': True,
+                'HttpOnly': True,
                 'SameSite': 'Lax',
             }
         )
