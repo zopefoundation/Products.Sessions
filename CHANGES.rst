@@ -4,6 +4,8 @@ Changelog
 5.0 (unreleased)
 ----------------
 
+- Add support for Python 3.12.
+
 - Fix the browser ID manager cookie setting for Availability.
   The name of the cookie flag ws incorrect so it was always False.
 
