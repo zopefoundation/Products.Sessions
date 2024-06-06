@@ -339,7 +339,7 @@ class TransientObjectContainer(SimpleItem):
                 DEBUG and TLOG(f'_move_item: no bucket for ts {ts}')
                 continue
             DEBUG and TLOG(
-                '_move_item: bucket for ts {} is {}'.format(ts, id(abucket))
+                f'_move_item: bucket for ts {ts} is {id(abucket)}'
             )
             DEBUG and TLOG(
                 '_move_item: keys for ts {} (bucket {})-- {}'.format(

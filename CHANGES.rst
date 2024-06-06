@@ -1,9 +1,11 @@
 Changelog
 =========
 
-5.1 (unreleased)
+6.0 (unreleased)
 ----------------
 
+
+- Drop support for Python 3.7.
 
 5.0 (2023-10-16)
 ----------------
