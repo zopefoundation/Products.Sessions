@@ -616,7 +616,7 @@ class TestBrowserIdManager(unittest.TestCase):
         hooks = queryBeforeTraverse(parent, 'BrowserIdManager')
         self.assertEqual(len(hooks), 1)
         self.assertEqual(hooks[0][0], 40)
-        self.assertTrue(isinstance(hooks[0][1], BrowserIdManagerTraverser))
+        self.assertIsInstance(hooks[0][1], BrowserIdManagerTraverser)
 
     def test_updateTraversalData_not_url_ns(self):
         from Acquisition import Implicit
@@ -649,7 +649,7 @@ class TestBrowserIdManager(unittest.TestCase):
         hooks = queryBeforeTraverse(parent, 'BrowserIdManager')
         self.assertEqual(len(hooks), 1)
         self.assertEqual(hooks[0][0], 0)
-        self.assertTrue(hooks[0][1] is hook)
+        self.assertIs(hooks[0][1], hook)
 
     def test_registerTraversalHook_normal(self):
         from Acquisition import Implicit
@@ -667,7 +667,7 @@ class TestBrowserIdManager(unittest.TestCase):
         hooks = queryBeforeTraverse(parent, 'BrowserIdManager')
         self.assertEqual(len(hooks), 1)
         self.assertEqual(hooks[0][0], 40)
-        self.assertTrue(isinstance(hooks[0][1], BrowserIdManagerTraverser))
+        self.assertIsInstance(hooks[0][1], BrowserIdManagerTraverser)
 
     def test_unregisterTraversalHook_nonesuch_doesnt_raise(self):
         from Acquisition import Implicit
@@ -793,7 +793,7 @@ class TestBrowserIdManagerPublish(Testing.ZopeTestCase.FunctionalTestCase):
         res = self.publish(
             '/browser_id_manager/encodeUrl?url=%3Chtml%3EEVIL%2Fhtml%3E%3C!--'
         )
-        self.assertFalse(b"<html>EVIL/html>" in res.getBody())
+        self.assertNotIn(b"<html>EVIL/html>", res.getBody())
 
 
 class DummyObject:
