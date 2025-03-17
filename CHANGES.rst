@@ -5,6 +5,10 @@ Changelog
 ----------------
 
 
+- Add support for Python 3.13.
+
+- Drop support for Python 3.8.
+
 - Drop support for Python 3.7.
 
 5.0 (2023-10-16)

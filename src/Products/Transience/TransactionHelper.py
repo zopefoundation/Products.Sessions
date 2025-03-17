@@ -11,6 +11,7 @@ class PreventTransactionCommit(Exception):
 
 class UncommittableJar:
     """ A jar that cannot be committed """
+
     def __init__(self, reason):
         self.reason = reason
         self.time = time.time()
@@ -36,6 +37,7 @@ class makeTransactionUncommittable:
     - register an uncommittable object with the provided transaction
       which prevents the commit of that transaction
     """
+
     def __init__(self, transaction, reason):
         self._p_jar = UncommittableJar(reason)
         transaction.join(self._p_jar)

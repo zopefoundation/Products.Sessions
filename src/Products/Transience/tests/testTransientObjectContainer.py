@@ -294,7 +294,7 @@ class TestTransientObjectContainer(TestCase):
 
         # Make sure we always return an integer, our ZMI forms require it
         self.t._timeout_secs = 125
-        self.assertTrue(isinstance(self.t.getTimeoutMinutes(), int))
+        self.assertIsInstance(self.t.getTimeoutMinutes(), int)
 
     def test_new(self):
         t = self.t.new('foobieblech')

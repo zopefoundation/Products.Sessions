@@ -195,23 +195,25 @@ class TestSessionManager(unittest.TestCase):
         self.assertEqual(sdm.getContainerPath(), '/foo/bar/baz')
 
     def testHasId(self):
-        self.assertTrue(
-            self.app.session_data_manager.id == sdm_name
+        self.assertEqual(
+            self.app.session_data_manager.id,
+            sdm_name
         )
 
     def testHasTitle(self):
-        self.assertTrue(
-            self.app.session_data_manager.title == 'Session Data Manager'
+        self.assertEqual(
+            self.app.session_data_manager.title,
+            'Session Data Manager'
         )
 
     def testGetSessionDataNoCreate(self):
         sd = self.app.session_data_manager.getSessionData(0)
-        self.assertTrue(sd is None)
+        self.assertIsNone(sd)
 
     def testGetSessionDataCreate(self):
         from Products.Transience.Transience import TransientObject
         sd = self.app.session_data_manager.getSessionData(1)
-        self.assertTrue(sd.__class__ is TransientObject)
+        self.assertIs(sd.__class__, TransientObject)
 
     def testHasSessionData(self):
         self.app.session_data_manager.getSessionData()
@@ -226,8 +228,8 @@ class TestSessionManager(unittest.TestCase):
         sdm = aq_base(getattr(self.app, sdm_name))
         toc = aq_base(getattr(self.app.temp_folder, toc_name))
 
-        self.assertTrue(aq_base(sd.aq_parent) is sdm)
-        self.assertTrue(aq_base(sd.aq_parent.aq_parent) is toc)
+        self.assertIs(aq_base(sd.aq_parent), sdm)
+        self.assertIs(aq_base(sd.aq_parent.aq_parent), toc)
 
     def testNewSessionDataObjectIsValid(self):
         from Acquisition import aq_base
@@ -236,7 +238,7 @@ class TestSessionManager(unittest.TestCase):
 
         sdType = type(TransientObject(1))
         sd = self.app.session_data_manager.getSessionData()
-        self.assertTrue(type(aq_base(sd)) is sdType)
+        self.assertIs(type(aq_base(sd)), sdType)
         self.assertTrue(not hasattr(sd, '_invalid'))
 
     def testBrowserIdIsSet(self):
@@ -249,7 +251,7 @@ class TestSessionManager(unittest.TestCase):
         mgr = getattr(self.app, idmgr_name)
         token = mgr.getBrowserId()
         bykeysd = self.app.session_data_manager.getSessionDataByKey(token)
-        self.assertTrue(sd == bykeysd)
+        self.assertEqual(sd, bykeysd)
 
     def testBadExternalSDCPath(self):
         sdm = self.app.session_data_manager
@@ -265,7 +267,7 @@ class TestSessionManager(unittest.TestCase):
         sd['test'] = 'Its alive!  Alive!'
         sd.invalidate()
         self.assertTrue(not sdm.getSessionData().has_key('test'))  # NOQA: W601
-        self.assertTrue('test' not in sdm.getSessionData())
+        self.assertNotIn('test', sdm.getSessionData())
 
     def testGhostUnghostSessionManager(self):
         import transaction
@@ -275,7 +277,7 @@ class TestSessionManager(unittest.TestCase):
         sd.set('foo', 'bar')
         sdm._p_changed = None
         transaction.commit()
-        self.assertTrue(sdm.getSessionData().get('foo') == 'bar')
+        self.assertEqual(sdm.getSessionData().get('foo'), 'bar')
 
     def testSubcommitAssignsPJar(self):
         global DummyPersistent  # so pickle can find it
@@ -288,9 +290,9 @@ class TestSessionManager(unittest.TestCase):
         sd = self.app.session_data_manager.getSessionData()
         dummy = DummyPersistent()
         sd.set('dp', dummy)
-        self.assertTrue(sd['dp']._p_jar is None)
+        self.assertIsNone(sd['dp']._p_jar)
         transaction.savepoint(optimistic=True)
-        self.assertFalse(sd['dp']._p_jar is None)
+        self.assertIsNotNone(sd['dp']._p_jar)
 
     def testAqWrappedObjectsFail(self):
         import transaction
@@ -309,7 +311,7 @@ class TestSessionManager(unittest.TestCase):
         self.app.REQUEST['PARENTS'] = [self.app]
         self.app.REQUEST['URL'] = 'a'
         self.app.REQUEST.traverse('/')
-        self.assertTrue('TESTOFSESSION' in self.app.REQUEST)
+        self.assertIn('TESTOFSESSION', self.app.REQUEST)
 
     def testUnlazifyAutoPopulated(self):
         from Acquisition import aq_base
@@ -321,7 +323,7 @@ class TestSessionManager(unittest.TestCase):
         self.app.REQUEST.traverse('/')
         sess = self.app.REQUEST['TESTOFSESSION']
         sdType = type(TransientObject(1))
-        self.assertTrue(type(aq_base(sess)) is sdType)
+        self.assertIs(type(aq_base(sess)), sdType)
 
     def testUsesDefaultSessionDataContainer(self):
         sdm = self.app.session_data_manager
