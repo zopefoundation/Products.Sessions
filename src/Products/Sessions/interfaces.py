@@ -14,7 +14,7 @@
 
 o See Also
 
-    - "Transient Object API":../../Transience/TransienceInterfaces.py
+    - "Transient Object API":../../Transience/interfaces.py
 
 """
 from zope.interface import Interface
@@ -217,6 +217,16 @@ class ISessionDataManager(Interface):
 
         o If there is no Session Data Object associated with 'key',
           return None.
+
+        o Permission required: Access arbitrary user session data
+        """
+
+
+class IMutableSessionDataManager(ISessionDataManager):
+    """A session data manager that can clear sessions."""
+
+    def clearSessionData():
+        """Clear all data stored in the current user session, if it exists.
 
         o Permission required: Access arbitrary user session data
         """

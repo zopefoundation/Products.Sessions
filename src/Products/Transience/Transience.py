@@ -40,12 +40,12 @@ from OFS.SimpleItem import SimpleItem
 from Persistence import Persistent
 from zope.interface import implementer
 
+from .interfaces import IItemWithId
+from .interfaces import IStringKeyedHomogeneousItemContainer
+from .interfaces import ITransientItemContainer
 from .permissions import access_transient_objects
 from .permissions import create_transient_objects
 from .permissions import manage_transient_containers
-from .TransienceInterfaces import ItemWithId
-from .TransienceInterfaces import StringKeyedHomogeneousItemContainer
-from .TransienceInterfaces import TransientItemContainer
 from .TransientObject import TransientObject
 
 
@@ -110,9 +110,9 @@ class MaxTransientObjectsExceeded(Exception):
 
 
 @implementer(
-    ItemWithId,
-    StringKeyedHomogeneousItemContainer,
-    TransientItemContainer,
+    IItemWithId,
+    IStringKeyedHomogeneousItemContainer,
+    ITransientItemContainer,
 )
 class TransientObjectContainer(SimpleItem):
     """ Object which contains items that are automatically flushed
@@ -913,7 +913,7 @@ class TransientObjectContainer(SimpleItem):
         self[key] = item
         return self._wrap(item)
 
-    # TransientItemContainer methods
+    # ITransientItemContainer methods
 
     @security.protected(manage_transient_containers)
     def setTimeoutMinutes(self, timeout_mins, period_secs=20):

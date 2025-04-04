@@ -253,6 +253,15 @@ class TestSessionManager(unittest.TestCase):
         bykeysd = self.app.session_data_manager.getSessionDataByKey(token)
         self.assertEqual(sd, bykeysd)
 
+    def testClearSessionData(self):
+        sd = self.app.session_data_manager.getSessionData()
+        sd.set('somekey', 'somevalue')
+        self.assertEqual(sd.get('somekey'), 'somevalue')
+
+        self.app.session_data_manager.clearSessionData()
+        sd = self.app.session_data_manager.getSessionData()
+        self.assertIsNone(sd.get('somekey'))
+
     def testBadExternalSDCPath(self):
         sdm = self.app.session_data_manager
         # fake out webdav

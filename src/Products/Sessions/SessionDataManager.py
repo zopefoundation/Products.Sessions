@@ -35,7 +35,7 @@ from ZPublisher.BeforeTraverse import unregisterBeforeTraverse
 
 from .BrowserIdManager import BROWSERID_MANAGER_NAME
 from .common import DEBUG
-from .interfaces import ISessionDataManager
+from .interfaces import IMutableSessionDataManager
 from .interfaces import SessionDataManagerErr
 from .permissions import access_session_data
 from .permissions import access_user_session_data
@@ -81,7 +81,7 @@ class SessionIdManagerErr(Exception):
     pass
 
 
-@implementer(ISessionDataManager)
+@implementer(IMutableSessionDataManager)
 class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
     """The Zope default session data manager implementation."""
 
@@ -147,6 +147,13 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
         if key is None:
             return 0
         return self._hasSessionDataObject(key)
+
+    @security.protected(access_user_session_data)
+    def clearSessionData(self):
+        key = self.getBrowserIdManager().getBrowserId(create=0)
+        if key is None:
+            return
+        return self._clearSessionDataObject(key)
 
     @security.protected(access_user_session_data)
     def getSessionDataByKey(self, key):
@@ -259,6 +266,16 @@ class SessionDataManager(Item, Implicit, Persistent, RoleManager, Owned, Tabs):
             # splice ourselves into the acquisition chain
             return ob.__of__(self.__of__(ob.aq_parent))
         return ob.__of__(self)
+
+    def _clearSessionDataObject(self, key):
+        """ clear session data object for ``key`` """
+        container = self._getSessionDataContainer()
+        if container is None:
+            return None
+
+        ob = container.get(key)
+        if ob is not None:
+            ob.clear()
 
     def _getSessionDataObjectByKey(self, key):
         """ returns new or existing session data object """
