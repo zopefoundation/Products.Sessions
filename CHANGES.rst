@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.0 (unreleased)
+6.0 (2025-04-05)
 ----------------
 
 - Add an interface and method to clear a session's data.
