@@ -28,12 +28,12 @@ from Persistence import Persistent
 from ZODB.POSException import ConflictError
 from zope.interface import implementer
 
-from .TransienceInterfaces import DictionaryLike
-from .TransienceInterfaces import ImmutablyValuedMappingOfPickleableObjects
-from .TransienceInterfaces import ItemWithId
-from .TransienceInterfaces import Transient
-from .TransienceInterfaces import TransientItemContainer
-from .TransienceInterfaces import TTWDictionary
+from .interfaces import IDictionaryLike
+from .interfaces import IImmutablyValuedMappingOfPickleableObjects
+from .interfaces import IItemWithId
+from .interfaces import ITransient
+from .interfaces import ITransientItemContainer
+from .interfaces import ITTWDictionary
 
 
 DEBUG = int(os.environ.get('Z_TOC_DEBUG', 0))
@@ -56,11 +56,11 @@ WRITEGRANULARITY = 30
 
 
 @implementer(
-    ItemWithId,  # randomly generate an id
-    Transient,
-    DictionaryLike,
-    TTWDictionary,
-    ImmutablyValuedMappingOfPickleableObjects
+    IItemWithId,  # randomly generate an id
+    ITransient,
+    IDictionaryLike,
+    ITTWDictionary,
+    IImmutablyValuedMappingOfPickleableObjects
 )
 class TransientObject(Persistent, Implicit):
     """ Dictionary-like object that supports additional methods
@@ -87,14 +87,14 @@ class TransientObject(Persistent, Implicit):
         # to set it on ourselves.
 
     # -----------------------------------------------------------------
-    # ItemWithId
+    # IItemWithId
     #
 
     def getId(self):
         return self.id
 
     # -----------------------------------------------------------------
-    # Transient
+    # ITransient
     #
 
     def invalidate(self):
@@ -106,7 +106,7 @@ class TransientObject(Persistent, Implicit):
         # search our acquisition chain for a transient object container
         # and delete ourselves from it.
         for ob in getattr(self, 'aq_chain', []):
-            if TransientItemContainer.providedBy(ob):
+            if ITransientItemContainer.providedBy(ob):
                 trans_ob_container = ob
                 break
         if trans_ob_container is not None:
@@ -142,7 +142,7 @@ class TransientObject(Persistent, Implicit):
         return self.token
 
     # -----------------------------------------------------------------
-    # DictionaryLike
+    # IDictionaryLike
     #
 
     def keys(self):
@@ -178,7 +178,7 @@ class TransientObject(Persistent, Implicit):
             self[k] = d[k]
 
     # -----------------------------------------------------------------
-    # ImmutablyValuedMappingOfPickleableObjects (what a mouthful!)
+    # IImmutablyValuedMappingOfPickleableObjects (what a mouthful!)
     #
 
     def __setitem__(self, k, v):
@@ -195,7 +195,7 @@ class TransientObject(Persistent, Implicit):
         self.setLastModified()
 
     # -----------------------------------------------------------------
-    # TTWDictionary
+    # ITTWDictionary
     #
 
     set = __setitem__

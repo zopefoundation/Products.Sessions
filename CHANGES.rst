@@ -4,12 +4,19 @@ Changelog
 6.0 (unreleased)
 ----------------
 
+- Add an interface and method to clear a session's data.
+  It is recommended to clear session data when a user logs into a site
+  to harden the application agains session fixation attacks.
+  See https://owasp.org/www-community/attacks/Session_fixation.
+
+- Show clear deprecation warnings for old interface class locations.
 
 - Add support for Python 3.13.
 
 - Drop support for Python 3.8.
 
 - Drop support for Python 3.7.
+
 
 5.0 (2023-10-16)
 ----------------

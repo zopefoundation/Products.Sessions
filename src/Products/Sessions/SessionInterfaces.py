@@ -12,11 +12,18 @@
 ############################################################################
 # BBB location for APIs now defined in Products.Sessions.interfaces
 
-from .interfaces import BrowserIdManagerErr  # noqa: F401
-from .interfaces import IBrowserIdManager
-from .interfaces import ISessionDataManager
-from .interfaces import SessionDataManagerErr  # noqa: F401
+from zope.deferredimport import deprecated
 
 
-BrowserIdManagerInterface = IBrowserIdManager
-SessionDataManagerInterface = ISessionDataManager
+deprecated(
+    "All interfaces for Products.Sessions have moved to"
+    " Products.Sessions.interfaces. Please import from there."
+    " This backward compatibility shim will be removed in"
+    " Products.Sessions version 7.",
+    BrowserIdManagerErr='Products.Sessions.interfaces:BrowserIdManagerErr',
+    IBrowserIdManager='Products.Sessions.interfaces:IBrowserIdManager',
+    ISessionDataManager='Products.Sessions.interfaces:ISessionDataManager',
+    SessionDataManagerErr='Products.Sessions.interfaces:SessionDataManagerErr',
+    BrowserIdManagerInterface='Products.Sessions.interfaces:IBrowserIdManager',
+    SessionDataManagerInterface=(
+        'Products.Sessions.interfaces:ISessionDataManager'),)

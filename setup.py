@@ -35,6 +35,7 @@ setup(
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.dev',
     long_description=_read('README.rst') + '\n' + _read('CHANGES.rst'),
+    long_description_content_type='text/x-rst',
     packages=find_packages('src'),
     namespace_packages=['Products'],
     package_dir={'': 'src'},
@@ -67,6 +68,7 @@ setup(
         'ZODB',
         'Zope >= 4.0b5',
         'zope.interface',
+        'zope.deferredimport',
     ],
     extras_require={
         'tests': ['Products.TemporaryFolder >= 6.2'],
