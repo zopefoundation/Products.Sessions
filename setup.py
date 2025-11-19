@@ -22,7 +22,7 @@ def _read(fname):
 
 setup(
     name='Products.Sessions',
-    version='6.2.dev0',
+    version='6.2',
     url='https://github.com/zopefoundation/Products.Sessions/',
     project_urls={
         'Issue Tracker': ('https://github.com/zopefoundation'
@@ -68,6 +68,7 @@ setup(
     extras_require={
         'tests': ['Products.TemporaryFolder >= 6.2'],
     },
+    include_package_data=True,
     entry_points="""
     [zope2.initialize]
     Products.Sessions = Products.Sessions:initialize
