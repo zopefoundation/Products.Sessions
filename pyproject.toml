@@ -17,7 +17,6 @@ classifiers = [
     "Development Status :: 6 - Mature",
     "Environment :: Web Environment",
     "Framework :: Zope",
-    "Framework :: Zope :: 4",
     "Framework :: Zope :: 5",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
@@ -44,7 +43,7 @@ dependencies = [
     "Persistence",
     "transaction",
     "ZODB",
-    "Zope >= 4.0b5",
+    "Zope >= 5",
     "zope.interface",
     "zope.deferredimport",
 ]
