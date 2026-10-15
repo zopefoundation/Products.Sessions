@@ -14,8 +14,8 @@
 		their use may cause many undoable transactions, potentially bloating
 		undoing ZODB databases.
 		<br />
-		Transient Object Containers support <strong>Add and Delete Scripts</strong> 
-		which are methods which are invoked when transient objects are added or 
+		Transient Object Containers support <strong>Add and Delete Scripts</strong>
+		which are methods which are invoked when transient objects are added or
 		deleted from the container. A add/delete script is invoked with the item being
 		operated upon and the transient object container as arguments. Specify
 		the Zope physical path to the method to be invoked to receive the notification
@@ -51,13 +51,13 @@
 			<label for="period_secs" class="col-sm-3 col-md-2">Resolution</label>
 			<div class="col-sm-9 col-md-10">
 				<input id="period_secs" class="form-control" type="text" name="period_secs:int" value="20" />
-				<small class="text-muted">Timeout resolution in seconds (accept the default if you're not sure) 
+				<small class="text-muted">Timeout resolution in seconds (accept the default if you're not sure)
 					<a href="#period_secs_help" onclick="$('#period_secs_help').toggle()"> [ ... ] </a>
-					<span id="period_secs_help" style="display:none;">Defines what the <em>resolution</em> of item 
-					timeout is. Setting this higher allows the transience machinery to do fewer <em>writes</em> 
-					at the expense of causing items to time out later than the <em>Data object timeout value</em> 
-					by a factor of (at most) this many seconds. This number must divide evenly into the 
-					number of timeout seconds (<em>Data object timeout value</em> * 60) and  cannot be set higher 
+					<span id="period_secs_help" style="display:none;">Defines what the <em>resolution</em> of item
+					timeout is. Setting this higher allows the transience machinery to do fewer <em>writes</em>
+					at the expense of causing items to time out later than the <em>Data object timeout value</em>
+					by a factor of (at most) this many seconds. This number must divide evenly into the
+					number of timeout seconds (<em>Data object timeout value</em> * 60) and  cannot be set higher
 					than the timeout value in seconds.
 					</span>
 				</small>
@@ -91,7 +91,7 @@
 		<div class="zmi-controls">
 			<input class="btn btn-primary" type="submit" name="submit" value="Add" />
 		</div>
-		
+
 	</form>
 
 </main>
