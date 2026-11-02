@@ -37,21 +37,21 @@
         <label class="col-sm-3 col-md-2">Look for Browser Id in</label>
         <div class="col-sm-9 col-md-10">
           <div class="form-check">
-            <input id="cookies" class="form-check-input" type="checkbox" 
-                   name="location:list" value="cookies" checked="checked" 
+            <input id="cookies" class="form-check-input" type="checkbox"
+                   name="location:list" value="cookies" checked="checked"
                    <dtml-if "'cookies' in namespaces">checked="checked"</dtml-if> />
             <label for="cookies" class="form-check-label">Cookies</label>
           </div>
           <div class="form-check">
-            <input id="form" class="form-check-input" type="checkbox" 
-                   name="location:list" value="form" 
+            <input id="form" class="form-check-input" type="checkbox"
+                   name="location:list" value="form"
                    <dtml-if "'form' in namespaces">checked="checked"</dtml-if> />
             <label for="form" class="form-check-label">
               Forms and Query Strings
             </label>
           </div>
           <div class="form-check">
-            <input id="url" class="form-check-input" type="checkbox" 
+            <input id="url" class="form-check-input" type="checkbox"
                    name="location:list" value="url" checked="checked"
                    <dtml-if "'form' in namespaces">checked="checked"</dtml-if> />
             <label for="url" class="form-check-label">URLs</label>
@@ -65,7 +65,7 @@
       <div class="col-sm-9 col-md-10">
         <div class="form-check">
           <input id="auto_url_encoding" class="form-check-input"
-                 type="checkbox" name="auto_url_encoding" 
+                 type="checkbox" name="auto_url_encoding"
                  <dtml-if getAutoUrlEncoding>checked="checked"</dtml-if> />
           <label for="auto_url_encoding" class="form-check-label">
             Automatically encode Zope-generated URLs with a browser id
@@ -114,7 +114,7 @@
       <div class="col-sm-9 col-md-10">
         <div class="form-check">
           <input type="checkbox" class="form-check-input"
-                 id="cookiesecure" name="cookiesecure" 
+                 id="cookiesecure" name="cookiesecure"
                  <dtml-if getCookieSecure>checked="checked"</dtml-if> />
           <label for="cookiesecure">Only Send Cookie Over HTTPS</label>
         </div>
@@ -126,7 +126,7 @@
       <div class="col-sm-9 col-md-10">
         <div class="form-check">
           <input type="checkbox" class="form-check-input"
-                 id="cookiehttponly" name="cookiehttponly" 
+                 id="cookiehttponly" name="cookiehttponly"
                  <dtml-if getCookieHTTPOnly>checked="checked"</dtml-if> />
           <label for="cookiehttponly">
             Make cookie not available from JavaScript

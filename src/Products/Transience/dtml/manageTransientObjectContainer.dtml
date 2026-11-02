@@ -32,7 +32,7 @@
 		<div class="form-group row">
 			<label for="title" class="col-sm-3 col-md-2">Title</label>
 			<div class="col-sm-9 col-md-10">
-				<input id="title" class="form-control" type="text" name="title" 
+				<input id="title" class="form-control" type="text" name="title"
 					value="<dtml-var name="title" html_quote>" />
 				<small class="text-muted">optional</small>
 			</div>
@@ -41,7 +41,7 @@
 		<div class="form-group row">
 			<label for="timeout_mins" class="col-sm-3 col-md-2">Timeout</label>
 			<div class="col-sm-9 col-md-10">
-				<input id="timeout_mins" class="form-control" type="text" name="timeout_mins:int" 
+				<input id="timeout_mins" class="form-control" type="text" name="timeout_mins:int"
 					value="<dtml-var name="getTimeoutMinutes" html_quote>" />
 				<small class="text-muted">Data object timeout in minutes, <em>0</em> means <em>no expiration</em></small>
 			</div>
@@ -50,15 +50,15 @@
 		<div class="form-group row">
 			<label for="period_secs" class="col-sm-3 col-md-2">Resolution</label>
 			<div class="col-sm-9 col-md-10">
-				<input id="period_secs" class="form-control" type="text" name="period_secs:int" 
+				<input id="period_secs" class="form-control" type="text" name="period_secs:int"
 					value="<dtml-var name="getPeriodSeconds" html_quote>" />
-				<small class="text-muted">Timeout resolution in seconds (accept the default if you're not sure) 
+				<small class="text-muted">Timeout resolution in seconds (accept the default if you're not sure)
 					<a href="#period_secs_help" onclick="$('#period_secs_help').toggle()"> [ ... ] </a>
-					<span id="period_secs_help" style="display:none;">Defines what the <em>resolution</em> of item 
-					timeout is. Setting this higher allows the transience machinery to do fewer <em>writes</em> 
-					at the expense of causing items to time out later than the <em>Data object timeout value</em> 
-					by a factor of (at most) this many seconds. This number must divide evenly into the 
-					number of timeout seconds (<em>Data object timeout value</em> * 60) and  cannot be set higher 
+					<span id="period_secs_help" style="display:none;">Defines what the <em>resolution</em> of item
+					timeout is. Setting this higher allows the transience machinery to do fewer <em>writes</em>
+					at the expense of causing items to time out later than the <em>Data object timeout value</em>
+					by a factor of (at most) this many seconds. This number must divide evenly into the
+					number of timeout seconds (<em>Data object timeout value</em> * 60) and  cannot be set higher
 					than the timeout value in seconds.
 					</span>
 				</small>
@@ -68,7 +68,7 @@
 		<div class="form-group row">
 			<label for="limit" class="col-sm-3 col-md-2">Limit</label>
 			<div class="col-sm-9 col-md-10">
-				<input id="limit" class="form-control" type="text" name="limit:int" 
+				<input id="limit" class="form-control" type="text" name="limit:int"
  					value="<dtml-var name="getSubobjectLimit" html_quote>" />
 				<small class="text-muted">Maximum number of subobjects; <em>0</em> means <em>infinite</em></small>
 			</div>
@@ -77,7 +77,7 @@
 		<div class="form-group row">
 			<label for="addNotification" class="col-sm-3 col-md-2">Add-Notice</label>
 			<div class="col-sm-9 col-md-10">
-				<input id="addNotification" class="form-control" type="text" name="addNotification" 
+				<input id="addNotification" class="form-control" type="text" name="addNotification"
 					value="<dtml-var name="getAddNotificationTarget" html_quote>" />
 				<small class="text-muted">Script to call upon object add (optional), e.g. <em>/somefolder/addScript</em></small>
 			</div>
@@ -86,7 +86,7 @@
 		<div class="form-group row">
 			<label for="delNotification" class="col-sm-3 col-md-2">Delete-Notice</label>
 			<div class="col-sm-9 col-md-10">
-				<input id="delNotification" class="form-control" type="text" name="delNotification" 
+				<input id="delNotification" class="form-control" type="text" name="delNotification"
 					value="<dtml-var name="getDelNotificationTarget" html_quote>" />
 				<small class="text-muted">Script to call upon object delete (optional), e.g. <em>/somefolder/delScript</em></small>
 			</div>
@@ -94,8 +94,8 @@
 
 		<dtml-let l=getLen>
 			<dtml-if l>
-				<p class="mt-4"><strong>WARNING!</strong> 
-					All data objects existing in this transient object container will be 
+				<p class="mt-4"><strong>WARNING!</strong>
+					All data objects existing in this transient object container will be
 					deleted when the data object timeout or expiration resolution is changed.
 				</p>
 			</dtml-if>

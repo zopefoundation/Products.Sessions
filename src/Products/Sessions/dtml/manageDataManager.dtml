@@ -3,9 +3,9 @@
 <dtml-var "manage_tabs(this(), _, form_title='Manage Session Data Manager')">
 
 <main class="container-fluid">
-  
+
   <p class="form-help mb-4">
-    A Session Data Manager object is responsible for maintaining a 
+    A Session Data Manager object is responsible for maintaining a
     relationship between session data objects and Zope browser ids.
     It is part of the Zope sessioning machinery.  Programmers may
     interact with a session data manager in order to obtain
@@ -36,7 +36,7 @@
         Session data container path
       </label>
       <div class="col-sm-8 col-md-9">
-        <input id="getContainerPath" class="form-control" type="text" name="path" 
+        <input id="getContainerPath" class="form-control" type="text" name="path"
                value="<dtml-if getContainerPath>&dtml-getContainerPath;</dtml-if>">
         <small>e.g. <code>/temp_folder/session_data</code></small>
       </div>

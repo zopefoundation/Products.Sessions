@@ -43,19 +43,19 @@
       <label class="col-sm-3 col-md-2">Look for Browser Id in</label>
       <div class="col-sm-9 col-md-10">
         <div class="form-check">
-          <input id="cookies" class="form-check-input" type="checkbox" 
+          <input id="cookies" class="form-check-input" type="checkbox"
             name="location:list" value="cookies" checked="checked" />
           <label for="cookies" class="form-check-label">Cookies</label>
         </div>
         <div class="form-check">
-          <input id="form" class="form-check-input" type="checkbox" 
+          <input id="form" class="form-check-input" type="checkbox"
             name="location:list" value="form" checked="checked" />
           <label for="form" class="form-check-label">
             Forms and Query Strings
           </label>
         </div>
         <div class="form-check">
-          <input id="url" class="form-check-input" type="checkbox" 
+          <input id="url" class="form-check-input" type="checkbox"
             name="location:list" value="url" checked="checked" />
           <label for="url" class="form-check-label">URLs</label>
         </div>
